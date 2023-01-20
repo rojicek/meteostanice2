@@ -1,0 +1,1 @@
+lilyGO LILY Pi ESP32 meteostanice (s HDO)
