@@ -1,0 +1,10 @@
+hdo_update.php
+
+1 - podivat se jak stara jsou hdo data v db
+2 - kratka budoucnost (mene nez ~3 dny) -> podivat se co je noveho na pre.cz (oba soubory)
+3 - pridat cokoliv noveho
+4 - smazat data starsi nez ~6 mesicu 
+ 
+ struktura db 
+ INSERT INTO `hdo_tbl` (`dateStart`, `dateEnd`, `DoW`, `peakStart`, `peakStop`) VALUES 
+('2022-06-10',	'2022-09-08',	'MON',	'03:20:00', '04:00:00');
