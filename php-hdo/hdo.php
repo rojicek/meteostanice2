@@ -22,9 +22,6 @@ try
 
     $current_time = time();
     
-    //debug!! todo
-    $current_time = 1675897000; // neco blizko konce hdo dat
-   
     // max available hdo data in my sql 
     $sql_maxdata = "select max(dateEnd) as max_data from hdo_tbl"; 
     $max_hdo_data_q = $databaseConnection -> query($sql_maxdata);
