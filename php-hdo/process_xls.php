@@ -8,14 +8,16 @@ date_default_timezone_set('Europe/Prague');
 
 function test_obsahu ($excel, $row, $col, $text)
 {
- 
+  $obsah = "neni definovano";
   if(isset($excel->cells[$row][$col])) 
-        if (strcmp($excel->cells[$row][$col], $text) == 0)
+      {
+        $obsah = $excel->cells[$row][$col];
+        if (strcmp($obsah, $text) == 0)
             return true;
-            
+       }     
    
    // fails here
-   mail("jiri@rojicek.cz", "PRE xls parse fail !", "kontrola radek:" . $row . " sloupec:" . $col . " ceka:" . $text . " nactu:" . $excel->cells[$row][$col]);
+   mail("jiri@rojicek.cz", "PRE xls parse fail !", "kontrola radek:" . $row . " sloupec:" . $col . " ceka:" . $text . " nactu:" . $obsah);
    die("nekonzistentni PRE xls"); //Terminate script execution, show error message.
    
 }
