@@ -3,7 +3,6 @@
 require_once "includedb.php";
 require_once 'MSXLS.php'; //MSCFB.php is 'required once' inside MSXLS.php
 
-
 date_default_timezone_set('Europe/Prague');
 
 function test_obsahu ($excel, $row, $col, $text)
@@ -17,8 +16,8 @@ function test_obsahu ($excel, $row, $col, $text)
        }     
    
    // fails here
-   mail("jiri@rojicek.cz", "PRE xls parse fail !", "kontrola radek:" . $row . " sloupec:" . $col . " ceka:" . $text . " nactu:" . $obsah);
-   die("nekonzistentni PRE xls"); //Terminate script execution, show error message.
+   mail("jiri@rojicek.cz", "Meteo: selhalo parsovani PRE xls", "kontrola radek:" . $row . " sloupec:" . $col . " ceka:" . $text . " nactu:" . $obsah);
+   return false;
    
 }
 
@@ -27,7 +26,7 @@ function cti_bunku ($excel, $row, $col)
     if(isset($excel->cells[$row][$col])) 
             return $excel->cells[$row][$col];
     
-   mail("jiri@rojicek.cz", "PRE xls parse fail !", "chybi hodnota radek:" . $row . " sloupec:" . $col);
+   mail("jiri@rojicek.cz", "Meteo: selhalo parsovani PRE xls", "chybi pozadovana hodnota bunky na radku:" . $row . " a sloupci:" . $col);
    die("nekonzistentni PRE xls"); //Terminate script execution, show error message.        
 }
 
@@ -69,6 +68,7 @@ function write_to_db($sql_array)
     catch (Exception $e)
        {
             echo "chyba zapisu do hdo tabulky" + $e;
+            mail("jiri@rojicek.cz", "Meteo: chyba zapisu HDO dat", "Nejdou zapsat HDO data " . $sql);
        } 
    }
 }
@@ -91,19 +91,25 @@ function  process_xls ($file_path, $file_local_path, $max_hdo_data)
     
     if($excel->error) 
     {
-        mail('jiri@rojicek.cz', 'xls parse fail !', $excel1>err_msg); 
-        die($excel->err_msg); //Terminate script execution, show error message.
+        mail('jiri@rojicek.cz', 'METEO: selhalo nacteni xls', 'soubor: '. $file_path . ' chyba: ' . $excel1->err_msg); 
+        //die($excel->err_msg); //Terminate script execution, show error message.
+        return; // do nothing
     }
     
-        
     $excel->set_fill_xl_errors(true);
     $excel->read_everything(); //Read cells into $excel->cells
     
     // testy - umre to kdyz se neco zmeni
-    test_obsahu ($excel, 0, 7, "PLATNOST");
-    test_obsahu ($excel, 0, 11, "od:");
-    test_obsahu ($excel, 1, 11, "do:");
-    test_obsahu ($excel, 27, 0, "485"); // tohle je kod naseho elektromeru!
+    $r1 = test_obsahu ($excel, 0, 7, "PLATNOST");
+    $r2 = test_obsahu ($excel, 0, 11, "od:");
+    $r3 = test_obsahu ($excel, 1, 11, "do:");
+    $r4 = test_obsahu ($excel, 27, 0, "485"); // tohle je kod naseho elektromeru!
+    
+    
+    if (!$r1 or !$r2 or !$r3 or !$r4)
+    {
+        return; //do nothing, integrity check failed
+    }
     
     $date_start_nbr = cti_bunku($excel, 0, 12);
     $date_end_nbr = cti_bunku($excel, 1, 12);
@@ -118,7 +124,7 @@ function  process_xls ($file_path, $file_local_path, $max_hdo_data)
     if ($date_start->getTimestamp() > $max_hdo_data)
     {
     
-       mail('jiri@rojicek.cz', 'Aktualizace HDO dat', 'pisu do tabulky, nasel jsem nova data');     
+       mail('jiri@rojicek.cz', 'Meteo: aktualizace HDO dat', 'pisu do tabulky, nasel jsem nova data');     
          
        // radek + 12 (6*2) start/end intervalu pro kazdy den
        // pondeli
@@ -155,9 +161,27 @@ function  process_xls ($file_path, $file_local_path, $max_hdo_data)
     
     }
         
-        
-
 }
 
 
+function clean_up_old_hdo($current_time)
+{
+  
+    try
+        {
+          global $databaseConnection;
+         
+          // delete older than 20000000sec ~ 230days
+          $cut_date = date('Y-m-d', $current_time-20000000);
+          $sqlDel = "delete from hdo_tbl where dateStart < '" . $cut_date ."'";
+          $r = $databaseConnection -> query($sqlDel);
+          mail("jiri@rojicek.cz", "Meteo: mazani HDO dat", "HDO smazano do: " . $cut_date);
+        }
+    catch (Exception $e)
+       {
+           mail("jiri@rojicek.cz", "Meteo: chyba mazani dat", "Nejdou smazat stara HDO data: " . $sqlDel);
+           echo "chyba mazani starych dat" + $e;
+       } 
+    
+}
 ?>

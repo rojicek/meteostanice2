@@ -33,7 +33,7 @@ try
     if  ($max_hdo_data - $current_time < total_seconds_5_days)
     {
         // worth try to read new hdo
-        mail('jiri@rojicek.cz', 'Aktualizace HDO dat', 'pokousim se aktualizovat HDO data');     
+        mail('jiri@rojicek.cz', 'Meteo: aktualizace HDO dat', 'Pokousim se aktualizovat HDO data');     
         
         // repeat the same for 2 files            
         $file1_path = 'https://www.predistribuce.cz/Files/potrebuji-zaridit/stav-hdo/aktualni-program-hdo-ke-stazeni/';
@@ -41,8 +41,12 @@ try
         $file2_path = 'https://www.predistribuce.cz/Files/potrebuji-zaridit/stav-hdo/nasledny-program-hdo-ke-stazeni/';
         $file2_local_path = $_SERVER['DOCUMENT_ROOT'] . '/meteo/data/nasledny.xls';
         
+        // process both files, start with the older one. Either may not exist
         process_xls ($file1_path, $file1_local_path, $max_hdo_data);
         process_xls ($file2_path, $file2_local_path, $max_hdo_data);
+        
+        // delete old records (~6mo and oler)
+        clean_up_old_hdo($current_time);
         
     }
           
@@ -50,6 +54,7 @@ try
  }  
 catch (Exception $e)
  {
+    mail('jiri@rojicek.cz', 'Meteo: chyba', 'Chyba' + $e);  
     echo "chyba" + $e;
  }    
     
