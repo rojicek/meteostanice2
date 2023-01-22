@@ -1,6 +1,6 @@
 <?php
 require_once 'MSCFB.php';
-
+ 
 class MSXLS{
 
   /* --------------------------------------------- */

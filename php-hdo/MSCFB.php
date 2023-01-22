@@ -1,6 +1,6 @@
 <?php
 class MSCFB{
-
+ 
   // ERROR CODES
   const E_EOF = 0;
   const E_SEEK = 1;
