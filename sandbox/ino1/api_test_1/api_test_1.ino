@@ -6,6 +6,8 @@
 #include <WiFiClientSecureBearSSL.h>
 #include <Wire.h>
 
+#include <ArduinoJson.h>
+
 ESP8266WiFiMulti WiFiMulti;
 
 #define HTDU21D_ADDRESS 0x40  //Unshifted 7-bit I2C address for the sensor
@@ -19,6 +21,8 @@ ESP8266WiFiMulti WiFiMulti;
 #define SOFT_RESET 0xFE
 
 byte sensorStatus;
+
+StaticJsonDocument<768> doc;
 
 void setup() {
   // put your setup code here, to run once:
@@ -58,6 +62,45 @@ void loop() {
         if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
           String payload = https.getString();
           Serial.println(payload);
+
+         
+
+          DeserializationError error = deserializeJson(doc, payload);
+
+          if (error) {
+            Serial.print(F("deserializeJson() failed: "));
+            Serial.println(error.f_str());
+            return;
+          }
+
+          JsonArray intervals = doc["intervals"];
+
+          const char* intervals_0_0 = intervals[0][0];  // "2023-01-24 22:20:00"
+          const char* intervals_0_1 = intervals[0][1];  // "2023-01-24 23:00:00"
+
+          const char* intervals_1_0 = intervals[1][0];  // "2023-01-25 02:40:00"
+          const char* intervals_1_1 = intervals[1][1];  // "2023-01-25 03:20:00"
+
+          const char* intervals_2_0 = intervals[2][0];  // "2023-01-25 07:20:00"
+          const char* intervals_2_1 = intervals[2][1];  // "2023-01-25 08:00:00"
+
+          const char* intervals_3_0 = intervals[3][0];  // "2023-01-25 11:20:00"
+          const char* intervals_3_1 = intervals[3][1];  // "2023-01-25 12:00:00"
+
+          const char* intervals_4_0 = intervals[4][0];  // "2023-01-25 15:00:00"
+          const char* intervals_4_1 = intervals[4][1];  // "2023-01-25 15:40:00"
+
+          const char* intervals_5_0 = intervals[5][0];  // "2023-01-25 19:20:00"
+          const char* intervals_5_1 = intervals[5][1];  // "2023-01-25 20:00:00"
+
+          const char* intervals_6_0 = intervals[6][0];  // "2023-01-25 22:20:00"
+          const char* intervals_6_1 = intervals[6][1];  // "2023-01-25 23:00:00"
+
+          Serial.println ("NACTENA DATA");
+          Serial.printf("posledni: %s\n", intervals_6_1);
+
+          ///////////////////
+          //fuguje          
         }
       } else {
         Serial.printf("[HTTPS] GET... failed, error: %s\n", https.errorToString(httpCode).c_str());
