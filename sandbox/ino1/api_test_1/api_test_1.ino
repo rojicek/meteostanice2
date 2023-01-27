@@ -10,7 +10,7 @@
 
 ESP8266WiFiMulti WiFiMulti;
 
-StaticJsonDocument<768> doc;
+StaticJsonDocument<3000> doc;
 
 const char *  lat = "50.0973722";
 const char *  lon = "14.4074581";
@@ -120,10 +120,24 @@ void loop() {
         // file found at server
         if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
           String w_payload = "--init--";
-           w_payload = https.getString();
+          w_payload = https.getString();
           Serial.println("payload pocasi:");
           Serial.println(w_payload);
           Serial.println("^^^");
+
+///
+  StaticJsonDocument<200> filter;
+  filter["current"]["dt"] = true;
+  
+  // Deserialize the document
+  StaticJsonDocument<800> w_doc;
+  deserializeJson(w_doc, w_payload, DeserializationOption::Filter(filter));
+
+  
+  serializeJsonPretty(w_doc, Serial);
+
+ 
+
           /////////////////
           //fuguje
         }
@@ -142,5 +156,5 @@ void loop() {
 
   } //konec wifi
 
-  delay(30000);
+  delay(10000);
 }
