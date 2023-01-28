@@ -79,12 +79,34 @@ $hdo_arr = array();
  $lat = "50.0973722";
  $lon = "14.4074581";
  
-
+ //$openweather_api = 'xxxxx';
  
  $air_url = "https://api.openweathermap.org/data/2.5/air_pollution?lat=".$lat."&lon=".$lon."&appid=".$openweather_api;
  $air_quality_arr = json_decode(file_get_contents($air_url), true);
  
+ // rename list key to air quality
  
+ //try
+// {
+  if (array_key_exists("list", $air_quality_arr))
+  {
+     $air_quality_arr['air_quality'] = $air_quality_arr['list'];
+     unset($air_quality_arr['list']);
+   }
+  else
+   {
+      $ert=0;
+   //  $air_quality_arr['air_quality'] = 0;
+   }
+   
+   //$rr=0;
+ //}
+ //catch (Exception $e) {
+  //  echo   $e->getMessage();
+//}
+
+
+
  $all_arr = array_merge($hdo_arr_for_json, $air_quality_arr);
   
  $export_json = json_encode($all_arr);
