@@ -79,39 +79,83 @@ $hdo_arr = array();
  $lat = "50.0973722";
  $lon = "14.4074581";
  
+ $max_time_gap = 7200;
+ $current_time = time();
+ 
  //$openweather_api = 'xxxxx';
- 
- $air_url = "https://api.openweathermap.org/data/2.5/air_pollution?lat=".$lat."&lon=".$lon."&appid=".$openweather_api;
- $air_quality_arr = json_decode(file_get_contents($air_url), true);
- 
- // rename list key to air quality
- 
- //try
-// {
-  if (array_key_exists("list", $air_quality_arr))
-  {
-     $air_quality_arr['air_quality'] = $air_quality_arr['list'];
-     unset($air_quality_arr['list']);
-   }
-  else
-   {
-      $ert=0;
-   //  $air_quality_arr['air_quality'] = 0;
-   }
+ try
+ {
+  $air_url = "https://api.openweathermap.org/data/2.5/air_pollution?lat=".$lat."&lon=".$lon."&appid=".$openweather_api;
+  //echo $air_url . "<pre>";
+  $air_content = file_get_contents($air_url);
+  $air_weather_arr = array();
+    
+  // default values  
+  $aqi = 0; 
+  $sunrise = 0;
+  $sunset = 0;
+  $temp = 0;
+  $temp_feel = 0;
+  
+  if ($air_content)
+   { //air ok
+     $air_quality_arr = json_decode($air_content, true);
+      if (array_key_exists("list", $air_quality_arr))
+          if ($current_time - $air_quality_arr['list'][0]['dt'] < $max_time_gap)
+             $aqi = $air_quality_arr['list'][0]['main']['aqi'];
+             
+   } //air ok
+   $air_weather_arr['weather']['aqi'] = $aqi;
+   // konec air quality 
    
-   //$rr=0;
- //}
- //catch (Exception $e) {
-  //  echo   $e->getMessage();
-//}
+   //current weather
+   $current_url = "https://api.openweathermap.org/data/3.0/onecall?lat=".$lat."&lon=".$lon."&exclude=minutely,hourly,daily,alerts&appid=".$openweather_api."&units=metric";
+   echo $current_url . "<p>";
+   $current_content = file_get_contents($current_url);
+   if ($current_content)
+   {//current weather
+    
+    $current_weather_arr = json_decode($current_content, true);
+    
+    if (array_key_exists("current", $current_weather_arr))
+        if ($current_time - $current_weather_arr['current']['dt'] < $max_time_gap)
+          { //json ok and up to date
+             $sunrise = $current_weather_arr['current']['sunrise'];
+             $sunset  = $current_weather_arr['current']['sunset'];
+             $temp = $current_weather_arr['current']['temp'];
+             $temp_feel = $current_weather_arr['current']['feels_like'];
+          } //json ok and up to date
+   
+   }//current weather
+   
+   $air_weather_arr['weather']['sunrise'] = date('H:i', $sunrise);
+   $air_weather_arr['weather']['sunset'] = date('H:i', $sunset);
+   $air_weather_arr['weather']['temp'] = round($temp,1);
+   $air_weather_arr['weather']['temp_feel'] = round($temp_feel,1);
 
 
 
- $all_arr = array_merge($hdo_arr_for_json, $air_quality_arr);
+/*
+{"lat":50.0974,"lon":14.4075,"timezone":"Europe/Prague","timezone_offset":3600,"current":{"dt":1675024601,"sunrise":1674974461,
+"sunset":1675007377,"temp":269.97,"feels_like":263.05,"pressure":1021,"humidity":83,"dew_point":267.78,
+"uvi":0,"clouds":0,"visibility":10000,"wind_speed":7.2,"wind_deg":240,"weather":[{"id":800,"main":"Clear","description":"clear sky","icon":"01n"}]}}*
+*/
+  
+   
+
+   
+ }
+ catch (Exception $e) {
+    echo   $e->getMessage();
+}
+
+
+
+ $all_arr = array_merge($hdo_arr_for_json, $air_weather_arr);
   
  $export_json = json_encode($all_arr);
   
-
+ 
  echo $export_json; 
  
  //echo "<p>konec";
