@@ -66,7 +66,7 @@ void loop() {
     HTTPClient https;
 
     //String url = "https://www.rojicek.cz/meteo/hdo-query.php";
-    String url = "https://api.openweathermap.org/data/3.0/onecall?lat=50.0973722&lon=14.4074581&appid=5cb11160e6649574aca2ee031feda8d4&units=metric&exclude=minutely,hourly";
+    String url = "https://api.openweathermap.org/data/3.0/onecall?lat=50.0973722&lon=14.4074581&appid=5cb11160e6649574aca2ee031feda8d4&units=metric&exclude=minutely,hourly,daily";
 
     if (https.begin(*client, url)) {
       // HTTPS

@@ -1,6 +1,6 @@
 <?php
 
-require_once "includedb.php";
+require_once '/var/www/rojicek.cz/web/db/includedb.php'; 
 require_once 'MSXLS.php'; //MSCFB.php is 'required once' inside MSXLS.php
 
 date_default_timezone_set('Europe/Prague');
@@ -184,4 +184,5 @@ function clean_up_old_hdo($current_time)
        } 
     
 }
+
 ?>

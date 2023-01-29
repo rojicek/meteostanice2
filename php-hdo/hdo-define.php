@@ -3,7 +3,7 @@
 // php code to update hdo info in my sql
 
 
-require_once "includedb.php";
+require_once '/var/www/rojicek.cz/web/db/includedb.php'; 
 require_once "process_xls.php";
 require_once 'MSXLS.php'; //MSCFB.php is 'required once' inside MSXLS.php
  
@@ -47,6 +47,7 @@ try
         
         // delete old records (~6mo and oler)
         clean_up_old_hdo($current_time);
+        
         
     }
           
