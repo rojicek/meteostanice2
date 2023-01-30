@@ -1,8 +1,14 @@
 <?php
 // php ktere vrati kompletni info pro meteostanici
 
- include '/var/www/rojicek.cz/web/db/includedb.php'; 
+include '/var/www/rojicek.cz/web/db/includedb.php'; 
 
+
+if ($_GET["pwd"] != "pa1e2")
+{
+    echo "{\"log\": \"no way jose\"}";
+    exit();
+}
 
 
 $datetime_now = time();
@@ -96,6 +102,9 @@ $hdo_arr = array();
   $sunset = 0;
   $temp = 0;
   $temp_feel = 0;
+  $wind_speed = -1;
+  $wind_deg = -1;
+  $w_desc = "NA";
   
   if ($air_content)
    { //air ok
@@ -110,7 +119,7 @@ $hdo_arr = array();
    
    //current weather
    $current_url = "https://api.openweathermap.org/data/3.0/onecall?lat=".$lat."&lon=".$lon."&exclude=minutely,hourly,daily,alerts&appid=".$openweather_api."&units=metric";
-   echo $current_url . "<p>";
+   //echo $current_url . "<p>";
    $current_content = file_get_contents($current_url);
    if ($current_content)
    {//current weather
@@ -124,6 +133,9 @@ $hdo_arr = array();
              $sunset  = $current_weather_arr['current']['sunset'];
              $temp = $current_weather_arr['current']['temp'];
              $temp_feel = $current_weather_arr['current']['feels_like'];
+             $wind_speed = $current_weather_arr['current']['wind_speed'];
+             $wind_deg = $current_weather_arr['current']['wind_deg'];
+             $w_desc = $current_weather_arr['current']['weather'][0]['main'];
           } //json ok and up to date
    
    }//current weather
@@ -132,8 +144,28 @@ $hdo_arr = array();
    $air_weather_arr['weather']['sunset'] = date('H:i', $sunset);
    $air_weather_arr['weather']['temp'] = round($temp,1);
    $air_weather_arr['weather']['temp_feel'] = round($temp_feel,1);
-
-
+   $air_weather_arr['weather']['wind_speed'] = round($wind_speed,1);
+   $air_weather_arr['weather']['wind_dir'] = "NA";
+   if (($wind_deg>=337.5) and ($wind_deg<22.5)) 
+      $air_weather_arr['weather']['wind_dir'] = "N";
+   elseif (($wind_deg>=22.5) and ($wind_deg<67.5)) 
+      $air_weather_arr['weather']['wind_dir'] = "NE";
+   elseif (($wind_deg>=67.5) and ($wind_deg<112.5)) 
+      $air_weather_arr['weather']['wind_dir'] = "E";
+   elseif (($wind_deg>=112.5) and ($wind_deg<157.5)) 
+      $air_weather_arr['weather']['wind_dir'] = "SE";
+   elseif (($wind_deg>=157.5) and ($wind_deg<202.5)) 
+      $air_weather_arr['weather']['wind_dir'] = "S";
+   elseif (($wind_deg>=202.5) and ($wind_deg<247.5)) 
+      $air_weather_arr['weather']['wind_dir'] = "SW";
+   elseif (($wind_deg>=247.5) and ($wind_deg<292.5)) 
+      $air_weather_arr['weather']['wind_dir'] = "W";
+   elseif (($wind_deg>=292.5) and ($wind_deg<337.5)) 
+      $air_weather_arr['weather']['wind_dir'] = "NW";
+   
+   $air_weather_arr['weather']['w_desc'] = $w_desc;
+   
+   
 
 /*
 {"lat":50.0974,"lon":14.4075,"timezone":"Europe/Prague","timezone_offset":3600,"current":{"dt":1675024601,"sunrise":1674974461,
