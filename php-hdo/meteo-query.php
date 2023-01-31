@@ -4,7 +4,7 @@
 include '/var/www/rojicek.cz/web/db/includedb.php'; 
 
 
-if ($_GET["pwd"] != "pa1e2")
+if ($_GET["pwd"] != $pwd)
 {
     echo "{\"log\": \"no way jose\"}";
     exit();
@@ -84,15 +84,21 @@ $hdo_arr = array();
  // air quality
  $lat = "50.0973722";
  $lon = "14.4074581";
+ $temp_placeholder = 99;
+ 
+ // cycling index limits
+ $low_temp = 6;
+ $super_low_temp = -3;
+ $hi_temp = 28;
+ $super_hi_temp = 33;
  
  $max_time_gap = 7200;
  $current_time = time();
  
- //$openweather_api = 'xxxxx';
+ //$openweather_api = 'xxxxx'; //just for testing
  try
  {
-  $air_url = "https://api.openweathermap.org/data/2.5/air_pollution?lat=".$lat."&lon=".$lon."&appid=".$openweather_api;
-  //echo $air_url . "<pre>";
+  $air_url = "https://api.openweathermap.org/data/2.5/air_pollution?lat=".$lat."&lon=".$lon."&appid=".$openweather_api;  
   $air_content = file_get_contents($air_url);
   $air_weather_arr = array();
     
@@ -105,6 +111,13 @@ $hdo_arr = array();
   $wind_speed = -1;
   $wind_deg = -1;
   $w_desc = "NA";
+  $w_icon = "";
+  $temp_today_max = -$temp_placeholder;
+  $temp_tomorrow_max = -$temp_placeholder;
+  $temp_today_min = $temp_placeholder;
+  $temp_tomorrow_min = $temp_placeholder;
+  $cycling_today = 1;
+  $cycling_tomorrow = 1;
   
   if ($air_content)
    { //air ok
@@ -118,27 +131,83 @@ $hdo_arr = array();
    // konec air quality 
    
    //current weather
-   $current_url = "https://api.openweathermap.org/data/3.0/onecall?lat=".$lat."&lon=".$lon."&exclude=minutely,hourly,daily,alerts&appid=".$openweather_api."&units=metric";
-   //echo $current_url . "<p>";
-   $current_content = file_get_contents($current_url);
-   if ($current_content)
-   {//current weather
+   $weather_url = "https://api.openweathermap.org/data/3.0/onecall?lat=".$lat."&lon=".$lon."&exclude=minutely,daily,alerts&appid=".$openweather_api."&units=metric";
+   // echo $weather_url . "<p>"; // debug only
+   $weather_content = file_get_contents($weather_url);
+   if ($weather_content)
+   {//weather content
     
-    $current_weather_arr = json_decode($current_content, true);
+    $weather_arr = json_decode($weather_content, true);
+    $up_to_date = 0;
     
-    if (array_key_exists("current", $current_weather_arr))
-        if ($current_time - $current_weather_arr['current']['dt'] < $max_time_gap)
+    if (array_key_exists("current", $weather_arr))
+        if ($current_time - $weather_arr['current']['dt'] < $max_time_gap)
           { //json ok and up to date
-             $sunrise = $current_weather_arr['current']['sunrise'];
-             $sunset  = $current_weather_arr['current']['sunset'];
-             $temp = $current_weather_arr['current']['temp'];
-             $temp_feel = $current_weather_arr['current']['feels_like'];
-             $wind_speed = $current_weather_arr['current']['wind_speed'];
-             $wind_deg = $current_weather_arr['current']['wind_deg'];
-             $w_desc = $current_weather_arr['current']['weather'][0]['main'];
+             $up_to_date = 1;   
+             $sunrise = $weather_arr['current']['sunrise'];
+             $sunset  = $weather_arr['current']['sunset'];
+             $temp = $weather_arr['current']['temp'];
+             $temp_feel = $weather_arr['current']['feels_like'];
+             $wind_speed = $weather_arr['current']['wind_speed'];
+             $wind_deg = $weather_arr['current']['wind_deg'];
+             $w_desc = $weather_arr['current']['weather'][0]['main'];
+             $w_icon = $weather_arr['current']['weather'][0]['icon'];
           } //json ok and up to date
-   
-   }//current weather
+          
+    if (array_key_exists("hourly", $weather_arr))
+        if ($up_to_date == 1)
+            {
+              $today_midnight = mktime(0, 0, 0) + 86400;  // today next midnight in epoch
+              $tomorrow_midnight =  $today_midnight + 2*86400; // today next midnight in epoch
+                            
+              for ($i = 0; $i<48; $i++)
+                { //for hourly
+                    echo date('Y-m-d H:i:s', $weather_arr['hourly'][$i]['dt']) . " -- " . $weather_arr['hourly'][$i]['temp'] . "<br>";
+                    
+                    if  ($weather_arr['hourly'][$i]['dt'] < $today_midnight)
+                    { //today
+                        if ($weather_arr['hourly'][$i]['temp'] > $temp_today_max)
+                            $temp_today_max = round($weather_arr['hourly'][$i]['temp'], 1);
+                        
+                        if ($weather_arr['hourly'][$i]['temp'] < $temp_today_min)
+                            $temp_today_min = round($weather_arr['hourly'][$i]['temp'], 1);
+                            
+                        //cycling index - only between sunrise and sunset    
+                        if (($weather_arr['hourly'][$i]['dt'] >= $sunrise) and ($weather_arr['hourly'][$i]['dt'] <= $sunset))
+                        { //sunrise-sunset for cycling index
+                            if (($weather_arr['hourly'][$i]['temp'] < $low_temp) or ($weather_arr['hourly'][$i]['temp'] > $hi_temp))
+                                $cycling_today = max($cycling_today, 2); //cold or warm
+                            if (($weather_arr['hourly'][$i]['temp'] < $super_low_temp) or ($weather_arr['hourly'][$i]['temp'] > $super_hi_temp))
+                                $cycling_today = max($cycling_today, 3); //too cold or too hot   
+                                                                             
+                        }//sunrise-sunset for cycling index
+                    } //today
+                    
+                    if  (($weather_arr['hourly'][$i]['dt'] >= $today_midnight) and ($weather_arr['hourly'][$i]['dt'] < $tomorrow_midnight)) 
+                    { //tomorrow
+                        if ($weather_arr['hourly'][$i]['temp'] > $temp_tomorrow_max)
+                            $temp_tomorrow_max = round($weather_arr['hourly'][$i]['temp'], 1);
+                        
+                        if ($weather_arr['hourly'][$i]['temp'] < $temp_tomorrow_min)
+                            $temp_tomorrow_min = round($weather_arr['hourly'][$i]['temp'], 1);
+                            
+                        //cycling index - only between sunrise and sunset (same sun as today)    
+                        if (($weather_arr['hourly'][$i]['dt'] >= $sunrise+86400) and ($weather_arr['hourly'][$i]['dt'] <= $sunset+86400))
+                        { //sunrise-sunset for cycling index
+                            if (($weather_arr['hourly'][$i]['temp'] < $low_temp) or ($weather_arr['hourly'][$i]['temp'] > $hi_temp))
+                                $cycling_tomorrow = max($cycling_tomorrow, 2); //cold or warm
+                            if (($weather_arr['hourly'][$i]['temp'] < $super_low_temp) or ($weather_arr['hourly'][$i]['temp'] > $super_hi_temp))
+                                $cycling_tomorrow = max($cycling_tomorrow, 3); //too cold or too hot   
+                                                                             
+                        }//sunrise-sunset for cycling index
+                    } //tomorrow
+    
+                } //for hourly
+                            
+            }
+          
+                   
+   }//weather content
    
    $air_weather_arr['weather']['sunrise'] = date('H:i', $sunrise);
    $air_weather_arr['weather']['sunset'] = date('H:i', $sunset);
@@ -164,16 +233,28 @@ $hdo_arr = array();
       $air_weather_arr['weather']['wind_dir'] = "NW";
    
    $air_weather_arr['weather']['w_desc'] = $w_desc;
+   $air_weather_arr['weather']['w_icon'] = $w_icon;
    
+   if ($temp_today_max == -$temp_placeholder) //didnt change for some reason
+       $temp_today_max = ""; //replace by empty string   
+   $air_weather_arr['weather']['temp_tdy_max'] = $temp_today_max;
+   
+   if ($temp_today_min == $temp_placeholder) //didnt change for some reason
+       $temp_today_min = "" ; //replace by empty string  
+   $air_weather_arr['weather']['temp_tdy_min'] = $temp_today_min;
+   
+   if ($temp_tomorrow_max == -$temp_placeholder) //didnt change for some reason
+       $temp_tomorrow_max = ""; //replace by empty string   
+   $air_weather_arr['weather']['temp_tmrw_max'] = $temp_tomorrow_max;
+   
+   if ($temp_tomorrow_min == $temp_placeholder) //didnt change for some reason
+       $temp_tomorrow_min = "" ; //replace by empty string  
+   $air_weather_arr['weather']['temp_tmrw_min'] = $temp_tomorrow_min;
+   
+   $air_weather_arr['weather']['clc_tdy'] = $cycling_today;
+   $air_weather_arr['weather']['clc_tmr'] = $cycling_tomorrow;
    
 
-/*
-{"lat":50.0974,"lon":14.4075,"timezone":"Europe/Prague","timezone_offset":3600,"current":{"dt":1675024601,"sunrise":1674974461,
-"sunset":1675007377,"temp":269.97,"feels_like":263.05,"pressure":1021,"humidity":83,"dew_point":267.78,
-"uvi":0,"clouds":0,"visibility":10000,"wind_speed":7.2,"wind_deg":240,"weather":[{"id":800,"main":"Clear","description":"clear sky","icon":"01n"}]}}*
-*/
-  
-   
 
    
  }
