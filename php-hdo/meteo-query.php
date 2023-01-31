@@ -57,11 +57,12 @@ $hdo_arr = array();
 
      if (strtotime($zacatek) >= $datetime_now)
      {  
-        array_push($hdo_arr, array($zacatek, $konec));
+        array_push($hdo_arr, array(strtotime($zacatek), strtotime($konec)));
      }        
      elseif (strtotime($konec) >= $datetime_now)
      { 
-        array_push($hdo_arr, array(date('Y-m-d H:i:s', $datetime_now), $konec));
+        //array_push($hdo_arr, array(date('Y-m-d H:i:s', $datetime_now), $konec));
+        array_push($hdo_arr, array($datetime_now, strtotime($konec)));
      }
   }
  
@@ -70,7 +71,7 @@ $hdo_arr = array();
   {
      $zacatek = $date_tomorrow . " " . $row['peakStart'];
      $konec = $date_tomorrow . " " . $row['peakStop'];
-     array_push($hdo_arr, array($zacatek, $konec));    
+     array_push($hdo_arr, array(strtotime($zacatek), strtotime($konec)));    
   }
  
  //play safe :)
@@ -162,7 +163,8 @@ $hdo_arr = array();
                             
               for ($i = 0; $i<48; $i++)
                 { //for hourly
-                    echo date('Y-m-d H:i:s', $weather_arr['hourly'][$i]['dt']) . " -- " . $weather_arr['hourly'][$i]['temp'] . "<br>";
+                
+                    //echo date('Y-m-d H:i:s', $weather_arr['hourly'][$i]['dt']) . " -- " . $weather_arr['hourly'][$i]['temp'] . "<br>";
                     
                     if  ($weather_arr['hourly'][$i]['dt'] < $today_midnight)
                     { //today
