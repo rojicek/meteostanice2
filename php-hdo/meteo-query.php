@@ -94,6 +94,10 @@ $hdo_arr = array();
  $super_hi_temp = 33;
  $hi_wind = 10;
  $super_hi_wind = 15;
+ $rain = 0.5;
+ $super_rain = 1.5;
+ $snow = 0.5;
+ $super_snow = 1.5;
  
  $max_time_gap = 7200;
  $current_time = time();
@@ -133,7 +137,7 @@ $hdo_arr = array();
    
    //current weather
    $weather_url = "https://api.openweathermap.org/data/3.0/onecall?lat=".$lat."&lon=".$lon."&exclude=minutely,daily,alerts&appid=".$openweather_api."&units=metric";
-   // echo $weather_url . "<p>"; // debug only
+   echo $weather_url . "<p>"; // debug only
    $weather_content = file_get_contents($weather_url);
    if ($weather_content)
    {//weather content
@@ -184,7 +188,28 @@ $hdo_arr = array();
                             if ($weather_arr['hourly'][$i]['wind_speed'] > $hi_wind)
                                 $cycling_today = max($cycling_today, 2); //too windy
                             if ($weather_arr['hourly'][$i]['wind_speed'] > $super_hi_wind)
-                                $cycling_today = max($cycling_today, 3); //super too windy                                                                             
+                                $cycling_today = max($cycling_today, 3); //super too windy  
+                                
+                            //rain
+                            if (array_key_exists("rain", $weather_arr['hourly'][$i]))
+                            {//rain
+                                //echo "rain: " . $weather_arr['hourly'][$i]['rain']['1h'] . "at" . date('Y-m-d H:i:s', $weather_arr['hourly'][$i]['dt']) . "<br>";
+                                if ($weather_arr['hourly'][$i]['rain']['1h'] > $rain)
+                                    $cycling_today = max($cycling_today, 2); //rainy
+                                if ($weather_arr['hourly'][$i]['rain']['1h'] > $super_rain)
+                                    $cycling_today = max($cycling_today, 3); //super rainy    
+                            }//rain
+                            
+                            //snow
+                            if (array_key_exists("snow", $weather_arr['hourly'][$i]))
+                            {//snow
+                                if ($weather_arr['hourly'][$i]['snow']['1h'] > $snow)
+                                    $cycling_today = max($cycling_today, 2); //snowy
+                                if ($weather_arr['hourly'][$i]['snow']['1h'] > $super_snow)
+                                    $cycling_today = max($cycling_today, 3); //super snowy    
+                            }//snow
+
+                                                                                                            
                         }//sunrise-sunset for cycling index
                     } //today
                                         
@@ -202,6 +227,26 @@ $hdo_arr = array();
                                 $cycling_today = max($cycling_tomorrow, 2); //too windy
                             if ($weather_arr['hourly'][$i]['wind_speed'] > $super_hi_wind)
                                 $cycling_today = max($cycling_tomorrow, 3); //super too windy
+                            
+                            //rain
+                            if (array_key_exists("rain", $weather_arr['hourly'][$i]))
+                            {//rain
+                               // echo "rain: " . $weather_arr['hourly'][$i]['rain']['1h'] . "mm at " . date('Y-m-d H:i:s', $weather_arr['hourly'][$i]['dt']) . "<br>";
+                                if ($weather_arr['hourly'][$i]['rain']['1h'] > $rain)
+                                    $cycling_tomorrow = max($cycling_tomorrow, 2); //rainy
+                                if ($weather_arr['hourly'][$i]['rain']['1h'] > $super_rain)
+                                    $cycling_tomorrow = max($cycling_tomorrow, 3); //super rainy    
+                            }//rain
+                            
+                            //snow
+                            if (array_key_exists("snow", $weather_arr['hourly'][$i]))
+                            {//snow
+                                if ($weather_arr['hourly'][$i]['snow']['1h'] > $snow)
+                                    $cycling_tomorrow = max($cycling_today, 2); //snowy
+                                if ($weather_arr['hourly'][$i]['snow']['1h'] > $super_snow)
+                                    $cycling_tomorrow = max($cycling_today, 3); //super snowy    
+                            }//snow
+   
                                                                              
                         }//sunrise-sunset for cycling index
                     } //tomorrow
@@ -214,6 +259,11 @@ $hdo_arr = array();
    #air quality is just one (today only). No red cycling condition
    if ($aqi > 3)
       $cycling_today = max($cycling_today, 2);
+      
+   if  ($current_time+3600 > $sunset) //hodina do zapadu slunce
+      $cycling_today = max($cycling_today, 2);
+   if  ($current_time-3600 > $sunset) //hodina po zapadu slunce
+      $cycling_today = max($cycling_today, 3);
    
    
    $air_weather_arr['weather']['sunrise'] = date('H:i', $sunrise);
