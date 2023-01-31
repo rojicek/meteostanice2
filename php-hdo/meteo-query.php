@@ -91,6 +91,8 @@ $hdo_arr = array();
  $super_low_temp = -3;
  $hi_temp = 28;
  $super_hi_temp = 33;
+ $hi_wind = 10;
+ $super_hi_wind = 15;
  
  $max_time_gap = 7200;
  $current_time = time();
@@ -112,10 +114,8 @@ $hdo_arr = array();
   $wind_deg = -1;
   $w_desc = "NA";
   $w_icon = "";
-  $temp_today_max = -$temp_placeholder;
-  $temp_tomorrow_max = -$temp_placeholder;
+  $temp_today_max = -$temp_placeholder;   
   $temp_today_min = $temp_placeholder;
-  $temp_tomorrow_min = $temp_placeholder;
   $cycling_today = 1;
   $cycling_tomorrow = 1;
   
@@ -167,10 +167,10 @@ $hdo_arr = array();
                     if  ($weather_arr['hourly'][$i]['dt'] < $today_midnight)
                     { //today
                         if ($weather_arr['hourly'][$i]['temp'] > $temp_today_max)
-                            $temp_today_max = round($weather_arr['hourly'][$i]['temp'], 1);
+                            $temp_today_max = round($weather_arr['hourly'][$i]['temp'], 0); //max temp to int 
                         
                         if ($weather_arr['hourly'][$i]['temp'] < $temp_today_min)
-                            $temp_today_min = round($weather_arr['hourly'][$i]['temp'], 1);
+                            $temp_today_min = round($weather_arr['hourly'][$i]['temp'], 0); //min temp to int 
                             
                         //cycling index - only between sunrise and sunset    
                         if (($weather_arr['hourly'][$i]['dt'] >= $sunrise) and ($weather_arr['hourly'][$i]['dt'] <= $sunset))
@@ -179,18 +179,16 @@ $hdo_arr = array();
                                 $cycling_today = max($cycling_today, 2); //cold or warm
                             if (($weather_arr['hourly'][$i]['temp'] < $super_low_temp) or ($weather_arr['hourly'][$i]['temp'] > $super_hi_temp))
                                 $cycling_today = max($cycling_today, 3); //too cold or too hot   
-                                                                             
+                            if ($weather_arr['hourly'][$i]['wind_speed'] > $hi_wind)
+                                $cycling_today = max($cycling_today, 2); //too windy
+                            if ($weather_arr['hourly'][$i]['wind_speed'] > $super_hi_wind)
+                                $cycling_today = max($cycling_today, 3); //super too windy                                                                             
                         }//sunrise-sunset for cycling index
                     } //today
-                    
+                                        
                     if  (($weather_arr['hourly'][$i]['dt'] >= $today_midnight) and ($weather_arr['hourly'][$i]['dt'] < $tomorrow_midnight)) 
                     { //tomorrow
-                        if ($weather_arr['hourly'][$i]['temp'] > $temp_tomorrow_max)
-                            $temp_tomorrow_max = round($weather_arr['hourly'][$i]['temp'], 1);
-                        
-                        if ($weather_arr['hourly'][$i]['temp'] < $temp_tomorrow_min)
-                            $temp_tomorrow_min = round($weather_arr['hourly'][$i]['temp'], 1);
-                            
+                                                
                         //cycling index - only between sunrise and sunset (same sun as today)    
                         if (($weather_arr['hourly'][$i]['dt'] >= $sunrise+86400) and ($weather_arr['hourly'][$i]['dt'] <= $sunset+86400))
                         { //sunrise-sunset for cycling index
@@ -198,16 +196,23 @@ $hdo_arr = array();
                                 $cycling_tomorrow = max($cycling_tomorrow, 2); //cold or warm
                             if (($weather_arr['hourly'][$i]['temp'] < $super_low_temp) or ($weather_arr['hourly'][$i]['temp'] > $super_hi_temp))
                                 $cycling_tomorrow = max($cycling_tomorrow, 3); //too cold or too hot   
+                            if ($weather_arr['hourly'][$i]['wind_speed'] > $hi_wind)
+                                $cycling_today = max($cycling_tomorrow, 2); //too windy
+                            if ($weather_arr['hourly'][$i]['wind_speed'] > $super_hi_wind)
+                                $cycling_today = max($cycling_tomorrow, 3); //super too windy
                                                                              
                         }//sunrise-sunset for cycling index
                     } //tomorrow
     
-                } //for hourly
-                            
+                } //for hourly                            
             }
-          
-                   
+                             
    }//weather content
+   
+   #air quality is just one (today only). No red cycling condition
+   if ($aqi > 3)
+      $cycling_today = max($cycling_today, 2);
+   
    
    $air_weather_arr['weather']['sunrise'] = date('H:i', $sunrise);
    $air_weather_arr['weather']['sunset'] = date('H:i', $sunset);
@@ -242,15 +247,7 @@ $hdo_arr = array();
    if ($temp_today_min == $temp_placeholder) //didnt change for some reason
        $temp_today_min = "" ; //replace by empty string  
    $air_weather_arr['weather']['temp_tdy_min'] = $temp_today_min;
-   
-   if ($temp_tomorrow_max == -$temp_placeholder) //didnt change for some reason
-       $temp_tomorrow_max = ""; //replace by empty string   
-   $air_weather_arr['weather']['temp_tmrw_max'] = $temp_tomorrow_max;
-   
-   if ($temp_tomorrow_min == $temp_placeholder) //didnt change for some reason
-       $temp_tomorrow_min = "" ; //replace by empty string  
-   $air_weather_arr['weather']['temp_tmrw_min'] = $temp_tomorrow_min;
-   
+         
    $air_weather_arr['weather']['clc_tdy'] = $cycling_today;
    $air_weather_arr['weather']['clc_tmr'] = $cycling_tomorrow;
    
