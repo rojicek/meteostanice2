@@ -86,7 +86,7 @@ $hdo_arr = array();
  // air quality
  $lat = "50.0973722";
  $lon = "14.4074581";
- $temp_placeholder = 99; //for min/max
+ //$temp_placeholder = 99; //for min/max
   
  $max_time_gap = 7200;
  $current_time = time();
@@ -108,8 +108,9 @@ $hdo_arr = array();
   $wind_deg = -1;
   $w_desc = "NA";
   $w_icon = "";
-  $temp_today_max = -$temp_placeholder;   
-  $temp_today_min = $temp_placeholder;
+  
+  $temp_trend = 0;
+  $hours_ahead = 8; //hours ahead for temp trend
   $cycling_today = 1;
   $cycling_tomorrow = 1;
   
@@ -161,12 +162,18 @@ $hdo_arr = array();
                     
                     if  ($weather_arr['hourly'][$i]['dt'] < $today_midnight)
                     { //today
-                        if ($weather_arr['hourly'][$i]['temp'] > $temp_today_max)
-                            $temp_today_max = round($weather_arr['hourly'][$i]['temp'], 0); //max temp to int 
                         
-                        if ($weather_arr['hourly'][$i]['temp'] < $temp_today_min)
-                            $temp_today_min = round($weather_arr['hourly'][$i]['temp'], 0); //min temp to int 
-                            
+                        //temp trend for next 8 hours, but only today (get extreme)
+                        // can be done base on $i, but time is more reliable
+                        if ($weather_arr['hourly'][$i]['dt'] < $current_time + $hours_ahead * 3600 )                         
+                        { //relevant for temp trend  
+                            echo date('Y-m-d H:i:s', $weather_arr['hourly'][$i]['dt']) . " -- " . $weather_arr['hourly'][$i]['temp'] . "<br>";
+                            if (abs($weather_arr['hourly'][$i]['temp'] - $temp) > abs($temp_trend))                                                      
+                                // care for plus minus!
+                                $temp_trend = $weather_arr['hourly'][$i]['temp'] - $temp;
+                        } //relevant for temp trend
+                        
+                                                     
                         //cycling index - only between sunrise and sunset    
                         if (($weather_arr['hourly'][$i]['dt'] >= $sunrise) and ($weather_arr['hourly'][$i]['dt'] <= $sunset))
                         { //sunrise-sunset for cycling index                                
@@ -234,20 +241,12 @@ $hdo_arr = array();
    
    $air_weather_arr['weather']['w_desc'] = $w_desc;
    $air_weather_arr['weather']['w_icon'] = $w_icon;
-   
-   if ($temp_today_max == -$temp_placeholder) //didnt change for some reason
-       $temp_today_max = ""; //replace by empty string   
-   $air_weather_arr['weather']['temp_tdy_max'] = $temp_today_max;
-   
-   if ($temp_today_min == $temp_placeholder) //didnt change for some reason
-       $temp_today_min = "" ; //replace by empty string  
-   $air_weather_arr['weather']['temp_tdy_min'] = $temp_today_min;
+      
          
+   $air_weather_arr['weather']['temp_trend'] = round($temp_trend, 0);
+            
    $air_weather_arr['weather']['clc_tdy'] = $cycling_today;
    $air_weather_arr['weather']['clc_tmr'] = $cycling_tomorrow;
-   
-
-
    
  }
  catch (Exception $e) {
