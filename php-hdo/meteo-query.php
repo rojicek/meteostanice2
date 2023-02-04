@@ -159,20 +159,18 @@ $hdo_arr = array();
                 { //for hourly
                 
                     //echo date('Y-m-d H:i:s', $weather_arr['hourly'][$i]['dt']) . " -- " . $weather_arr['hourly'][$i]['temp'] . "<br>";
+                    //temp trend for next 8 hours, but only today (get extreme). Future only
+                    // can be done base on $i, but time is more reliable
+                    if (($weather_arr['hourly'][$i]['dt'] < $current_time + $hours_ahead * 3600 ) and ($weather_arr['hourly'][$i]['dt'] > $current_time))                         
+                    { //relevant for temp trend  
+                        echo date('Y-m-d H:i:s', $weather_arr['hourly'][$i]['dt']) . " -- " . $weather_arr['hourly'][$i]['temp'] . "<br>";
+                        if (abs($weather_arr['hourly'][$i]['temp'] - $temp) > abs($temp_trend))                                                      
+                            // care for plus minus!
+                            $temp_trend = $weather_arr['hourly'][$i]['temp'] - $temp;
+                    } //relevant for temp trend
                     
                     if  ($weather_arr['hourly'][$i]['dt'] < $today_midnight)
                     { //today
-                        
-                        //temp trend for next 8 hours, but only today (get extreme)
-                        // can be done base on $i, but time is more reliable
-                        if ($weather_arr['hourly'][$i]['dt'] < $current_time + $hours_ahead * 3600 )                         
-                        { //relevant for temp trend  
-                            echo date('Y-m-d H:i:s', $weather_arr['hourly'][$i]['dt']) . " -- " . $weather_arr['hourly'][$i]['temp'] . "<br>";
-                            if (abs($weather_arr['hourly'][$i]['temp'] - $temp) > abs($temp_trend))                                                      
-                                // care for plus minus!
-                                $temp_trend = $weather_arr['hourly'][$i]['temp'] - $temp;
-                        } //relevant for temp trend
-                        
                                                      
                         //cycling index - only between sunrise and sunset    
                         if (($weather_arr['hourly'][$i]['dt'] >= $sunrise) and ($weather_arr['hourly'][$i]['dt'] <= $sunset))
