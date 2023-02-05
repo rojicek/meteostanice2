@@ -25,6 +25,9 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   // put your main code here, to run repeatedly:
+
+  int next_loop_delay = 300000;
+  
   if (WiFiMulti.run() == WL_CONNECTED) {
     Serial.println("wifi ok");
 
@@ -36,10 +39,12 @@ void loop() {
     //String url = "https://www.rojicek.cz/meteo/hdo-query.php";
     String url = "https://www.rojicek.cz/meteo/meteo-query.php?pwd=pa1e2";
 
+
     if (https.begin(*client, url)) 
     {
       // HTTPS
       Serial.print("[HTTPS] GET...\n");
+
 
       // start connection and send HTTP header
       int httpCode = https.GET();
@@ -67,6 +72,7 @@ void loop() {
           if (error) {
             Serial.print(F("deserializeJson() failed: "));
             Serial.println(error.f_str());
+            next_loop_delay = 60000; //zkus rychleji
             return;
           }
 
@@ -93,5 +99,5 @@ void loop() {
       Serial.printf("[HTTPS] Unable to connect\n");
     }
   }
-  delay(300000);
+  delay(next_loop_delay);
 }
