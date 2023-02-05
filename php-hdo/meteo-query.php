@@ -110,7 +110,7 @@ $hdo_arr = array();
   $w_icon = "";
   
   $temp_trend = 0;
-  $hours_ahead = 8; //hours ahead for temp trend
+  $hours_ahead = 6; //hours ahead for temp trend
   $cycling_today = 1;
   $cycling_tomorrow = 1;
   
@@ -127,7 +127,7 @@ $hdo_arr = array();
    
    //current weather
    $weather_url = "https://api.openweathermap.org/data/3.0/onecall?lat=".$lat."&lon=".$lon."&exclude=minutely,daily,alerts&appid=".$openweather_api."&units=metric";
-   echo $weather_url . "<p>"; // debug only
+   // echo $weather_url . "<p>"; // debug only
    $weather_content = file_get_contents($weather_url);
    if ($weather_content)
    {//weather content
@@ -163,7 +163,7 @@ $hdo_arr = array();
                     // can be done base on $i, but time is more reliable
                     if (($weather_arr['hourly'][$i]['dt'] > $current_time) and ($weather_arr['hourly'][$i]['dt'] < $current_time + $hours_ahead * 3600 ))                         
                     { //relevant for temp trend  
-                        echo "trend index " . date('Y-m-d H:i:s', $weather_arr['hourly'][$i]['dt']) . " -> " . $weather_arr['hourly'][$i]['temp'] . "<br>";
+                        //echo "trend index " . date('Y-m-d H:i:s', $weather_arr['hourly'][$i]['dt']) . " -> " . $weather_arr['hourly'][$i]['temp'] . "<br>";
                         if (abs($weather_arr['hourly'][$i]['temp'] - $temp) > abs($temp_trend))                                                      
                             // care for plus minus!
                             $temp_trend = $weather_arr['hourly'][$i]['temp'] - $temp;
@@ -175,7 +175,7 @@ $hdo_arr = array();
                         //cycling index - only between sunrise and sunset    
                         if (($weather_arr['hourly'][$i]['dt'] >= $sunrise) and ($weather_arr['hourly'][$i]['dt'] <= $sunset))
                         { //sunrise-sunset for cycling index  
-                                echo "today index  " . date('Y-m-d H:i:s', $weather_arr['hourly'][$i]['dt'])  . "<br>";                              
+                                //echo "today index  " . date('Y-m-d H:i:s', $weather_arr['hourly'][$i]['dt'])  . "<br>";                              
                                 $cycling_today = cycling_index_check ($weather_arr['hourly'][$i]['temp'],       '<', $low_temp, $super_low_temp, $cycling_today); //cold check
                                 $cycling_today = cycling_index_check ($weather_arr['hourly'][$i]['temp'],       '>', $hi_temp,  $super_hi_temp, $cycling_today); //hot check
                                 $cycling_today = cycling_index_check ($weather_arr['hourly'][$i]['wind_speed'], '>', $hi_wind,  $super_hi_wind, $cycling_today); //wind
@@ -190,7 +190,7 @@ $hdo_arr = array();
                         //cycling index - only between sunrise and sunset (same sun as today)    
                         if (($weather_arr['hourly'][$i]['dt'] >= $sunrise+86400) and ($weather_arr['hourly'][$i]['dt'] <= $sunset+86400))
                         { //sunrise-sunset for cycling index
-                                echo "tomorrow index " . date('Y-m-d H:i:s', $weather_arr['hourly'][$i]['dt'])  . "<br>";        
+                                //echo "tomorrow index " . date('Y-m-d H:i:s', $weather_arr['hourly'][$i]['dt'])  . "<br>";        
                                 $cycling_tomorrow = cycling_index_check ($weather_arr['hourly'][$i]['temp'],       '<', $low_temp, $super_low_temp, $cycling_tomorrow); //cold check
                                 $cycling_tomorrow = cycling_index_check ($weather_arr['hourly'][$i]['temp'],       '>', $hi_temp,  $super_hi_temp, $cycling_tomorrow); //hot check
                                 $cycling_tomorrow = cycling_index_check ($weather_arr['hourly'][$i]['wind_speed'], '>', $hi_wind,  $super_hi_wind, $cycling_tomorrow); //wind
