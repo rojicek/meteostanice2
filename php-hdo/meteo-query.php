@@ -161,20 +161,21 @@ $hdo_arr = array();
                     //echo date('Y-m-d H:i:s', $weather_arr['hourly'][$i]['dt']) . " -- " . $weather_arr['hourly'][$i]['temp'] . "<br>";
                     //temp trend for next 8 hours, but only today (get extreme). Future only
                     // can be done base on $i, but time is more reliable
-                    if (($weather_arr['hourly'][$i]['dt'] < $current_time + $hours_ahead * 3600 ) and ($weather_arr['hourly'][$i]['dt'] > $current_time))                         
+                    if (($weather_arr['hourly'][$i]['dt'] > $current_time) and ($weather_arr['hourly'][$i]['dt'] < $current_time + $hours_ahead * 3600 ))                         
                     { //relevant for temp trend  
-                        echo date('Y-m-d H:i:s', $weather_arr['hourly'][$i]['dt']) . " -- " . $weather_arr['hourly'][$i]['temp'] . "<br>";
+                        echo "trend index " . date('Y-m-d H:i:s', $weather_arr['hourly'][$i]['dt']) . " -> " . $weather_arr['hourly'][$i]['temp'] . "<br>";
                         if (abs($weather_arr['hourly'][$i]['temp'] - $temp) > abs($temp_trend))                                                      
                             // care for plus minus!
                             $temp_trend = $weather_arr['hourly'][$i]['temp'] - $temp;
                     } //relevant for temp trend
                     
-                    if  ($weather_arr['hourly'][$i]['dt'] < $today_midnight)
-                    { //today
+                    if  ((($weather_arr['hourly'][$i]['dt'] > $current_time)) and ($weather_arr['hourly'][$i]['dt'] < $today_midnight))
+                    { //today, future only
                                                      
                         //cycling index - only between sunrise and sunset    
                         if (($weather_arr['hourly'][$i]['dt'] >= $sunrise) and ($weather_arr['hourly'][$i]['dt'] <= $sunset))
-                        { //sunrise-sunset for cycling index                                
+                        { //sunrise-sunset for cycling index  
+                                echo "today index  " . date('Y-m-d H:i:s', $weather_arr['hourly'][$i]['dt'])  . "<br>";                              
                                 $cycling_today = cycling_index_check ($weather_arr['hourly'][$i]['temp'],       '<', $low_temp, $super_low_temp, $cycling_today); //cold check
                                 $cycling_today = cycling_index_check ($weather_arr['hourly'][$i]['temp'],       '>', $hi_temp,  $super_hi_temp, $cycling_today); //hot check
                                 $cycling_today = cycling_index_check ($weather_arr['hourly'][$i]['wind_speed'], '>', $hi_wind,  $super_hi_wind, $cycling_today); //wind
@@ -189,6 +190,7 @@ $hdo_arr = array();
                         //cycling index - only between sunrise and sunset (same sun as today)    
                         if (($weather_arr['hourly'][$i]['dt'] >= $sunrise+86400) and ($weather_arr['hourly'][$i]['dt'] <= $sunset+86400))
                         { //sunrise-sunset for cycling index
+                                echo "tomorrow index " . date('Y-m-d H:i:s', $weather_arr['hourly'][$i]['dt'])  . "<br>";        
                                 $cycling_tomorrow = cycling_index_check ($weather_arr['hourly'][$i]['temp'],       '<', $low_temp, $super_low_temp, $cycling_tomorrow); //cold check
                                 $cycling_tomorrow = cycling_index_check ($weather_arr['hourly'][$i]['temp'],       '>', $hi_temp,  $super_hi_temp, $cycling_tomorrow); //hot check
                                 $cycling_tomorrow = cycling_index_check ($weather_arr['hourly'][$i]['wind_speed'], '>', $hi_wind,  $super_hi_wind, $cycling_tomorrow); //wind
@@ -220,7 +222,7 @@ $hdo_arr = array();
    $air_weather_arr['weather']['temp_feel'] = round($temp_feel,1);
    $air_weather_arr['weather']['wind_speed'] = round($wind_speed,1);
    $air_weather_arr['weather']['wind_dir'] = "NA";
-   if (($wind_deg>=337.5) and ($wind_deg<22.5)) 
+   if (($wind_deg>=337.5) or ($wind_deg<22.5)) 
       $air_weather_arr['weather']['wind_dir'] = "N";
    elseif (($wind_deg>=22.5) and ($wind_deg<67.5)) 
       $air_weather_arr['weather']['wind_dir'] = "NE";
