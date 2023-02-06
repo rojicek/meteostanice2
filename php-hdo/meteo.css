@@ -1,0 +1,27 @@
+
+body {
+  font-family:  'Verdana', 'Geneva', 'Kalimati', sans-serif;
+}
+
+table, th, td
+{
+color: #000000; 
+font-family: Verdana,Geneva,Kalimati,sans-serif; 
+font-size: 20pt; 
+font-style: normal;
+text-align: center; 
+vertical-align: middle;
+/*border: 1px solid; */
+border: none;
+}
+
+td.maly
+{
+font-size: 10pt; 
+}
+
+td.stredni
+{
+font-size: 15pt; 
+}
+

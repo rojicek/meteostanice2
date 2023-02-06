@@ -1,4 +1,10 @@
 <?php
+
+// PHP version: 8.0.26
+
+
+/*
+
 header("Content-Type: image/png");
 
 $im = @imagecreate(480, 320)
@@ -6,16 +12,25 @@ $im = @imagecreate(480, 320)
 $background_color = imagecolorallocate($im, 255, 255, 255);
 
 
+
 //place fixed elements
-$w_icon_url = "https://openweathermap.org/img/wn/13d@2x.png";
+$w_icon_url = "img/weather_icon_demo.png";
+
+
+$deg_color = imagecolorallocate($im, 0, 0, 0);
+
+imagestring($im, 5, 5, 5,  "15°C", $deg_color);
+
+
 $overlayImage = imagecreatefrompng($w_icon_url);
-imagecopy($im, $overlayImage, 10, 10, 0, 0, imagesx($overlayImage), imagesy($overlayImage));
+imagecopy($im, $overlayImage, 50, 50, 0, 0, imagesx($overlayImage), imagesy($overlayImage));
 
+imagecopy($im, $overlayImage, 250, 50, 0, 0, imagesx($overlayImage), imagesy($overlayImage));
 
+imagestring($im, 15, 55, 5,  "25°C", $deg_color);
 
-//$text_color = imagecolorallocate($im, 233, 14, 91);
-
-//imagestring($im, 1, 5, 5,  "A Simple Text String", $text_color);
 imagepng($im);
+
 imagedestroy($im);
+*/
 ?>
