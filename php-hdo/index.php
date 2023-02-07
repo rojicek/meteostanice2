@@ -17,11 +17,14 @@
 
 //prep data by query
 require_once '/var/www/rojicek.cz/web/db/vars.php';
+require_once 'hdo_calc.php';
+
 $meteo_url = "https://www.rojicek.cz/meteo/meteo-query.php?pwd=".$pwd;
 
 $meteo_content = file_get_contents($meteo_url);
 $meteo_content_arr = json_decode($meteo_content, true);
 
+$hdo_starts = next_hdo($meteo_content_arr["hdo_intervals"]);
 
 ?>
 
@@ -91,17 +94,37 @@ echo date('H:i',$meteo_content_arr["weather"]["sunset"]);
 <?php echo $meteo_content_arr["weather"]["temp_feel"] . "&degC";  ?>
 </font>
 </td>
-<td colspan=3 rowspan=3 style="color:#355E3b">
-&nbsp;+0h +0h <br>&nbsp;+0h +0h 
+<td colspan=3 rowspan=3>
+
+<?php
+$second_line = 0;
+
+for ($i=0; $i<count($hdo_starts); $i++)
+ {
+  
+   if (($i >= count($hdo_starts)/2) and ($second_line == 0))
+   {
+        echo "<br>";
+        $second_line = 1;
+    }
+     echo "<font color = \"".$hdo_starts[$i][1]."\">" . $hdo_starts[$i][0] . "</font> ";
+ }
+?>
+ 
 </td>
 </tr>
 
 
 <tr>
 <td>
-
+<?php
+// trend prep 
+$temp_trend = $meteo_content_arr["weather"]["temp_trend"];
+if ($temp_trend>0)
+  $temp_trend = "+".$temp_trend;
+?>
 <img src="img/temp_trend/<?php echo $meteo_content_arr["weather"]["temp_trend_icon"]; ?>.png"  style="vertical-align:middle" width=40> 
-<font class="mensi"><?php echo $meteo_content_arr["weather"]["temp_trend"] . "&degC";  ?></font>
+<font class="mensi"><?php echo $temp_trend . "&degC";  ?></font>
 </td>
 
 </tr>
