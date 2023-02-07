@@ -8,11 +8,12 @@ table, th, td
 color: #000000; 
 font-family: Verdana,Geneva,Kalimati,sans-serif; 
 font-size: 20pt; 
+width:800px;
 font-style: normal;
 text-align: center; 
-vertical-align: middle;
-/*border: 1px solid; */
-border: none;
+/* vertical-align: text-top;??? */
+border: 1px solid; 
+/*border: none;*/
 }
 
 td.maly
@@ -25,3 +26,7 @@ td.stredni
 font-size: 15pt; 
 }
 
+font.mensi
+{
+ font-size: 18px;
+}

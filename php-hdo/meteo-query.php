@@ -247,15 +247,15 @@ $hdo_arr = array();
    
    $temp_trend_icon = "?"; //default - should be overwritten
    if (abs($temp_trend) <= $small_temp_diff)
-    $temp_trend_icon = "0";
+    $temp_trend_icon = "trend_steady";
    elseif (($temp_trend > $small_temp_diff) and ($temp_trend <= $big_temp_diff))
-    $temp_trend_icon = "+1";
+    $temp_trend_icon = "trend_small_up";
    elseif ($temp_trend > $big_temp_diff)
-    $temp_trend_icon = "+2";
+    $temp_trend_icon = "trend_up";
    elseif (($temp_trend < -$small_temp_diff) and ($temp_trend >= -$big_temp_diff))
-    $temp_trend_icon = "-1";
+    $temp_trend_icon = "trend_small_down";
    elseif ($temp_trend < -$big_temp_diff)
-     $temp_trend_icon = "-2";
+     $temp_trend_icon = "trend_down";
         
    $air_weather_arr['weather']['temp_trend_icon'] = $temp_trend_icon;
    
