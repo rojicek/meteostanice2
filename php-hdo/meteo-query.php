@@ -216,8 +216,8 @@ $hdo_arr = array();
       $cycling_today = max($cycling_today, 3);
    
    //build output json
-   $air_weather_arr['weather']['sunrise'] = date('H:i', $sunrise);
-   $air_weather_arr['weather']['sunset'] = date('H:i', $sunset);
+   $air_weather_arr['weather']['sunrise'] = $sunrise; //date('H:i', $sunrise);
+   $air_weather_arr['weather']['sunset'] = $sunset; //date('H:i', $sunset);
    $air_weather_arr['weather']['temp'] = round($temp,1);
    $air_weather_arr['weather']['temp_feel'] = round($temp_feel,1);
    $air_weather_arr['weather']['wind_speed'] = round($wind_speed,1);
@@ -244,6 +244,21 @@ $hdo_arr = array();
       
          
    $air_weather_arr['weather']['temp_trend'] = round($temp_trend, 0);
+   
+   $temp_trend_icon = "?"; //default - should be overwritten
+   if (abs($temp_trend) <= $small_temp_diff)
+    $temp_trend_icon = "0";
+   elseif (($temp_trend > $small_temp_diff) and ($temp_trend <= $big_temp_diff))
+    $temp_trend_icon = "+1";
+   elseif ($temp_trend > $big_temp_diff)
+    $temp_trend_icon = "+2";
+   elseif (($temp_trend < -$small_temp_diff) and ($temp_trend >= -$big_temp_diff))
+    $temp_trend_icon = "-1";
+   elseif ($temp_trend < -$big_temp_diff)
+     $temp_trend_icon = "-2";
+        
+   $air_weather_arr['weather']['temp_trend_icon'] = $temp_trend_icon;
+   
             
    $air_weather_arr['weather']['clc_tdy'] = $cycling_today;
    $air_weather_arr['weather']['clc_tmr'] = $cycling_tomorrow;

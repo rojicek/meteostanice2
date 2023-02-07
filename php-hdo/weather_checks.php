@@ -11,6 +11,9 @@
  $super_rain = 1.5;
  $snow = 0.5;
  $super_snow = 1.5;
+ 
+ $small_temp_diff = 2;
+ $big_temp_diff = 6;
 
 function cycling_index_check ($value, $direction, $limit, $hi_limit, $cycle_index)
 {
