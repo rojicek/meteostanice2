@@ -12,8 +12,9 @@ width:800px;
 font-style: normal;
 text-align: center; 
 /* vertical-align: text-top;??? */
-/*border: 1px solid;*/ 
-border: none;
+border: 1px solid;
+/*border: none;*/
+table-layout:auto;
 }
 
 td.maly

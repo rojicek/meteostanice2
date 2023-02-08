@@ -17,7 +17,7 @@
 
 //prep data by query
 require_once '/var/www/rojicek.cz/web/db/vars.php';
-require_once 'hdo_calc.php';
+require_once 'utils1.php';
 
 $meteo_url = "https://www.rojicek.cz/meteo/meteo-query.php?pwd=".$pwd;
 
@@ -25,6 +25,11 @@ $meteo_content = file_get_contents($meteo_url);
 $meteo_content_arr = json_decode($meteo_content, true);
 
 $hdo_starts = next_hdo($meteo_content_arr["hdo_intervals"]);
+$hdo_intervals =  [
+    0 => ["10%","#FF1010"],
+    1 => ["10%","#42FF10"],
+    2 => ["25%","#FF1010"]   
+];
 
 ?>
 
@@ -143,7 +148,15 @@ if ($temp_trend>0)
 </tr>
 
 <tr>
-<td class="maly" style="text-align:right;" colspan=4 bgcolor="#00316E" height=25px>
+<td  colspan=4 >
+
+<table style="table-layout: fixed;" width="100%">
+<tr height=25px>
+<td bgcolor="#00316E" style="width:10%;font-size:10pt; "></td>
+<td bgcolor="#FF316E" style="width:20%;font-size:10pt;"></td>
+</tr>
+</table>
+
 
 </td>
 </tr>
