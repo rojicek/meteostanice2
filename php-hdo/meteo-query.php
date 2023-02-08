@@ -152,8 +152,9 @@ $hdo_arr = array();
     // if (array_key_exists("hourly", $weather_arr)) - test jak to prezije bez kontroly
         if ($up_to_date == 1)
             {
-              $today_midnight = mktime(0, 0, 0) + 86400;  // today next midnight in epoch
-              $tomorrow_midnight =  $today_midnight + 2*86400; // today next midnight in epoch
+              // no longer needed
+              //$today_midnight = mktime(0, 0, 0) + 86400;  // today next midnight in epoch
+              //$tomorrow_midnight =  $today_midnight + 2*86400; // today next midnight in epoch
                             
               for ($i = 0; $i<48; $i++)
                 { //for hourly
@@ -183,12 +184,12 @@ $hdo_arr = array();
                     //cycling index - only between sunrise and sunset (same sun as today)    
                     if (($weather_arr['hourly'][$i]['dt'] >= $sunrise+86400) and ($weather_arr['hourly'][$i]['dt'] <= $sunset+86400))
                     { //sunrise-sunset for cycling index tomorrow
-                            //echo "tomorrow index " . date('Y-m-d H:i:s', $weather_arr['hourly'][$i]['dt'])  . "<br>";        
-                            $cycling_tomorrow = cycling_index_check ($weather_arr['hourly'][$i]['temp'],       '<', $low_temp, $super_low_temp, $cycling_tomorrow); //cold check
-                            $cycling_tomorrow = cycling_index_check ($weather_arr['hourly'][$i]['temp'],       '>', $hi_temp,  $super_hi_temp, $cycling_tomorrow); //hot check
-                            $cycling_tomorrow = cycling_index_check ($weather_arr['hourly'][$i]['wind_speed'], '>', $hi_wind,  $super_hi_wind, $cycling_tomorrow); //wind
-                            $cycling_tomorrow = cycling_index_check ($weather_arr['hourly'][$i]['rain']['1h'], '>', $rain,  $super_rain, $cycling_tomorrow); //rain
-                            $cycling_tomorrow = cycling_index_check ($weather_arr['hourly'][$i]['snow']['1h'], '>', $snow,  $super_snow, $cycling_tomorrow); //snow                                                                                                                                      
+                        //echo "tomorrow index " . date('Y-m-d H:i:s', $weather_arr['hourly'][$i]['dt'])  . "<br>";        
+                        $cycling_tomorrow = cycling_index_check ($weather_arr['hourly'][$i]['temp'],       '<', $low_temp, $super_low_temp, $cycling_tomorrow); //cold check
+                        $cycling_tomorrow = cycling_index_check ($weather_arr['hourly'][$i]['temp'],       '>', $hi_temp,  $super_hi_temp, $cycling_tomorrow); //hot check
+                        $cycling_tomorrow = cycling_index_check ($weather_arr['hourly'][$i]['wind_speed'], '>', $hi_wind,  $super_hi_wind, $cycling_tomorrow); //wind
+                        $cycling_tomorrow = cycling_index_check ($weather_arr['hourly'][$i]['rain']['1h'], '>', $rain,  $super_rain, $cycling_tomorrow); //rain
+                        $cycling_tomorrow = cycling_index_check ($weather_arr['hourly'][$i]['snow']['1h'], '>', $snow,  $super_snow, $cycling_tomorrow); //snow                                                                                                                                      
                     } //tomorrow
     
                 } //for hourly                            
@@ -197,10 +198,11 @@ $hdo_arr = array();
    }//weather content
    
    //extra kontroly pro dnesek, jestli uz neni noc
-   // air quality is just one (today only). No red cycling condition
-   if ($aqi > 3)
+   // air quality is just one (today only).
+   if ($aqi == 4)
       $cycling_today = max($cycling_today, 2);
-   
+   if ($aqi == 5)
+      $cycling_today = max($cycling_today, 3);
    
    //too early today
    if  ($current_time < $sunrise-3600) //hodina pred vychodem
@@ -208,9 +210,9 @@ $hdo_arr = array();
    if  ($current_time < $sunrise) // pred vychodem
       $cycling_today = max($cycling_today, 2);   
    //too soon too dark       
-   if  ($current_time+3600 > $sunset) //hodina do zapadu slunce
+   if  ($current_time > $sunset-3600) //hodina pred zapadem slunce
       $cycling_today = max($cycling_today, 2);
-   if  ($current_time-3600 > $sunset) //hodina po zapadu slunce
+   if  ($current_time > $sunset+3600) //hodina po zapadu slunce
       $cycling_today = max($cycling_today, 3);
    
    //build output json
