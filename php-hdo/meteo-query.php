@@ -169,34 +169,26 @@ $hdo_arr = array();
                             $temp_trend = $weather_arr['hourly'][$i]['temp'] - $temp;
                     } //relevant for temp trend
                     
-                    if  ((($weather_arr['hourly'][$i]['dt'] > $current_time)) and ($weather_arr['hourly'][$i]['dt'] < $today_midnight))
-                    { //today, future only
-                                                     
-                        //cycling index - only between sunrise and sunset    
-                        if (($weather_arr['hourly'][$i]['dt'] >= $sunrise) and ($weather_arr['hourly'][$i]['dt'] <= $sunset))
-                        { //sunrise-sunset for cycling index  
-                                //echo "today index  " . date('Y-m-d H:i:s', $weather_arr['hourly'][$i]['dt'])  . "<br>";                              
-                                $cycling_today = cycling_index_check ($weather_arr['hourly'][$i]['temp'],       '<', $low_temp, $super_low_temp, $cycling_today); //cold check
-                                $cycling_today = cycling_index_check ($weather_arr['hourly'][$i]['temp'],       '>', $hi_temp,  $super_hi_temp, $cycling_today); //hot check
-                                $cycling_today = cycling_index_check ($weather_arr['hourly'][$i]['wind_speed'], '>', $hi_wind,  $super_hi_wind, $cycling_today); //wind
-                                $cycling_today = cycling_index_check ($weather_arr['hourly'][$i]['rain']['1h'], '>', $rain,  $super_rain, $cycling_today); //rain
-                                $cycling_today = cycling_index_check ($weather_arr['hourly'][$i]['snow']['1h'], '>', $snow,  $super_snow, $cycling_today); //snow                                                                                                                                
-                        }//sunrise-sunset for cycling index
+                    if  ((($weather_arr['hourly'][$i]['dt'] > $current_time)) and ($weather_arr['hourly'][$i]['dt'] < $sunset+3600))
+                    { //today, future only until sunset + 1h                                               
+                        //echo "today index  " . date('Y-m-d H:i:s', $weather_arr['hourly'][$i]['dt'])  . "<br>";                              
+                        $cycling_today = cycling_index_check ($weather_arr['hourly'][$i]['temp'],       '<', $low_temp, $super_low_temp, $cycling_today); //cold check
+                        $cycling_today = cycling_index_check ($weather_arr['hourly'][$i]['temp'],       '>', $hi_temp,  $super_hi_temp, $cycling_today); //hot check
+                        $cycling_today = cycling_index_check ($weather_arr['hourly'][$i]['wind_speed'], '>', $hi_wind,  $super_hi_wind, $cycling_today); //wind
+                        $cycling_today = cycling_index_check ($weather_arr['hourly'][$i]['rain']['1h'], '>', $rain,  $super_rain, $cycling_today); //rain
+                        $cycling_today = cycling_index_check ($weather_arr['hourly'][$i]['snow']['1h'], '>', $snow,  $super_snow, $cycling_today); //snow                                                                                                                                
                     } //today
                                         
-                    if  (($weather_arr['hourly'][$i]['dt'] >= $today_midnight) and ($weather_arr['hourly'][$i]['dt'] < $tomorrow_midnight)) 
-                    { //tomorrow
-                                                
-                        //cycling index - only between sunrise and sunset (same sun as today)    
-                        if (($weather_arr['hourly'][$i]['dt'] >= $sunrise+86400) and ($weather_arr['hourly'][$i]['dt'] <= $sunset+86400))
-                        { //sunrise-sunset for cycling index
-                                //echo "tomorrow index " . date('Y-m-d H:i:s', $weather_arr['hourly'][$i]['dt'])  . "<br>";        
-                                $cycling_tomorrow = cycling_index_check ($weather_arr['hourly'][$i]['temp'],       '<', $low_temp, $super_low_temp, $cycling_tomorrow); //cold check
-                                $cycling_tomorrow = cycling_index_check ($weather_arr['hourly'][$i]['temp'],       '>', $hi_temp,  $super_hi_temp, $cycling_tomorrow); //hot check
-                                $cycling_tomorrow = cycling_index_check ($weather_arr['hourly'][$i]['wind_speed'], '>', $hi_wind,  $super_hi_wind, $cycling_tomorrow); //wind
-                                $cycling_tomorrow = cycling_index_check ($weather_arr['hourly'][$i]['rain']['1h'], '>', $rain,  $super_rain, $cycling_tomorrow); //rain
-                                $cycling_tomorrow = cycling_index_check ($weather_arr['hourly'][$i]['snow']['1h'], '>', $snow,  $super_snow, $cycling_tomorrow); //snow                                                                                                                                      
-                        }//sunrise-sunset for cycling index
+                                
+                    //cycling index - only between sunrise and sunset (same sun as today)    
+                    if (($weather_arr['hourly'][$i]['dt'] >= $sunrise+86400) and ($weather_arr['hourly'][$i]['dt'] <= $sunset+86400))
+                    { //sunrise-sunset for cycling index tomorrow
+                            //echo "tomorrow index " . date('Y-m-d H:i:s', $weather_arr['hourly'][$i]['dt'])  . "<br>";        
+                            $cycling_tomorrow = cycling_index_check ($weather_arr['hourly'][$i]['temp'],       '<', $low_temp, $super_low_temp, $cycling_tomorrow); //cold check
+                            $cycling_tomorrow = cycling_index_check ($weather_arr['hourly'][$i]['temp'],       '>', $hi_temp,  $super_hi_temp, $cycling_tomorrow); //hot check
+                            $cycling_tomorrow = cycling_index_check ($weather_arr['hourly'][$i]['wind_speed'], '>', $hi_wind,  $super_hi_wind, $cycling_tomorrow); //wind
+                            $cycling_tomorrow = cycling_index_check ($weather_arr['hourly'][$i]['rain']['1h'], '>', $rain,  $super_rain, $cycling_tomorrow); //rain
+                            $cycling_tomorrow = cycling_index_check ($weather_arr['hourly'][$i]['snow']['1h'], '>', $snow,  $super_snow, $cycling_tomorrow); //snow                                                                                                                                      
                     } //tomorrow
     
                 } //for hourly                            
@@ -208,7 +200,13 @@ $hdo_arr = array();
    // air quality is just one (today only). No red cycling condition
    if ($aqi > 3)
       $cycling_today = max($cycling_today, 2);
-      
+   
+   
+   //too early today
+   if  ($current_time < $sunrise-3600) //hodina pred vychodem
+      $cycling_today = max($cycling_today, 3);
+   if  ($current_time < $sunrise) // pred vychodem
+      $cycling_today = max($cycling_today, 2);   
    //too soon too dark       
    if  ($current_time+3600 > $sunset) //hodina do zapadu slunce
       $cycling_today = max($cycling_today, 2);

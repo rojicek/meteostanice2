@@ -70,7 +70,7 @@ echo date('H:i',$meteo_content_arr["weather"]["sunset"]);
 
 <td>
 <font class="mensi">
-<?php echo strtoupper(date('D')) . "&nbsp;&nbsp;<img src=\"img/cycle/cycle_". $meteo_content_arr["weather"]["clc_tdy"] . ".png\"  style=\"vertical-align:middle\" width=70>"; ?>
+<?php echo "NOW&nbsp;&nbsp;<img src=\"img/cycle/cycle_". $meteo_content_arr["weather"]["clc_tdy"] . ".png\"  style=\"vertical-align:middle\" width=70>"; ?>
 </font>
 </td>
 
