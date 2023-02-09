@@ -25,12 +25,22 @@ $meteo_content = file_get_contents($meteo_url);
 $meteo_content_arr = json_decode($meteo_content, true);
 
 $hdo_starts = next_hdo($meteo_content_arr["hdo_intervals"]);
+$hdo_intervals = next_hdo_intervals($meteo_content_arr["hdo_intervals"]);
+/*
 $hdo_intervals =  [
-    0 => ["10%","#FF1010"],
-    1 => ["10%","#42FF10"],
-    2 => ["25%","#FF1010"]   
+    0 => [200,"#FF1010", "10:00"],
+    1 => [500,"#42FF10", "11:00"],
+    2 => [150,"#FF1010", "13:00"]   
 ];
+*/
 
+$total_hdo = 0;
+for ($i=0; $i<count($hdo_intervals); $i++)
+{
+  $total_hdo = $total_hdo + $hdo_intervals[$i][0];
+}
+
+#echo "total hdo: " . $total_hdo . "<br>";
 ?>
 
 <body>
@@ -152,8 +162,13 @@ if ($temp_trend>0)
 
 <table style="table-layout: fixed;" width="100%">
 <tr height=25px>
-<td bgcolor="#00316E" style="width:10%;font-size:10pt; "></td>
-<td bgcolor="#FF316E" style="width:20%;font-size:10pt;"></td>
+<?php
+for ($i=0; $i<count($hdo_intervals); $i++)
+{
+  $procenta = round(100*$hdo_intervals[$i][0]/$total_hdo, 0);
+  echo "<td bgcolor=\"".$hdo_intervals[$i][1]."\" style=\"width:".$procenta."%;font-size:10pt; \"></td>";
+}
+?>
 </tr>
 </table>
 

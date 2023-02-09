@@ -83,4 +83,74 @@ function overlap ($s1, $k1, $s2, $k2)
    
  return $o;
 }
+
+function next_hdo_intervals($intervals)
+{
+  $vt_barva = "#FF9999";
+  $nt_barva = "#00CC66";
+  
+  $current_time = time(); 
+  $stop_time = $current_time + 43200;
+  
+  $hdo_intervals = array();
+  
+  //zacatek
+  
+
+ 
+ // echo "--------------<p>";
+  
+  for ($i=0; $i<count($intervals); $i++)
+  {
+     $i_start = $intervals[$i][0];
+     $i_end = $intervals[$i][1];
+      //echo  "pole:" . date('r', $i_start) . " - " . date('r', $i_end) . "<br>";
+     // echo  $i_start . " - " .  $i_end . "<br>";
+
+     if ($i_start <=  $stop_time)   
+     {  
+        if ($i_start > $current_time) //pokud fakt zacinam NT
+            array_push($hdo_intervals, [$i_start - $current_time,  $nt_barva]);
+       // echo "1 od " .  date('r', $current_time) . " do " . date('r', $i_start) . "<br>";
+     }
+     else
+     {
+       array_push($hdo_intervals, [$stop_time - $current_time,  $nt_barva]);
+      // echo "2 od " .  date('r', $current_time) . " do " . date('r', $stop_time) . "<br>";
+       break;
+     }
+          
+     if ($i_end <= $stop_time)
+     {
+        array_push($hdo_intervals, [$i_end - $i_start,  $vt_barva]);
+        // echo "3 od " .  date('r', $i_start) . " do " . date('r', $i_end) . "<br>";
+        }
+     else
+     {
+        array_push($hdo_intervals, [$stop_time - $i_start,  $vt_barva]);
+        // echo "4 od " .  date('r', $i_start) . " do " . date('r', $stop_time) . "<br>";
+        break;
+      }
+    // echo $i_start - $current_time . " = nt<br>";
+    // echo $i_end - $i_start . " = vt<br>";
+     
+    // echo "--------------<p>";
+     
+     $current_time = $i_end; //posunu aktualni cas
+     
+     
+     
+  }
+  
+  /*
+  $hdo_intervals =  [
+      0 => [200,"#FF1010", "10:00"],
+      1 => [500,"#42FF10", "11:00"],
+      2 => [150,"#FF1010", "13:00"]   
+  ];
+  */
+  return $hdo_intervals;
+}
+  
+
 ?>

@@ -43,7 +43,7 @@ else
 $selectDNESKA = "select DoW, peakStart, peakStop from hdo_tbl where date(now())>=dateStart AND date(now())<=dateEnd AND " . $DoWdnes . "  = DoW order by timeid";  
 $hdoResultsDNESKA  = $databaseConnection->query ($selectDNESKA);
    
-$selectZITRA = "select DoW, peakStart, peakStop from hdo_tbl where date(now())>=dateStart AND date(now())<=dateEnd AND " . $DoWzitra . "  = DoW order by timeid";  
+$selectZITRA = "select DoW, peakStart, peakStop from hdo_tbl where date(now() + interval 1 day)>=dateStart AND date(now()+ interval 1 day)<=dateEnd AND " . $DoWzitra . "  = DoW order by timeid"; 
 $hdoResultsZITRA  = $databaseConnection->query ($selectZITRA);
 
 
