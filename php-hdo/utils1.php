@@ -86,8 +86,8 @@ function overlap ($s1, $k1, $s2, $k2)
 
 function next_hdo_intervals($intervals)
 {
-  $vt_barva = "#FF9999";
-  $nt_barva = "#00CC66";
+  $vt_barva = "#ab3532";
+  $nt_barva = "#257d25";
   
   $current_time = time(); 
   $stop_time = $current_time + 43200;
@@ -110,24 +110,24 @@ function next_hdo_intervals($intervals)
      if ($i_start <=  $stop_time)   
      {  
         if ($i_start > $current_time) //pokud fakt zacinam NT
-            array_push($hdo_intervals, [$i_start - $current_time,  $nt_barva]);
+            array_push($hdo_intervals, [$i_start - $current_time,  $nt_barva, $current_time]);
        // echo "1 od " .  date('r', $current_time) . " do " . date('r', $i_start) . "<br>";
      }
      else
      {
-       array_push($hdo_intervals, [$stop_time - $current_time,  $nt_barva]);
+       array_push($hdo_intervals, [$stop_time - $current_time,  $nt_barva, $current_time]);
       // echo "2 od " .  date('r', $current_time) . " do " . date('r', $stop_time) . "<br>";
        break;
      }
           
      if ($i_end <= $stop_time)
      {
-        array_push($hdo_intervals, [$i_end - $i_start,  $vt_barva]);
+        array_push($hdo_intervals, [$i_end - $i_start,  $vt_barva, $i_start]);
         // echo "3 od " .  date('r', $i_start) . " do " . date('r', $i_end) . "<br>";
         }
      else
      {
-        array_push($hdo_intervals, [$stop_time - $i_start,  $vt_barva]);
+        array_push($hdo_intervals, [$stop_time - $i_start,  $vt_barva, $i_start]);
         // echo "4 od " .  date('r', $i_start) . " do " . date('r', $stop_time) . "<br>";
         break;
       }

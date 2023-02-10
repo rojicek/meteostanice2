@@ -70,9 +70,9 @@ echo date('H:i', $meteo_content_arr["weather"]["sunrise"]);
 echo "&nbsp;&nbsp;";
 
 if (($current_time < $meteo_content_arr["weather"]["sunrise"]) or ($current_time > $meteo_content_arr["weather"]["sunset"])) 
-    echo "<img src=\"img/sun/sunrise.svg\" style=\"vertical-align:middle\" width=80>";
-else
     echo "<img src=\"img/sun/sunset.svg\" style=\"vertical-align:middle\" width=80>";
+else
+    echo "<img src=\"img/sun/sunrise.svg\" style=\"vertical-align:middle\" width=80>";
 
 echo "&nbsp;&nbsp;"; 
 echo date('H:i',$meteo_content_arr["weather"]["sunset"]);
@@ -163,10 +163,17 @@ if ($temp_trend>0)
 <table style="table-layout: fixed;" width="100%">
 <tr height=25px>
 <?php
+$min_minutes_to_show_label = 35;
 for ($i=0; $i<count($hdo_intervals); $i++)
 {
   $procenta = round(100*$hdo_intervals[$i][0]/$total_hdo, 0);
-  echo "<td bgcolor=\"".$hdo_intervals[$i][1]."\" style=\"width:".$procenta."%;font-size:10pt; \"></td>";
+  //if ($i == 0) or
+  if (($hdo_intervals[$i][0] < $min_minutes_to_show_label*60) or ($i==0))
+    $next_start = "";
+  else
+    $next_start = date('H:i', $hdo_intervals[$i][2]);
+  
+  echo "<td bgcolor=\"".$hdo_intervals[$i][1]."\" style=\"text-align:left;width:".$procenta."%;font-size:10pt;color:white; \">".$next_start."</td>";
 }
 ?>
 </tr>
@@ -180,3 +187,4 @@ for ($i=0; $i<count($hdo_intervals); $i++)
 
 
 </body>
+
