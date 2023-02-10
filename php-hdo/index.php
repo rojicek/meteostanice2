@@ -16,8 +16,8 @@
 <?php
 
 //prep data by query
-require_once '/var/www/rojicek.cz/web/db/vars.php';
 require_once 'utils1.php';
+require_once 'constants.php';
 
 $meteo_url = "https://www.rojicek.cz/meteo/meteo-query.php?pwd=".$pwd;
 
@@ -110,7 +110,7 @@ echo date('H:i',$meteo_content_arr["weather"]["sunset"]);
 </font>
 </td>
 <td colspan=3 rowspan=3>
-
+<a href="../hdo" style="text-decoration:none;">
 <?php
 $second_line = 0;
 
@@ -125,7 +125,7 @@ for ($i=0; $i<count($hdo_starts); $i++)
      echo "<font color = \"".$hdo_starts[$i][1]."\">" . $hdo_starts[$i][0] . "</font> ";
  }
 ?>
- 
+ </a>
 </td>
 </tr>
 

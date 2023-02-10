@@ -1,8 +1,10 @@
 <?php
 // php ktere vrati kompletni info pro meteostanici
 
-include '/var/www/rojicek.cz/web/db/includedb.php'; 
-require_once 'weather_checks.php';
+require_once '/var/www/rojicek.cz/web/db/includedb.php'; 
+
+require_once 'constants.php';
+require_once 'utils1.php';
 
 
 if ($_GET["pwd"] != $pwd)
@@ -84,9 +86,6 @@ $hdo_arr = array();
  
  //////////////////////////////
  // air quality
- $lat = "50.0973722";
- $lon = "14.4074581";
- 
   
  $max_time_gap = 7200;
  $current_time = time();
