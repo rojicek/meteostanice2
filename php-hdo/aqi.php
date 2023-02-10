@@ -64,7 +64,7 @@ if ($air_content)
 <tr>
 <td> Air </td>
 <td><img src= "img/air_quality/air<?php echo $aqi;?>.png" width=70></td>
-<td><?php echo $aqi;?></td>
+<td><?php echo $aqi;?></td> 
 </tr>
 
 <tr>
