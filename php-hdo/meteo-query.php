@@ -86,7 +86,7 @@ $hdo_arr = array();
  // air quality
  $lat = "50.0973722";
  $lon = "14.4074581";
- //$temp_placeholder = 99; //for min/max
+ 
   
  $max_time_gap = 7200;
  $current_time = time();
@@ -218,8 +218,8 @@ $hdo_arr = array();
    //build output json
    $air_weather_arr['weather']['sunrise'] = $sunrise; //date('H:i', $sunrise);
    $air_weather_arr['weather']['sunset'] = $sunset; //date('H:i', $sunset);
-   $air_weather_arr['weather']['temp'] = round($temp,1);
-   $air_weather_arr['weather']['temp_feel'] = round($temp_feel,1);
+   $air_weather_arr['weather']['temp'] = round($temp,0);
+   $air_weather_arr['weather']['temp_feel'] = round($temp_feel,0);
    $air_weather_arr['weather']['wind_speed'] = round($wind_speed,1);
    $air_weather_arr['weather']['wind_dir'] = "NA";
    if (($wind_deg>=337.5) or ($wind_deg<22.5)) 
