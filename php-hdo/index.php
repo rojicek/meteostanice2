@@ -96,7 +96,9 @@ echo date('H:i',$meteo_content_arr["weather"]["sunset"]);
 </td>
 
 <td>
+<a href="aqi.php" style="text-decoration:none;">
 <img src="img/air_quality/air<?php echo $meteo_content_arr["weather"]["aqi"]; ?>.png"  width=70>
+</a>
 </td>
 
 </tr>
