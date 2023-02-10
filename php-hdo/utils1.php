@@ -180,4 +180,18 @@ function next_hdo_intervals($intervals)
      return $cycle_index;
 }  
 
+function match_range($value, $arr)
+{
+ for ($i=0; $i<count($arr); $i++)
+ {
+  if ($value <= $arr[$i])
+    {
+      return $i+1;
+    } //
+ }//for
+ 
+ //zbyva posledni
+ return count($arr);
+}
+
 ?>
