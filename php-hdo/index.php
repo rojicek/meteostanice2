@@ -45,7 +45,7 @@ for ($i=0; $i<count($hdo_intervals); $i++)
 
 <body>
 
-<table>
+<table class="meteo">
 
 <tr>
 <td rowspan=3>

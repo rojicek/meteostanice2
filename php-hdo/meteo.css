@@ -3,7 +3,7 @@ body {
   font-family:  'Verdana', 'Geneva', 'Kalimati', sans-serif;
 }
 
-table, th, td
+table.meteo, th.meteo, td.meteo
 {
 color: #000000; 
 font-family: Verdana,Geneva,Kalimati,sans-serif; 
@@ -15,6 +15,12 @@ text-align: center;
 /*border: 1px solid;*/
 border: none;
 table-layout:auto;
+}
+
+table.air, td.air
+{
+font-family: Verdana,Geneva,Kalimati,sans-serif; 
+font-size: 16pt; 
 }
 
 td.maly
