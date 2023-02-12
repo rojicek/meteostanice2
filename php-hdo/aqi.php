@@ -18,7 +18,6 @@
 <?php
 // php ktere vrati air quality
  
-
 require_once 'constants.php';
 require_once 'utils1.php';
 
@@ -56,7 +55,7 @@ if ($air_content)
    $pm10_i = match_range($pm10, $aqi_limits["pm10"]);
    $nh3_i = match_range($nh3, $aqi_limits["nh3"]);
    
-   //echo $air_url . "<br>";
+   // echo $air_url . "<br>";
    /*
    echo $air_url . "<br>";
    echo "aqi: " .$aqi . "<br>";

@@ -19,6 +19,7 @@
 require_once 'utils1.php';
 require_once 'constants.php';
 
+
 $meteo_url = "https://www.rojicek.cz/meteo/meteo-query.php?pwd=".$pwd;
 
 $meteo_content = file_get_contents($meteo_url);
