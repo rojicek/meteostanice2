@@ -89,7 +89,7 @@ if ($air_content)
 </tr>
 
 <tr>
-<td colspan=6 style="text-align: right;">Poslední aktualizace: <?php echo date('d.m.Y H:i:s', $air_quality_arr['list'][0]['dt']) ?></td>
+<td colspan=6 style="text-align: right;">Poslední aktualizace: <?php echo date('d.m.Y H:i', $air_quality_arr['list'][0]['dt']) ?></td>
 </tr>
 
 <tr>
