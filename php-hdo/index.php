@@ -55,7 +55,7 @@ for ($i=0; $i<count($hdo_intervals); $i++)
 <td class="maly" style="text-align:right;" colspan=3>
 <?php
  $current_time = time();
- echo date('j M, H:i', $current_time);
+ echo date('j M, G:i', $current_time);
 ?>
 </td>
 </tr>
@@ -66,16 +66,24 @@ for ($i=0; $i<count($hdo_intervals); $i++)
 
 <td colspan=3 class="maly" style="text-align:right;vertical-align: middle;" height=70>
 <?php 
-echo date('H:i', $meteo_content_arr["weather"]["sunrise"]);
-echo "&nbsp;&nbsp;";
-
+//todo: napsat lepe, tohle opakuje kod
 if (($current_time < $meteo_content_arr["weather"]["sunrise"]) or ($current_time > $meteo_content_arr["weather"]["sunset"])) 
-    echo "<img src=\"img/sun/sunset.svg\" style=\"vertical-align:middle\" width=80>";
-else
+{ 
+    echo "<b>" . date('G:i', $meteo_content_arr["weather"]["sunrise"]) . "</b>";
+    echo "&nbsp;&nbsp;";
     echo "<img src=\"img/sun/sunrise.svg\" style=\"vertical-align:middle\" width=80>";
+    echo "&nbsp;&nbsp;"; 
+    echo date('G:i',$meteo_content_arr["weather"]["sunset"]);
+}
+else
+{
+    echo  date('G:i', $meteo_content_arr["weather"]["sunrise"] );
+    echo "&nbsp;&nbsp;";
+    echo "<img src=\"img/sun/sunset.svg\" style=\"vertical-align:middle\" width=80>";
+    echo "&nbsp;&nbsp;"; 
+    echo "<b>" . date('G:i',$meteo_content_arr["weather"]["sunset"]) . "</b>";
+}
 
-echo "&nbsp;&nbsp;"; 
-echo date('H:i',$meteo_content_arr["weather"]["sunset"]);
 ?>
 </td>
 

@@ -85,12 +85,16 @@ if ($air_content)
 <td></td>
 <td><img src= "img/air_quality/air<?php echo $aqi;?>.png" width=70></td>
 <td></td>
-<td class="air" style="text-align:right;font-size: 25pt; "><b><center><?php echo $aqi;?></center></b></td> 
+<td class="air" style="text-align:right;font-size: 25pt; "><b><center><?php echo $aqi;?>/5</center></b></td> 
 <td></td>
 </tr>
 
 <tr>
-<td>&nbsp;</td>
+<td colspan=6 style="text-align: right;">Poslední aktualizace: <?php echo date('d.m.Y H:i:s', $air_quality_arr['list'][0]['dt']) ?></td>
+</tr>
+
+<tr>
+<td colspan=6><hr></td>
 </tr>
 
 <tr>
@@ -131,6 +135,10 @@ max <?php echo $aqi_limits["o3"][0];?> &#181;g/m<sup>3</sup></td>
 </tr>
 
 <tr>
+<td colspan=6><hr></td>
+</tr>
+
+<tr>
 <td class="air"><b>CO</b><br>oxid uhelnatý</td>
 <td></td>
 <td><img src= "img/air_quality/air<?php echo $co_i;?>.png" width=70></td>
@@ -151,7 +159,7 @@ max <?php echo $aqi_limits["no"][0];?> &#181;g/m<sup>3</sup></td>
 
 
 <tr>
-<td class="air"><b>NH<sub>3</sub></b><br>Amoniak</td>
+<td class="air"><b>NH<sub>3</sub></b><br>amoniak</td>
 <td></td>
 <td><img src= "img/air_quality/air<?php echo $nh3_i;?>.png" width=70></td>
 <td></td>
