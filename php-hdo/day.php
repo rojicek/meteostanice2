@@ -9,21 +9,25 @@
 function drawVisualization() {
     // Some raw data (not necessarily accurate)
     var data = google.visualization.arrayToDataTable([
-        ['cas', 'snih', 'dest',  'Total', {type: 'number', role: 'annotation'}],
-        ['1h', 5, 1,  2, 17],
-        ['2h', 6, 1, 2, 20],
-        ['3h', 2, 1, 0, 9],
-        ['4h', 5, 1, 1, 18],
-        ['5h', 3, 1, 0, 13]
+        ['cas', 'snih', 'dest',  'teplota'],//, {type: 'number', role: 'annotation'}],
+        ['1h', 1, 1, 5],
+        ['2h', 2, 2, 4],
+        ['3h', 3, 1, 3],
+        ['4h', 4, 2, 2],
+        ['5h', 5, 1, 1]
     ]);
 
     var options = {
         isStacked: true,
         title : 'Monthly Coffee Production by Country',
-        vAxis: {title: 'y osa'},
+        //vAxis: [0: {format: '#'}, 1: {format: '#'}],
+        //vAxis: [0: {title: 'prvni'}, 1: {title: 'druha'}],
         hAxis: {title: 'cas'},
-        seriesType: 'bars',
-        series: {2: {type: 'line'}},
+        //seriesType: 'bars',
+        series: {0: {type: 'bars'},
+                 1: {type: 'bars'}},
+        //series {0: { type: 'bars' }}
+        //series: {2: {type: 'line', targetAxisIndex: 1}},
     };
 
     var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
