@@ -10,22 +10,23 @@ function drawVisualization() {
     // Some raw data (not necessarily accurate)
     var data = google.visualization.arrayToDataTable([
         ['cas', 'snih', 'dest',  'teplota'],//, {type: 'number', role: 'annotation'}],
-        ['1h', 1, 1, 5],
-        ['2h', 2, 2, 4],
-        ['3h', 3, 1, 3],
-        ['4h', 4, 2, 2],
-        ['5h', 5, 1, 1]
+        ['1h', 1, 1, 50],
+        ['2h', 2, 2, 40],
+        ['3h', 3, 1, 30],
+        ['4h', 4, 2, 20],
+        ['5h', 5, 1, 10]
     ]);
 
     var options = {
         isStacked: true,
         title : 'Monthly Coffee Production by Country',
         //vAxis: [0: {format: '#'}, 1: {format: '#'}],
-        //vAxis: [0: {title: 'prvni'}, 1: {title: 'druha'}],
+        vAxis: {0: {title: 'prvni'}, 1: {title: 'druha'}},
         hAxis: {title: 'cas'},
         //seriesType: 'bars',
-        series: {0: {type: 'bars'},
-                 1: {type: 'bars'}},
+        series: {0: {type: 'bars', targetAxisIndex: 0},
+                 1: {type: 'bars', targetAxisIndex: 0},
+                 2: {type: 'line', targetAxisIndex: 1}},
         //series {0: { type: 'bars' }}
         //series: {2: {type: 'line', targetAxisIndex: 1}},
     };
