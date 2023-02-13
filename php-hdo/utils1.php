@@ -152,7 +152,7 @@ function next_hdo_intervals($intervals)
   return $hdo_intervals;
 }
  /////////////////////////////////////////
- function cycling_index_check ($value, $direction, $limit, $hi_limit, $cycle_index)
+ function cycling_index_check ($value, $direction, $limit, $extreme_limit, $cycle_index)
 {
 
     // the value does not exists, return cycle index as it is
@@ -163,7 +163,7 @@ function next_hdo_intervals($intervals)
       {
           if ($value >= $limit)
               $cycle_index = max ($cycle_index, 2);            
-          if ($value >= $hi_limit)
+          if ($value >= $extreme_limit)
               $cycle_index = max ($cycle_index, 3);
       } //if vetsi
               
@@ -171,7 +171,7 @@ function next_hdo_intervals($intervals)
       {
           if ($value <= $limit)
               $cycle_index = max ($cycle_index, 2);           
-          if ($value <= $hi_limit)
+          if ($value <= $extreme_limit)
               $cycle_index = max ($cycle_index, 3);
       } //if vetsi
          

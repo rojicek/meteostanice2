@@ -3,11 +3,25 @@
  // not in github
  require_once '/var/www/rojicek.cz/web/db/weather-secrets.php';     
  
- //used in main, but let's keep it here   
- $low_temp = 6;
- $super_low_temp = -3;
- $hi_temp = 28;
- $super_hi_temp = 33;
+
+ 
+ $temp_limits = array(
+  //mesic -> [extreme_low, low, high, extreme_high], tj intervaly cervena - oranzova - zelena - oranzova - cervena
+   1 => [-4,  0, 28, 33],
+   2 => [-3,  1, 28, 33],
+   3 => [-1,  3, 28, 33],
+   4 => [ 2,  6, 28, 33],
+   5 => [ 8, 13, 28, 33],
+   6 => [10, 15, 28, 33],
+   7 => [10, 15, 28, 33],
+   8 => [10, 15, 28, 33],
+   9 => [ 8, 13, 28, 33],
+  10 => [ 2,  6, 28, 33],
+  11 => [-1,  3, 28, 33],
+  12 => [-3,  1, 28, 33]
+ );
+ 
+
  $hi_wind = 10;
  $super_hi_wind = 15;
  $rain = 0.5;
