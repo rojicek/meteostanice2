@@ -1,13 +1,18 @@
 <html>
   <head>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
     <script type="text/javascript">
+    
+
     
       google.charts.load('current', {'packages':['corechart']});
       google.charts.setOnLoadCallback(drawVisualization);
       
 function drawVisualization() {
     // Some raw data (not necessarily accurate)
+    /*
     var data = google.visualization.arrayToDataTable([
         ['cas', 'dest', 'snih',  'teplota'],//, {type: 'number', role: 'annotation'}],
         ['1h', 1, 1.5, 18],
@@ -35,6 +40,13 @@ function drawVisualization() {
         ['23h', 1, 3, 10],
        
     ]);
+    */
+    
+    var data = $.ajax({
+          url: "get-daily.php",
+          dataType: "json",
+          async: false
+          }).responseText;
 
     var options = {
         isStacked: true,
