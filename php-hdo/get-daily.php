@@ -1,23 +1,13 @@
 <?php
 
-/*
-$myArr = array(
-  'cas' => array('1h', '2h','3h', '4h'),
-  'dest' => array(1,1,1,1),
-  'snih' => array(2,2,2,2),
-  'teplota' => array(10,11,11,12)
-);
-
-$myJSON = json_encode($myArr);
-
-echo $myJSON;
-*/
-
+    require_once 'constants.php';
+    require_once 'utils1.php';
      
     $table = array();
+    $hours_ahead = 24;
         
 
-     
+    //staticke sloupce 
     $table['cols'] = array(
     array('type' => 'string', 'label' => 'cas'),
     array('type' => 'number', 'label' => 'dest'), 
@@ -25,28 +15,53 @@ echo $myJSON;
     array('type' => 'number', 'label' => 'teplota')      
     );
 
-    $temp1 = array(
-    array('v' => '2002'),
-    array('v' => 1),
-    array('v' => 2),
-    array('v' => 3)  
-    );
-    
-    $temp2 = array(
-    array('v' => '2003'),
-    array('v' => 4),
-    array('v' => 5),
-    array('v' => 6)  
-    );
 
-    $rows[] = array('c' => $temp1);   
-    $rows[] = array('c' => $temp2);                                              
-                                         
+    //postupne radky
+    
+    $weather_url = $openweather_url . "?lat=".$lat."&lon=".$lon."&exclude=minutely,daily,alerts&appid=".$openweather_api."&units=metric";
+   //echo $weather_url . "<p>"; // debug only
+   $weather_content = file_get_contents($weather_url);
+   if ($weather_content)
+   {//weather content
+    
+    $weather_arr = json_decode($weather_content, true);
+    
+    for ($i = 0; $i<$hours_ahead; $i++)
+        { //for hourly    
+           // echo date('Y-m-d H:i:s', $weather_arr['hourly'][$i]['dt']) . " -- " . $weather_arr['hourly'][$i]['temp'] . "<br>";
+           
+           //jen kazdy druhy cas
+            $d = "";
+           if ($i % 2 == 0)
+              $d = date('G:i', $weather_arr['hourly'][$i]['dt']);
+        
+             
+           $rain = 0;  
+           $snow = 0;
+           //teploty jsou proste vzdycky 
+           if (array_key_exists('rain', $weather_arr['hourly'][$i]))  
+              $rain = $weather_arr['hourly'][$i]['rain']['1h'];
+           
+           if (array_key_exists('snow', $weather_arr['hourly'][$i]))  
+              $snow = $weather_arr['hourly'][$i]['snow']['1h'];
+           
+          
+            $temp = array(
+                            array('v' => $d ),
+                            array('v' => $rain), //dest
+                            array('v' => $snow), //snih
+                            array('v' => $weather_arr['hourly'][$i]['temp'] ) //teplota
+                            );
+            $rows[] = array('c' => $temp);  
+        }//for hourly
+ }
+
+   
     
     $table['rows'] = $rows;
 
 
-     $jsonTable = json_encode($table);
+    $jsonTable = json_encode($table);
   
     echo $jsonTable;
 

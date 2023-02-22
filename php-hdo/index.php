@@ -50,7 +50,9 @@ for ($i=0; $i<count($hdo_intervals); $i++)
 
 <tr>
 <td rowspan=3>
+<a href = "day.php" style="text-decoration:none;">
 <?php echo "<img src=\"img/weather/". $meteo_content_arr["weather"]["w_icon"] . ".svg\"  style=\"vertical-align:middle\" width=200>"; ?>
+</a>
 </td>
 
 <td class="maly" style="text-align:right;" colspan=3>
@@ -66,6 +68,7 @@ for ($i=0; $i<count($hdo_intervals); $i++)
 
 
 <td colspan=3 class="maly" style="text-align:right;vertical-align: middle;" height=70>
+
 <?php 
 //todo: napsat lepe, tohle opakuje kod
 if (($current_time < $meteo_content_arr["weather"]["sunrise"]) or ($current_time > $meteo_content_arr["weather"]["sunset"])) 
@@ -84,8 +87,8 @@ else
     echo "&nbsp;&nbsp;"; 
     echo "<b>" . date('G:i',$meteo_content_arr["weather"]["sunset"]) . "</b>";
 }
-
 ?>
+
 </td>
 
 </tr>

@@ -3,6 +3,11 @@
 
 
 <!--Load the AJAX API--> 
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+
 <script type="text/javascript"
 src="https://www.google.com/jsapi"></script> <script type="text/javascript" 
 src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">
@@ -38,16 +43,14 @@ src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">
       
      var options = {
         isStacked: true,
-        title : 'Predpoved',
+        title : 'Předpoveď',
 
         vAxes: {
                 0: {title: 'Teplota'},
-               // 0: {title: 'Profit', textStyle: {color: 'DodgerBlue', bold: true}},
-                1: {title: 'Srazky', gridlines: {color: 'transparent'}}
-                
+                1: {title: 'Srážky', gridlines: {color: 'transparent'}, viewWindow: {min: 0, max: 10}} //pevne meze aby obrazek byl vizualne podobny, max 10mm/h
                 },
                 
-        hAxis: {title: 'cas', gridlines: {color: '#FF0000'}},
+        hAxis: {title: 'čas', gridlines: {color: '#FF0000'}},
         
         series: {
                  0: {type: 'bars', targetAxisIndex: 1, color:'#53789E'},
