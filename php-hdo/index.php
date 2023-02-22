@@ -106,7 +106,7 @@ else
 
 <td>
 <a href="aqi.php" style="text-decoration:none;">
-<img src="img/air_quality/air<?php echo $meteo_content_arr["weather"]["aqi"]; ?>.png"  width=70>
+<img src="img/air_quality/air<?php echo $meteo_content_arr["weather"]["aqi"]; ?>.png"  width=70 title="<?php echo $meteo_content_arr["weather"]["aqi"]; ?>">
 </a>
 </td>
 
