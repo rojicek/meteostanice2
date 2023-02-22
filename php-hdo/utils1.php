@@ -194,4 +194,23 @@ function match_range($value, $arr)
  return count($arr);
 }
 
+
+function get_aq_data($site, $data_arr)
+{
+    // Libus je obvykle 7
+    if ($data_arr[7]['properties']['id'] == $site)    
+        return $data_arr[7]['properties'];
+
+    // jiny format - smycka pres vsechno
+    for ($i = 0; $i<count($data_arr); $i++)
+    { 
+      if ($data_arr[$i]['properties']['id'] == $site)
+        return $data_arr[$i]['properties'];       
+    }
+    
+    //fail
+    return array();
+
+}
+
 ?>

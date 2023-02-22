@@ -21,7 +21,8 @@
   12 => [-3,  2, 28, 33]
  );
  
-
+ $chmu_stanice = 'ALIBA'; // Praha 4 - Libus
+ 
  $hi_wind = 10;
  $super_hi_wind = 15;
  $rain = 0.5;
@@ -37,13 +38,14 @@
 
 
  $aqi_limits = array(
- "co"    => array(2000, 2500, 2501, 2502),
+ "co"    => array(2000, 2500, 2501, 2502), //nepouzivam
  "no2"   => array(50, 100, 200, 400),
  "o3"    => array(60, 120, 180, 240),
  "pm10"  => array(25, 50, 90, 180),
  "pm2_5" => array(15, 30, 55, 110),
- "no"    => array(2000, 2500, 2501, 2502),
- "nh3"   => array(1000, 1100, 1200, 1300) //asi vsechno nedostupne
+ "so2"   => array(40, 80, 380, 800),
+ "no"    => array(2000, 2500, 2501, 2502), //nepouzivam
+ "nh3"   => array(1000, 1100, 1200, 1300) //nepouzivam
  );
 
  
