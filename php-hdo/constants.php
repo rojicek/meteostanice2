@@ -48,7 +48,11 @@
  "nh3"   => array(1000, 1100, 1200, 1300) //nepouzivam
  );
 
- 
+
+ //$air_url = "https://private-anon-26bd2f9116-golemioapi.apiary-proxy.com/v2/airqualitystations/";  
+$air_url = "https://api.golemio.cz/v2/airqualitystations/";
+$openweather_url = 'https://api.openweathermap.org/data/3.0/onecall';
+
 
 
 ?>

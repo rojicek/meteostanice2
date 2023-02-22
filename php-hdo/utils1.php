@@ -194,7 +194,7 @@ function match_range($value, $arr)
  return count($arr);
 }
 
-
+////////////////////////////////
 function get_aq_data($site, $data_arr)
 {
     // Libus je obvykle 7
@@ -212,5 +212,17 @@ function get_aq_data($site, $data_arr)
     return array();
 
 }
+
+////////////////////////////////
+function get_component($comp, $components)
+{
+  for ($i=0; $i<count($components); $i++)
+   {
+    if (strtolower($components[$i]['type']) == strtolower($comp))
+        return $components[$i]['averaged_time']['value'];    
+   }
+   return -1; //not found
+}
+
 
 ?>

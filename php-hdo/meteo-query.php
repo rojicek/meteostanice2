@@ -97,8 +97,19 @@ $hdo_arr = array();
  //$openweather_api = 'xxxxx'; //just for testing
  try
  {
-  $air_url = "https://api.openweathermap.org/data/2.5/air_pollution?lat=".$lat."&lon=".$lon."&appid=".$openweather_api;  
-  $air_content = file_get_contents($air_url);
+  //air quality from golemio
+    
+  $opts = array (
+      'http' => array (
+          'method' => 'GET',
+          'header'=> "Content-type: application/json; charset=utf-8\r\n"
+                   . "x-access-token: " . $golemio_api . "\r\n",
+          )
+      );
+  
+  $context  = stream_context_create($opts);
+  $air_content= file_get_contents($air_url, false, $context);
+    
   $air_weather_arr = array();
     
   // default values  
@@ -120,16 +131,19 @@ $hdo_arr = array();
   if ($air_content)
    { //air ok
      $air_quality_arr = json_decode($air_content, true);
-      if (array_key_exists("list", $air_quality_arr))
-          if ($current_time - $air_quality_arr['list'][0]['dt'] < $max_time_gap)
-             $aqi = $air_quality_arr['list'][0]['main']['aqi'];
+     
+     $site_properties = get_aq_data($chmu_stanice, $air_quality_arr['features']);
+     $measurements = $site_properties['measurement'];
+
+     $aqi = $measurements['AQ_hourly_index'];
+           
              
    } //air ok
    $air_weather_arr['weather']['aqi'] = $aqi;
    // konec air quality 
    
    //current weather
-   $weather_url = "https://api.openweathermap.org/data/3.0/onecall?lat=".$lat."&lon=".$lon."&exclude=minutely,daily,alerts&appid=".$openweather_api."&units=metric";
+   $weather_url = $openweather_url . "?lat=".$lat."&lon=".$lon."&exclude=minutely,daily,alerts&appid=".$openweather_api."&units=metric";
    // echo $weather_url . "<p>"; // debug only
    $weather_content = file_get_contents($weather_url);
    if ($weather_content)
