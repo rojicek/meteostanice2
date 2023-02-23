@@ -45,7 +45,7 @@ src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">
         isStacked: true,
         title : 'Předpoveď',
         
-        bar: {groupWidth: "95%"},
+        bar: {groupWidth: "90%"},
         
         annotations: {
         alwaysOutside: true,
@@ -57,7 +57,7 @@ src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">
           },
         
         vAxes: {
-                0: {title: 'Teplota (°C)', gridlines: {}}, //osy 
+                0: {title: 'Teplota (°C)'}, //osy , gridlines: {}, viewWindowMode:'pretty' 
                 1: {title: 'Srážky  (mm/h)', gridlines: {color: 'transparent'}, viewWindow: {min: 0, max: 10}} //pevne meze aby obrazek byl vizualne podobny, max 10mm/h
                 },
                 
@@ -65,8 +65,8 @@ src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">
         
         series: {
                  //jenom pro data series, anotace se nepocitaji
-                 0: {type: 'bars', targetAxisIndex: 1, color:'#53789E'}, //rain                                 
-                 1: {type: 'bars', targetAxisIndex: 1, color:'#C5E2F7'}, //snow                                                                   
+                 0: {type: 'bars', targetAxisIndex: 1}, //rain (color in style)                                 
+                 1: {type: 'bars', targetAxisIndex: 1}, //snow (color in style)                                                                   
                  2: {type: 'line', targetAxisIndex: 0, color:'#228b22',  lineWidth: 5, curveType: 'function'}
                 },
         legend:'none',

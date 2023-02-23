@@ -10,9 +10,11 @@
     //staticke sloupce 
     $table['cols'] = array(
     array('type' => 'string', 'label' => 'čas'),
-    array('type' => 'number', 'label' => 'déšť (mm/h)', 'role' => 'data'),         
+    array('type' => 'number', 'label' => 'déšť (mm/h)', 'role' => 'data'),
+    array('type' => 'string', 'role' => 'style'),         
     array('type' => 'number', 'label' => 'sníh (mm/h)', 'role' => 'data'),
-    array('type' => 'number', 'role' => 'annotation'),
+    array('type' => 'string', 'role' => 'style'),    
+    array('type' => 'number', 'role' => 'annotation'),    
     array('type' => 'number', 'label' => 'teplota', 'role' => 'data')      
     );
 
@@ -39,12 +41,26 @@
              
            $rain = 0;  
            $snow = 0;
-           //teploty jsou proste vzdycky 
-           if (array_key_exists('rain', $weather_arr['hourly'][$i]))  
-              $rain = $weather_arr['hourly'][$i]['rain']['1h'];
+           $rain_opa = 0;
+           $rain_stroke_width = 0;
+           $snow_opa = 0;
+           $snow_stroke_width = 0;
            
-           if (array_key_exists('snow', $weather_arr['hourly'][$i]))  
+           
+           //teploty jsou proste vzdycky 
+           if (array_key_exists('rain', $weather_arr['hourly'][$i]))
+           {                           
+              $rain = $weather_arr['hourly'][$i]['rain']['1h'];
+              $rain_opa = $weather_arr['hourly'][$i]['pop'];
+              $rain_stroke_width = 1;
+            }
+           
+           if (array_key_exists('snow', $weather_arr['hourly'][$i]))   
+           {
               $snow = $weather_arr['hourly'][$i]['snow']['1h'];
+              $snow_opa = $weather_arr['hourly'][$i]['pop'];
+              $snow_stroke_width = 1;
+            }
            
             //debug
             //$rain = 2.5;
@@ -52,14 +68,16 @@
             
             $total_precipitation = null;
             if ($rain + $snow > 0)
-             $total_precipitation = round($rain + $snow, 0);
+                $total_precipitation = round($rain + $snow, 0);
             
             $temp = array(
                             array('v' => $d ),
-                            array('v' => $rain), //dest                                                                                    
+                            array('v' => $rain), //dest
+                            array('v' => "fill-color: #3C5369; stroke-width: ".$rain_stroke_width."; stroke-color:#3C5369 fill-opacity:".$rain_opa),                                                                                    
                             array('v' => $snow), //snih
-                            array('v' => $total_precipitation), //celkem anotace
-                            array('v' => $weather_arr['hourly'][$i]['temp'] ) //teplota                            
+                            array('v' => "fill-color: #C5E2F7; stroke-width: ".$snow_stroke_width."; stroke-color:#000000 ; fill-opacity:".$snow_opa),
+                            array('v' => $total_precipitation), //celkem anotace                            
+                            array('v' => $weather_arr['hourly'][$i]['temp']) //teplota                            
                             );
             $rows[] = array('c' => $temp);  
         }//for hourly
