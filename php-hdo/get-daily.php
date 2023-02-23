@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
     require_once 'constants.php';
     require_once 'utils1.php';
@@ -9,10 +9,10 @@
 
     //staticke sloupce 
     $table['cols'] = array(
-    array('type' => 'string', 'label' => 'cas'),
-    array('type' => 'number', 'label' => 'dest'), 
-    array('type' => 'number', 'label' => 'snih'),
-    array('type' => 'number', 'label' => 'teplota')      
+    array('type' => 'string', 'label' => 'čas'),
+    array('type' => 'number', 'label' => 'déšť (mm/h)', 'role' => 'data'),     
+    array('type' => 'number', 'label' => 'sníh (mm/h)', 'role' => 'data'),
+    array('type' => 'number', 'label' => 'teplota', 'role' => 'data')      
     );
 
 
@@ -31,9 +31,9 @@
            // echo date('Y-m-d H:i:s', $weather_arr['hourly'][$i]['dt']) . " -- " . $weather_arr['hourly'][$i]['temp'] . "<br>";
            
            //jen kazdy druhy cas
-            $d = "";
-           if ($i % 2 == 0)
-              $d = date('G:i', $weather_arr['hourly'][$i]['dt']);
+            //$d = "";
+           //if ($i % 2 == 0)
+            $d = date('G', $weather_arr['hourly'][$i]['dt']) . 'h';
         
              
            $rain = 0;  
@@ -48,9 +48,9 @@
           
             $temp = array(
                             array('v' => $d ),
-                            array('v' => $rain), //dest
+                            array('v' => $rain), //dest                                                        
                             array('v' => $snow), //snih
-                            array('v' => $weather_arr['hourly'][$i]['temp'] ) //teplota
+                            array('v' => $weather_arr['hourly'][$i]['temp'] ) //teplota                            
                             );
             $rows[] = array('c' => $temp);  
         }//for hourly

@@ -44,17 +44,27 @@ src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">
      var options = {
         isStacked: true,
         title : 'Předpoveď',
-
+        
+        bar: {groupWidth: "95%"},
+        
+//        annotations: {
+//        alwaysOutside : true,
+//          textStyle: {
+//            fontSize: 14            
+//           }
+//          },
+        
         vAxes: {
-                0: {title: 'Teplota'},
-                1: {title: 'Srážky', gridlines: {color: 'transparent'}, viewWindow: {min: 0, max: 10}} //pevne meze aby obrazek byl vizualne podobny, max 10mm/h
+                0: {title: 'Teplota (°C)', gridlines: {}}, //osy 
+                1: {title: 'Srážky  (mm/h)', gridlines: {color: 'transparent'}, viewWindow: {min: 0, max: 10}} //pevne meze aby obrazek byl vizualne podobny, max 10mm/h
                 },
                 
-        hAxis: {title: 'čas', gridlines: {color: '#FF0000'}},
+        hAxis: {title: 'čas', gridlines: {color: '#FF0000'},  slantedText:true, slantedTextAngle:45},
         
         series: {
-                 0: {type: 'bars', targetAxisIndex: 1, color:'#53789E'},
-                 1: {type: 'bars', targetAxisIndex: 1, color:'#C5E2F7'},
+                 0: {type: 'bars', targetAxisIndex: 1, color:'#53789E'}, //rain                                 
+                 1: {type: 'bars', targetAxisIndex: 1, color:'#C5E2F7'}, //snow
+                 
                  2: {type: 'line', targetAxisIndex: 0, color:'#228b22',  lineWidth: 5, curveType: 'function'}
                 },
         legend:'none',
