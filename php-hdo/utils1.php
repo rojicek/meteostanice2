@@ -152,7 +152,11 @@ function next_hdo_intervals($intervals)
   return $hdo_intervals;
 }
  /////////////////////////////////////////
+<<<<<<< HEAD
  function cycling_index_check ($value, $direction, $limit, $extreme_limit, $cycle_index)
+=======
+ function cycling_index_check ($value, $direction, $limit, $hi_limit, $cycle_index)
+>>>>>>> e241a845e249a21d9f4ba3ced7382cf0e040be37
 {
 
     // the value does not exists, return cycle index as it is
@@ -163,7 +167,11 @@ function next_hdo_intervals($intervals)
       {
           if ($value >= $limit)
               $cycle_index = max ($cycle_index, 2);            
+<<<<<<< HEAD
           if ($value >= $extreme_limit)
+=======
+          if ($value >= $hi_limit)
+>>>>>>> e241a845e249a21d9f4ba3ced7382cf0e040be37
               $cycle_index = max ($cycle_index, 3);
       } //if vetsi
               
@@ -171,7 +179,11 @@ function next_hdo_intervals($intervals)
       {
           if ($value <= $limit)
               $cycle_index = max ($cycle_index, 2);           
+<<<<<<< HEAD
           if ($value <= $extreme_limit)
+=======
+          if ($value <= $hi_limit)
+>>>>>>> e241a845e249a21d9f4ba3ced7382cf0e040be37
               $cycle_index = max ($cycle_index, 3);
       } //if vetsi
          
@@ -194,6 +206,7 @@ function match_range($value, $arr)
  return count($arr);
 }
 
+<<<<<<< HEAD
 ////////////////////////////////
 function get_aq_data($site, $data_arr)
 {
@@ -225,4 +238,6 @@ function get_component($comp, $components)
 }
 
 
+=======
+>>>>>>> e241a845e249a21d9f4ba3ced7382cf0e040be37
 ?>

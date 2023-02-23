@@ -3,7 +3,11 @@ body {
   font-family:  'Verdana', 'Geneva', 'Kalimati', sans-serif;
 }
 
+<<<<<<< HEAD
 table.meteo, th.meteo, td.meteo
+=======
+table, th, td
+>>>>>>> e241a845e249a21d9f4ba3ced7382cf0e040be37
 {
 color: #000000; 
 font-family: Verdana,Geneva,Kalimati,sans-serif; 
@@ -17,12 +21,15 @@ border: none;
 table-layout:auto;
 }
 
+<<<<<<< HEAD
 table.air, td.air
 {
 font-family: Verdana,Geneva,Kalimati,sans-serif; 
 font-size: 16pt; 
 }
 
+=======
+>>>>>>> e241a845e249a21d9f4ba3ced7382cf0e040be37
 td.maly
 {
 font-size: 15pt; 
