@@ -10,8 +10,9 @@
     //staticke sloupce 
     $table['cols'] = array(
     array('type' => 'string', 'label' => 'čas'),
-    array('type' => 'number', 'label' => 'déšť (mm/h)', 'role' => 'data'),     
+    array('type' => 'number', 'label' => 'déšť (mm/h)', 'role' => 'data'),         
     array('type' => 'number', 'label' => 'sníh (mm/h)', 'role' => 'data'),
+    array('type' => 'number', 'role' => 'annotation'),
     array('type' => 'number', 'label' => 'teplota', 'role' => 'data')      
     );
 
@@ -45,11 +46,19 @@
            if (array_key_exists('snow', $weather_arr['hourly'][$i]))  
               $snow = $weather_arr['hourly'][$i]['snow']['1h'];
            
-          
+            //debug
+            //$rain = 2.5;
+            //$snow = 1.6;
+            
+            $total_precipitation = null;
+            if ($rain + $snow > 0)
+             $total_precipitation = round($rain + $snow, 0);
+            
             $temp = array(
                             array('v' => $d ),
-                            array('v' => $rain), //dest                                                        
+                            array('v' => $rain), //dest                                                                                    
                             array('v' => $snow), //snih
+                            array('v' => $total_precipitation), //celkem anotace
                             array('v' => $weather_arr['hourly'][$i]['temp'] ) //teplota                            
                             );
             $rows[] = array('c' => $temp);  

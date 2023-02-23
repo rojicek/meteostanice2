@@ -47,12 +47,14 @@ src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">
         
         bar: {groupWidth: "95%"},
         
-//        annotations: {
-//        alwaysOutside : true,
-//          textStyle: {
-//            fontSize: 14            
-//           }
-//          },
+        annotations: {
+        alwaysOutside: true,
+          textStyle: {
+            fontSize: 14, 
+            color:  '#000000'         
+           },
+           stem: {length:2, color:'transparent'}
+          },
         
         vAxes: {
                 0: {title: 'Teplota (°C)', gridlines: {}}, //osy 
@@ -62,9 +64,9 @@ src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">
         hAxis: {title: 'čas', gridlines: {color: '#FF0000'},  slantedText:true, slantedTextAngle:45},
         
         series: {
+                 //jenom pro data series, anotace se nepocitaji
                  0: {type: 'bars', targetAxisIndex: 1, color:'#53789E'}, //rain                                 
-                 1: {type: 'bars', targetAxisIndex: 1, color:'#C5E2F7'}, //snow
-                 
+                 1: {type: 'bars', targetAxisIndex: 1, color:'#C5E2F7'}, //snow                                                                   
                  2: {type: 'line', targetAxisIndex: 0, color:'#228b22',  lineWidth: 5, curveType: 'function'}
                 },
         legend:'none',
