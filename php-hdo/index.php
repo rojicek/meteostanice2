@@ -19,10 +19,7 @@
 require_once 'utils1.php';
 require_once 'constants.php';
 
-<<<<<<< HEAD
 
-=======
->>>>>>> e241a845e249a21d9f4ba3ced7382cf0e040be37
 $meteo_url = "https://www.rojicek.cz/meteo/meteo-query.php?pwd=".$pwd;
 
 $meteo_content = file_get_contents($meteo_url);
@@ -49,7 +46,6 @@ for ($i=0; $i<count($hdo_intervals); $i++)
 
 <body>
 
-<<<<<<< HEAD
 <table class="meteo">
 
 <tr>
@@ -57,23 +53,12 @@ for ($i=0; $i<count($hdo_intervals); $i++)
 <a href = "day.php" style="text-decoration:none;">
 <?php echo "<img src=\"img/weather/". $meteo_content_arr["weather"]["w_icon"] . ".svg\"  style=\"vertical-align:middle\" width=200>"; ?>
 </a>
-=======
-<table>
-
-<tr>
-<td rowspan=3>
-<?php echo "<img src=\"img/weather/". $meteo_content_arr["weather"]["w_icon"] . ".svg\"  style=\"vertical-align:middle\" width=200>"; ?>
->>>>>>> e241a845e249a21d9f4ba3ced7382cf0e040be37
 </td>
 
 <td class="maly" style="text-align:right;" colspan=3>
 <?php
  $current_time = time();
-<<<<<<< HEAD
  echo date('j M, G:i', $current_time);
-=======
- echo date('j M, H:i', $current_time);
->>>>>>> e241a845e249a21d9f4ba3ced7382cf0e040be37
 ?>
 </td>
 </tr>
@@ -83,7 +68,6 @@ for ($i=0; $i<count($hdo_intervals); $i++)
 
 
 <td colspan=3 class="maly" style="text-align:right;vertical-align: middle;" height=70>
-<<<<<<< HEAD
 
 <?php 
 //todo: napsat lepe, tohle opakuje kod
@@ -105,20 +89,6 @@ else
 }
 ?>
 
-=======
-<?php 
-echo date('H:i', $meteo_content_arr["weather"]["sunrise"]);
-echo "&nbsp;&nbsp;";
-
-if (($current_time < $meteo_content_arr["weather"]["sunrise"]) or ($current_time > $meteo_content_arr["weather"]["sunset"])) 
-    echo "<img src=\"img/sun/sunset.svg\" style=\"vertical-align:middle\" width=80>";
-else
-    echo "<img src=\"img/sun/sunrise.svg\" style=\"vertical-align:middle\" width=80>";
-
-echo "&nbsp;&nbsp;"; 
-echo date('H:i',$meteo_content_arr["weather"]["sunset"]);
-?>
->>>>>>> e241a845e249a21d9f4ba3ced7382cf0e040be37
 </td>
 
 </tr>
@@ -139,11 +109,7 @@ echo date('H:i',$meteo_content_arr["weather"]["sunset"]);
 
 <td>
 <a href="aqi.php" style="text-decoration:none;">
-<<<<<<< HEAD
 <img src="img/air_quality/air<?php echo $meteo_content_arr["weather"]["aqi"]; ?>.png"  width=70 title="<?php echo $meteo_content_arr["weather"]["aqi"]; ?>">
-=======
-<img src="img/air_quality/air<?php echo $meteo_content_arr["weather"]["aqi"]; ?>.png"  width=70>
->>>>>>> e241a845e249a21d9f4ba3ced7382cf0e040be37
 </a>
 </td>
 
