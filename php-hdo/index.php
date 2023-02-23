@@ -19,6 +19,7 @@
 require_once 'utils1.php';
 require_once 'constants.php';
 
+
 $meteo_url = "https://www.rojicek.cz/meteo/meteo-query.php?pwd=".$pwd;
 
 $meteo_content = file_get_contents($meteo_url);
@@ -45,17 +46,19 @@ for ($i=0; $i<count($hdo_intervals); $i++)
 
 <body>
 
-<table>
+<table class="meteo">
 
 <tr>
 <td rowspan=3>
+<a href = "day.php" style="text-decoration:none;">
 <?php echo "<img src=\"img/weather/". $meteo_content_arr["weather"]["w_icon"] . ".svg\"  style=\"vertical-align:middle\" width=200>"; ?>
+</a>
 </td>
 
 <td class="maly" style="text-align:right;" colspan=3>
 <?php
  $current_time = time();
- echo date('j M, H:i', $current_time);
+ echo date('j M, G:i', $current_time);
 ?>
 </td>
 </tr>
@@ -65,18 +68,27 @@ for ($i=0; $i<count($hdo_intervals); $i++)
 
 
 <td colspan=3 class="maly" style="text-align:right;vertical-align: middle;" height=70>
+
 <?php 
-echo date('H:i', $meteo_content_arr["weather"]["sunrise"]);
-echo "&nbsp;&nbsp;";
-
+//todo: napsat lepe, tohle opakuje kod
 if (($current_time < $meteo_content_arr["weather"]["sunrise"]) or ($current_time > $meteo_content_arr["weather"]["sunset"])) 
-    echo "<img src=\"img/sun/sunset.svg\" style=\"vertical-align:middle\" width=80>";
-else
+{ 
+    echo "<b>" . date('G:i', $meteo_content_arr["weather"]["sunrise"]) . "</b>";
+    echo "&nbsp;&nbsp;";
     echo "<img src=\"img/sun/sunrise.svg\" style=\"vertical-align:middle\" width=80>";
-
-echo "&nbsp;&nbsp;"; 
-echo date('H:i',$meteo_content_arr["weather"]["sunset"]);
+    echo "&nbsp;&nbsp;"; 
+    echo date('G:i',$meteo_content_arr["weather"]["sunset"]);
+}
+else
+{
+    echo  date('G:i', $meteo_content_arr["weather"]["sunrise"] );
+    echo "&nbsp;&nbsp;";
+    echo "<img src=\"img/sun/sunset.svg\" style=\"vertical-align:middle\" width=80>";
+    echo "&nbsp;&nbsp;"; 
+    echo "<b>" . date('G:i',$meteo_content_arr["weather"]["sunset"]) . "</b>";
+}
 ?>
+
 </td>
 
 </tr>
@@ -97,7 +109,7 @@ echo date('H:i',$meteo_content_arr["weather"]["sunset"]);
 
 <td>
 <a href="aqi.php" style="text-decoration:none;">
-<img src="img/air_quality/air<?php echo $meteo_content_arr["weather"]["aqi"]; ?>.png"  width=70>
+<img src="img/air_quality/air<?php echo $meteo_content_arr["weather"]["aqi"]; ?>.png"  width=70 title="<?php echo $meteo_content_arr["weather"]["aqi"]; ?>">
 </a>
 </td>
 

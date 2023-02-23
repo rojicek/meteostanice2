@@ -152,7 +152,7 @@ function next_hdo_intervals($intervals)
   return $hdo_intervals;
 }
  /////////////////////////////////////////
- function cycling_index_check ($value, $direction, $limit, $hi_limit, $cycle_index)
+ function cycling_index_check ($value, $direction, $limit, $extreme_limit, $cycle_index)
 {
 
     // the value does not exists, return cycle index as it is
@@ -163,7 +163,7 @@ function next_hdo_intervals($intervals)
       {
           if ($value >= $limit)
               $cycle_index = max ($cycle_index, 2);            
-          if ($value >= $hi_limit)
+          if ($value >= $extreme_limit)
               $cycle_index = max ($cycle_index, 3);
       } //if vetsi
               
@@ -171,7 +171,7 @@ function next_hdo_intervals($intervals)
       {
           if ($value <= $limit)
               $cycle_index = max ($cycle_index, 2);           
-          if ($value <= $hi_limit)
+          if ($value <= $extreme_limit)
               $cycle_index = max ($cycle_index, 3);
       } //if vetsi
          
@@ -193,5 +193,36 @@ function match_range($value, $arr)
  //zbyva posledni
  return count($arr);
 }
+
+////////////////////////////////
+function get_aq_data($site, $data_arr)
+{
+    // Libus je obvykle 7
+    if ($data_arr[7]['properties']['id'] == $site)    
+        return $data_arr[7]['properties'];
+
+    // jiny format - smycka pres vsechno
+    for ($i = 0; $i<count($data_arr); $i++)
+    { 
+      if ($data_arr[$i]['properties']['id'] == $site)
+        return $data_arr[$i]['properties'];       
+    }
+    
+    //fail
+    return array();
+
+}
+
+////////////////////////////////
+function get_component($comp, $components)
+{
+  for ($i=0; $i<count($components); $i++)
+   {
+    if (strtolower($components[$i]['type']) == strtolower($comp))
+        return $components[$i]['averaged_time']['value'];    
+   }
+   return -1; //not found
+}
+
 
 ?>
