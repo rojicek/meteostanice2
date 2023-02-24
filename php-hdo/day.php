@@ -36,8 +36,9 @@ src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">
       t_max = Math.max(t_max, data.getValue(i,temp_column));                            
      }
     
-    var band = Math.max(0.03*(t_max-t_min), 1.5);   
-    return [t_min-band, t_max+band];
+    var band = Math.max(0.03*(t_max-t_min), 1.5); 
+      
+    return [Math.round(t_min-band), Math.round(t_max+band)];
     } //getExtremes
      
     google.setOnLoadCallback(drawChartTVStatusInterval);
