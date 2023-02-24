@@ -24,13 +24,27 @@ src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">
      google.load('visualization', '1', {'packages':['corechart']});
     
      
-     
+    function getExtremes(data, column_name) 
+    {
+    var t_min = 100;
+    var t_max = -100;
+    var temp_column = data.getColumnIndex(column_name);        
+    
+    for (var i=0 ; i<data.getNumberOfRows() ; i++) 
+    {     
+      t_min = Math.min(t_min, data.getValue(i,temp_column));
+      t_max = Math.max(t_max, data.getValue(i,temp_column));                            
+     }
+    
+    var band = Math.max(0.03*(t_max-t_min), 1.5);   
+    return [t_min-band, t_max+band];
+    } //getExtremes
      
     google.setOnLoadCallback(drawChartTVStatusInterval);
     function drawChartTVStatusInterval() 
     {
     
-      var jsonDataTVStatusInterval = $.ajax({
+      var jsonWData = $.ajax({
           url: "get-daily.php",
           dataType:"json",
           async: false
@@ -38,8 +52,12 @@ src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">
       
       
       
-       var hourly_data = new google.visualization.DataTable(jsonDataTVStatusInterval);
-    
+     var hourly_data = new google.visualization.DataTable(jsonWData);
+     
+     var temp_min = 0;
+     var temp_max = 0;
+     
+     [temp_min, temp_max] = getExtremes(hourly_data, 'teplota');
       
      var options = {
         isStacked: true,
@@ -57,8 +75,8 @@ src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">
           },
         
         vAxes: {
-                0: {title: 'Teplota (°C)'}, //osy , gridlines: {}, viewWindowMode:'pretty' 
-                1: {title: 'Srážky  (mm/h)', gridlines: {color: 'transparent'}, viewWindow: {min: 0, max: 10}} //pevne meze aby obrazek byl vizualne podobny, max 10mm/h
+                0: {title: 'Teplota (°C)', viewWindow: {min: temp_min, max: temp_max}}, //osy , gridlines: {}, viewWindowMode:'pretty' 
+                1: {title: 'Srážky  (mm/h)', gridlines: {color: 'transparent'}, viewWindow: {min: 0, max: 10}} //pevne meze aby obrazek byl vizualne podobny, max 10mm/h 
                 },
                 
         hAxis: {title: 'čas', gridlines: {color: '#FF0000'},  slantedText:true, slantedTextAngle:45},

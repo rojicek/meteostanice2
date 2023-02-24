@@ -19,7 +19,7 @@
     );
 
 
-    //postupne radky
+
     
     $weather_url = $openweather_url . "?lat=".$lat."&lon=".$lon."&exclude=minutely,daily,alerts&appid=".$openweather_api."&units=metric";
    //echo $weather_url . "<p>"; // debug only
