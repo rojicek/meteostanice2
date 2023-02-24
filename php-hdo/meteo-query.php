@@ -144,7 +144,7 @@ $hdo_arr = array();
    
    //current weather
    $weather_url = $openweather_url . "?lat=".$lat."&lon=".$lon."&exclude=minutely,daily,alerts&appid=".$openweather_api."&units=metric";
-   // echo $weather_url . "<p>"; // debug only
+   //echo $weather_url . "<p>"; // debug only
    $weather_content = file_get_contents($weather_url);
    if ($weather_content)
    {//weather content
@@ -166,6 +166,17 @@ $hdo_arr = array();
              $w_desc = $weather_arr['current']['weather'][0]['main'];
              $w_icon = $weather_arr['current']['weather'][0]['icon'];
              
+             $w_rain = 0;
+             $w_snow = 0;
+             
+             if (array_key_exists("rain", $weather_arr["current"]))             
+               if (array_key_exists("1h", $weather_arr["current"]["rain"]))
+                    $w_rain = $weather_arr['current']['rain']['1h'];
+                    
+             if (array_key_exists("snow", $weather_arr["current"]))             
+               if (array_key_exists("1h", $weather_arr["current"]["snow"]))
+                    $w_snow = $weather_arr['current']['snow']['1h'];   
+                         
           } //json ok and up to date
           
     // if (array_key_exists("hourly", $weather_arr)) - test jak to prezije bez kontroly
@@ -240,6 +251,10 @@ $hdo_arr = array();
    //build output json
    $air_weather_arr['weather']['sunrise'] = $sunrise; //date('H:i', $sunrise);
    $air_weather_arr['weather']['sunset'] = $sunset; //date('H:i', $sunset);
+   
+   $air_weather_arr['weather']['rain'] = $w_rain;
+   $air_weather_arr['weather']['snow'] = $w_snow;  
+      
    $air_weather_arr['weather']['temp'] = round($temp,0);
    $air_weather_arr['weather']['temp_feel'] = round($temp_feel,0);
    $air_weather_arr['weather']['wind_speed'] = round($wind_speed,1);

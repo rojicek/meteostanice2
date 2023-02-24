@@ -158,10 +158,38 @@ if ($temp_trend>0)
 
 </tr>
 
+<?php
+//decide precipitation
+$rain = $meteo_content_arr["weather"]["rain"];
+$snow = $meteo_content_arr["weather"]["snow"];
+
+$precipitation = $rain + $snow;
+$precipitation_icon = "";
+
+if ($rain>0)
+    $precipitation_icon = "w-drop.png"; //rain only
+if ($snow>0)
+    $precipitation_icon = "snow.png"; //snow only
+if (($rain>0) and ($snow>0))
+    $precipitation_icon = "mix.png"; //mixes
+
+?>
+
 <tr>
 <td>
 <img src="img/direction/compass-<?php echo strtolower ($meteo_content_arr["weather"]["wind_dir"]); ?>.png"  style="vertical-align:middle" width=30 height=30> 
 <font style="font-size: smaller;"><?php echo $meteo_content_arr["weather"]["wind_speed"] . "m/s";?></font>
+<?php
+if ($precipitation > 0)
+ { 
+?>
+&nbsp;
+<img src="img/precipitation/<?php echo $precipitation_icon;?>"  style="vertical-align:middle" width=30 height=30> 
+<font style="font-size: smaller;"><?php echo round($precipitation,0) . "mm/h";?></font>
+<?php
+ } //end any precipitation
+?>
+
 </td>
 
 </tr>
