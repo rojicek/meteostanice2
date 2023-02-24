@@ -61,7 +61,7 @@ src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">
       
      var options = {
         isStacked: true,
-        title : 'Předpoveď',
+        title : 'Předpověď na příštích 24h',
         
         bar: {groupWidth: "90%"},
         
