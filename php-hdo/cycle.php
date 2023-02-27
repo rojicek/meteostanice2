@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html> 
 
 <head>
@@ -38,6 +38,10 @@ $cycling_tomorrow_rain = 1;
 $cycling_tomorrow_snow = 1;
 $cycling_tomorrow_wind = 1;
 
+
+$cycling_today_total = 1;
+$cycling_tomorrow_total = 1;
+    
 $current_time = time();
 $month_today =  intval(date('n', $datetime_now));
 $month_tomorrow = intval(date('n', $datetime_now + 86400));
@@ -53,6 +57,8 @@ $month_tomorrow = intval(date('n', $datetime_now + 86400));
     $weather_arr = json_decode($weather_content, true);
     $sunrise = $weather_arr['current']['sunrise'];
     $sunset  = $weather_arr['current']['sunset'];
+    
+    
    
                       
                       
@@ -67,7 +73,7 @@ $month_tomorrow = intval(date('n', $datetime_now + 86400));
                   $cycling_today_wind = cycling_index_check ($weather_arr['hourly'][$i]['wind_speed'], '>', $hi_wind,  $super_hi_wind, $cycling_today_wind); //wind
                   $cycling_today_rain = cycling_index_check ($weather_arr['hourly'][$i]['rain']['1h'], '>', $rain,  $super_rain, $cycling_today_rain); //rain
                   $cycling_today_snow = cycling_index_check ($weather_arr['hourly'][$i]['snow']['1h'], '>', $snow,  $super_snow, $cycling_today_snow); //snow
-                  
+                                                                              
                   //echo "today index  " . date('Y-m-d H:i:s', $weather_arr['hourly'][$i]['dt'])  . " > " . $weather_arr['hourly'][$i]['temp'] ." >" . $cycling_today_temp . "<br>";                  
                                                                                                                                          
               } //today
@@ -81,22 +87,15 @@ $month_tomorrow = intval(date('n', $datetime_now + 86400));
                   $cycling_tomorrow_temp = cycling_index_check ($weather_arr['hourly'][$i]['temp'],       '>', $temp_limits[$month_tomorrow][2],  $temp_limits[$month_tomorrow][3], $cycling_tomorrow_temp); //hot check
                   $cycling_tomorrow_wind = cycling_index_check ($weather_arr['hourly'][$i]['wind_speed'], '>', $hi_wind,  $super_hi_wind, $cycling_tomorrow_wind); //wind
                   $cycling_tomorrow_rain = cycling_index_check ($weather_arr['hourly'][$i]['rain']['1h'], '>', $rain,  $super_rain, $cycling_tomorrow_rain); //rain
-                  $cycling_tomorrow_snow = cycling_index_check ($weather_arr['hourly'][$i]['snow']['1h'], '>', $snow,  $super_snow, $cycling_tomorrow_snow); //snow                 
-                  
+                  $cycling_tomorrow_snow = cycling_index_check ($weather_arr['hourly'][$i]['snow']['1h'], '>', $snow,  $super_snow, $cycling_tomorrow_snow); //snow 
+                                                                                    
                   //echo "tomorrow index  " . date('Y-m-d H:i:s', $weather_arr['hourly'][$i]['dt'])  . " > " . $weather_arr['hourly'][$i]['temp'] ." >" . $cycling_tomorrow_temp . "<br>";                                                                                                                     
               } //tomorrow
 
           } //for hourly                            
       
 
-   
-   // air quality is just one (today only).
-   if ($aqi[0] == 2)
-      $cycling_today = max($cycling_today, 2);
-   if ($aqi[0] == 3)
-      $cycling_today = max($cycling_today, 3);
-   
-   
+         
    //extra kontroly pro dnesek, jestli uz neni noc
    //too early today
    if  ($current_time < $sunrise-3600) //hodina pred vychodem           
@@ -147,7 +146,10 @@ $month_tomorrow = intval(date('n', $datetime_now + 86400));
                         
    } //air ok
 
-
+//total values
+//overall
+    $cycling_today_total = max($cycling_today_temp, $cycling_today_wind, $cycling_today_rain,  $cycling_today_snow, $cycling_today_aqi, $cycling_today_sun);
+    $cycling_tomorrow_total = max($cycling_tomorrow_temp, $cycling_tomorrow_wind, $cycling_tomorrow_rain,  $cycling_tomorrow_snow);
     
   // default values  
 
@@ -174,18 +176,127 @@ echo "snow " . $cycling_tomorrow_snow . "<br>";
 
 <table style="air">
 
-<tr>
-<td class="air"><b>teplota</b></td>
-<td>
-<img src="img/cycle/cycle_"<?php echo$cycling_today_temp ?>".png"  style=vertical-align:middle width=70>
-</td>
-<td><?php $cycling_today_temp; ?></td>
-<td></td>
 
-<td>YYY</td>
-<td><?php $cycling_tomorrow_temp; ?></td>
-<td></td>
+
+<tr>
+<td colspan=2></td>
+
+
+<td colspan=2>
+<b>Dneska</b>
+</td>
+
+
+<td>&nbsp;&nbsp;&nbsp;</td>
+
+<td colspan=2>
+<b>Zítra</b>
+</td>
  
+</tr>
+
+
+
+<tr>
+
+
+
+<td>Celkově</td>
+<td>&nbsp;&nbsp;&nbsp;</td>
+<td>
+<img src="img/cycle/cycle_<?php echo $cycling_today_total ?>.png"  style=vertical-align:middle width=70>
+</td>
+<td><b><?php echo $cycling_today_total; ?></b></td>
+<td>&nbsp;&nbsp;&nbsp;</td>
+<td>
+<img src="img/cycle/cycle_<?php echo $cycling_tomorrow_total ?>.png"  style=vertical-align:middle width=70>
+</td>
+<td><b><?php echo $cycling_tomorrow_total; ?></b></td> 
+</tr>
+
+<tr>
+<td colspan=6><hr style="height:3px;background-color:black;width=100%;"></td>
+</tr>
+
+<td>Teplota</td>
+<td>&nbsp;&nbsp;&nbsp;</td>
+<td>
+<img src="img/cycle/cycle_<?php echo $cycling_today_temp ?>.png"  style=vertical-align:middle width=70>
+</td>
+<td><b><?php echo $cycling_today_temp; ?></b></td>
+<td>&nbsp;&nbsp;&nbsp;</td>
+<td>
+<img src="img/cycle/cycle_<?php echo $cycling_tomorrow_temp ?>.png"  style=vertical-align:middle width=70>
+</td>
+<td><b><?php echo $cycling_tomorrow_temp; ?></b></td> 
+</tr>
+
+<tr>
+<td>Vítr</td>
+<td>&nbsp;&nbsp;&nbsp;</td>
+<td>
+<img src="img/cycle/cycle_<?php echo $cycling_today_wind ?>.png"  style=vertical-align:middle width=70>
+</td>
+<td><b><?php echo $cycling_today_wind; ?></b></td>
+<td>&nbsp;&nbsp;&nbsp;</td>
+<td>
+<img src="img/cycle/cycle_<?php echo $cycling_tomorrow_wind ?>.png"  style=vertical-align:middle width=70>
+</td>
+<td><b><?php echo $cycling_tomorrow_wind; ?></b></td> 
+</tr>
+
+
+<tr>
+<td>Déšť</td>
+<td>&nbsp;&nbsp;&nbsp;</td>
+<td>
+<img src="img/cycle/cycle_<?php echo $cycling_today_rain ?>.png"  style=vertical-align:middle width=70>
+</td>
+<td><b><?php echo $cycling_today_rain; ?></b></td>
+<td>&nbsp;&nbsp;&nbsp;</td>
+<td>
+<img src="img/cycle/cycle_<?php echo $cycling_tomorrow_rain ?>.png"  style=vertical-align:middle width=70>
+</td>
+<td><b><?php echo $cycling_tomorrow_rain; ?></b></td> 
+</tr>
+
+<tr>
+<td>Sníh</td>
+<td>&nbsp;&nbsp;&nbsp;</td>
+<td>
+<img src="img/cycle/cycle_<?php echo $cycling_today_snow ?>.png"  style=vertical-align:middle width=70>
+</td>
+<td><b><?php echo $cycling_today_snow; ?></b></td>
+<td>&nbsp;&nbsp;&nbsp;</td>
+<td>
+<img src="img/cycle/cycle_<?php echo $cycling_tomorrow_snow ?>.png"  style=vertical-align:middle width=70>
+</td>
+<td><b><?php echo $cycling_tomorrow_snow; ?></b></td> 
+</tr>
+
+
+<tr>
+<td>Vzduch</td>
+<td>&nbsp;&nbsp;&nbsp;</td>
+<td>
+<img src="img/cycle/cycle_<?php echo $cycling_today_aqi ?>.png"  style=vertical-align:middle width=70>
+</td>
+<td><b><?php echo $cycling_today_aqi; ?></b></td>
+<td>&nbsp;&nbsp;&nbsp;</td>
+<td></td>
+<td></td> 
+</tr>
+
+<tr>
+<td>Světlo</td>
+<td>&nbsp;&nbsp;&nbsp;</td>
+<td>
+<img src="img/cycle/cycle_<?php echo $cycling_today_sun ?>.png"  style=vertical-align:middle width=70>
+</td>
+<td><b><?php echo $cycling_today_sun; ?></b></td>
+<td>&nbsp;&nbsp;&nbsp;</td>
+<td></td>
+<td></td> 
 </tr>
 
 </table>
