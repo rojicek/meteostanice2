@@ -182,14 +182,14 @@ echo "snow " . $cycling_tomorrow_snow . "<br>";
 <td colspan=2></td>
 
 
-<td colspan=2>
+<td colspan=2 style="text-align: center;">
 <b>Dneska</b>
 </td>
 
 
 <td>&nbsp;&nbsp;&nbsp;</td>
 
-<td colspan=2>
+<td colspan=2 style="text-align: center;">
 <b>Zítra</b>
 </td>
  
