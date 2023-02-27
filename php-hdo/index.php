@@ -96,7 +96,7 @@ else
 <tr>
 
 <td>
-<a href = "cycle.php" style="text-decoration:none;">
+<a href = "cycle.php" class="cas">
 <font class="mensi">
 <?php echo "NOW&nbsp;&nbsp;<img src=\"img/cycle/cycle_". $meteo_content_arr["weather"]["clc_tdy"] . ".png\"  style=\"vertical-align:middle\" width=70>"; ?>
 </font>
@@ -104,7 +104,7 @@ else
 </td>
 
 <td>
-<a href = "cycle.php" style="text-decoration:none;">
+<a href = "cycle.php" class="cas">
 <font class="mensi">
 <?php echo strtoupper(date("D", strtotime("+1 day"))) . "&nbsp;&nbsp;<img src=\"img/cycle/cycle_". $meteo_content_arr["weather"]["clc_tmr"] . ".png\"  style=\"vertical-align:middle\" width=70>"; ?>
 </font>

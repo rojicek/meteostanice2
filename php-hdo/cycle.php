@@ -33,6 +33,7 @@ $cycling_today_wind = 1;
 $cycling_today_sun = 1;
 $cycling_today_aqi = 1;
 
+$today_in = 0;
 $cycling_tomorrow_temp = 1;
 $cycling_tomorrow_rain = 1;
 $cycling_tomorrow_snow = 1;
@@ -73,7 +74,9 @@ $month_tomorrow = intval(date('n', $datetime_now + 86400));
                   $cycling_today_wind = cycling_index_check ($weather_arr['hourly'][$i]['wind_speed'], '>', $hi_wind,  $super_hi_wind, $cycling_today_wind); //wind
                   $cycling_today_rain = cycling_index_check ($weather_arr['hourly'][$i]['rain']['1h'], '>', $rain,  $super_rain, $cycling_today_rain); //rain
                   $cycling_today_snow = cycling_index_check ($weather_arr['hourly'][$i]['snow']['1h'], '>', $snow,  $super_snow, $cycling_today_snow); //snow
-                                                                              
+                  
+                  
+                  $today_in = 1; //dnesek je jeste relevantni                                                              
                   //echo "today index  " . date('Y-m-d H:i:s', $weather_arr['hourly'][$i]['dt'])  . " > " . $weather_arr['hourly'][$i]['temp'] ." >" . $cycling_today_temp . "<br>";                  
                                                                                                                                          
               } //today
@@ -221,9 +224,15 @@ echo "snow " . $cycling_tomorrow_snow . "<br>";
 <td>Teplota</td>
 <td>&nbsp;&nbsp;&nbsp;</td>
 <td>
+<?php if ($today_in == 1) { ?>
 <img src="img/cycle/cycle_<?php echo $cycling_today_temp ?>.png"  style=vertical-align:middle width=70>
+<?php } ?>
 </td>
-<td><b><?php echo $cycling_today_temp; ?></b></td>
+<td>
+<?php if ($today_in == 1) { ?>
+<b><?php echo $cycling_today_temp; ?></b>
+<?php } ?>
+</td>
 <td>&nbsp;&nbsp;&nbsp;</td>
 <td>
 <img src="img/cycle/cycle_<?php echo $cycling_tomorrow_temp ?>.png"  style=vertical-align:middle width=70>
@@ -235,9 +244,15 @@ echo "snow " . $cycling_tomorrow_snow . "<br>";
 <td>Vítr</td>
 <td>&nbsp;&nbsp;&nbsp;</td>
 <td>
+<?php if ($today_in == 1) { ?>
 <img src="img/cycle/cycle_<?php echo $cycling_today_wind ?>.png"  style=vertical-align:middle width=70>
+<?php } ?>
 </td>
-<td><b><?php echo $cycling_today_wind; ?></b></td>
+<td>
+<?php if ($today_in == 1) { ?>
+<b><?php echo $cycling_today_wind; ?></b>
+<?php } ?>
+</td>
 <td>&nbsp;&nbsp;&nbsp;</td>
 <td>
 <img src="img/cycle/cycle_<?php echo $cycling_tomorrow_wind ?>.png"  style=vertical-align:middle width=70>
@@ -250,9 +265,15 @@ echo "snow " . $cycling_tomorrow_snow . "<br>";
 <td>Déšť</td>
 <td>&nbsp;&nbsp;&nbsp;</td>
 <td>
+<?php if ($today_in == 1) { ?>
 <img src="img/cycle/cycle_<?php echo $cycling_today_rain ?>.png"  style=vertical-align:middle width=70>
+<?php } ?>
 </td>
-<td><b><?php echo $cycling_today_rain; ?></b></td>
+<td>
+<?php if ($today_in == 1) { ?>
+<b><?php echo $cycling_today_rain; ?></b>
+<?php } ?>
+</td>
 <td>&nbsp;&nbsp;&nbsp;</td>
 <td>
 <img src="img/cycle/cycle_<?php echo $cycling_tomorrow_rain ?>.png"  style=vertical-align:middle width=70>
@@ -264,9 +285,15 @@ echo "snow " . $cycling_tomorrow_snow . "<br>";
 <td>Sníh</td>
 <td>&nbsp;&nbsp;&nbsp;</td>
 <td>
+<?php if ($today_in == 1) { ?>
 <img src="img/cycle/cycle_<?php echo $cycling_today_snow ?>.png"  style=vertical-align:middle width=70>
+<?php } ?>
 </td>
-<td><b><?php echo $cycling_today_snow; ?></b></td>
+<td>
+<?php if ($today_in == 1) { ?>
+<b><?php echo $cycling_today_snow; ?></b>
+<?php } ?>
+</td>
 <td>&nbsp;&nbsp;&nbsp;</td>
 <td>
 <img src="img/cycle/cycle_<?php echo $cycling_tomorrow_snow ?>.png"  style=vertical-align:middle width=70>

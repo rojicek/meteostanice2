@@ -37,3 +37,9 @@ font.mensi
 {
  font-size: 20px;
 }
+
+a.cas:link, a.cas:visited, a.cas:hover, a.cas:active
+{
+ color:#000000;
+ text-decoration: none;
+}
