@@ -231,10 +231,10 @@ $hdo_arr = array();
    }//weather content
    
    //extra kontroly pro dnesek, jestli uz neni noc
-   // air quality is just one (today only).
-   if ($aqi == 4)
+   // air quality is just one (today only). (options 1A/1B ... 3A/3B)   
+   if ($aqi[0] == 2)
       $cycling_today = max($cycling_today, 2);
-   if ($aqi == 5)
+   if ($aqi[0] == 3)
       $cycling_today = max($cycling_today, 3);
    
    //too early today
