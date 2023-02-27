@@ -1,67 +1,90 @@
+#include <WiFi.h>
+#include <ESP32Time.h>
+
 #include "config.h"
+#include "time.h"
+
+
 
 TTGOClass *ttgo;
+const char *wifi_ap = "R_host";
+const char *wifi_pd = "badenka5";
+const char *ntpServer = "pool.ntp.org";
+const long gmtOffset_sec = 3600;
+const int daylightOffset_sec = 3600;
 
-int i = 0;
+struct tm aktualni_cas;
+struct tm zobrazeny_cas;
+ESP32Time rtc(3600);
 
-void setup()
-{
-    Serial.begin(115200);
-    Serial.println("init 1");
+void setup() {
+  Serial.begin(115200);
 
-    //Get watch instance
-    ttgo = TTGOClass::getWatch();
+  //nastav obrazovku
+  ttgo = TTGOClass::getWatch();
+  ttgo->begin();
+  ttgo->openBL();
 
-    Serial.println("init 2");
+  // nastav presny cas
+  wifi_connect();
+  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+  Serial.print(gmtime());
+  rtc.setTime(gmtime());
+  //getTime();
+  wifi_disconnect();
+  
 
-    // Initialize the hardware
-    ttgo->begin();
-
-    // Turn on the backlight
-    ttgo->openBL();
-
-    ttgo->lvgl_begin();
-
-    Serial.println("init 3");
-
-    ttgo->lvgl_whirling(1);
-
-    Serial.println("init 4");
-
-        //Check if RTC is online
-    if (!ttgo->deviceProbe(0x51)) {
-        Serial.println("RTC CHECK FAILED");
-        ttgo->tft->fillScreen(TFT_BLACK);
-        ttgo->tft->setTextFont(4);
-        ttgo->tft->setCursor(0, 0);
-        ttgo->tft->setTextColor(TFT_RED);
-       // ttgo->tft->println("RTC CHECK FAILED");
-        delay(5000);
-    }
-
-   // ttgo->tft->println("init konec");
-    //ttgo->tft->fillScreen(TFT_RED);
-    Serial.println("init done");
-
+  //Serial.print(aktualni_cas);
+  //Serial.print(&aktualni_cas);
+  //Serial.println (asctime(&aktualni_cas));
+  Serial.print("inicializovano");
 }
 
-void loop()
-{
+// smycky
+// 1s ... cas
+// 5min ... pocasi
+// 1 den ... configTime (abych mel presny cas)
 
-  lv_task_handler();
-   //ttgo->tft->println("ping");
-   Serial.println("ping");
-    if (i==0)
-    {
-   ttgo->tft->fillScreen(TFT_RED);
-   i = 1;
-    }
-    else
-    {
-       ttgo->tft->fillScreen(TFT_BLUE);
-   i = 0;
-    }
-    
+void loop() {
+ 
+  //get actual time
+ // if (!getLocalTime(&aktualni_cas)) {
+ //   Serial.println("nejde ziskat aktualni cas");
+ // }
+ 
+
+  //if (aktualni_cas > zobrazeny_cas)
+  {
+    //prepisu cas
+     
+      Serial.println(rtc.getTimeDate()); 
+
+
+      //Serial.println (asctime(&aktualni_cas));
+      //Serial.println (asctime(&local));
+      
+  }
+
   delay(1000);
+} //loop
 
+///////////////////////
+void wifi_connect()
+{ 
+    WiFi.begin(wifi_ap, wifi_pd);
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(200);
+        Serial.print(".");
+    }
+}
+void wifi_disconnect()
+{
+  WiFi.disconnect();
+  //asi nemusim cekat na odpojeni
+  /* 
+    while (WiFi.status() != WL_DISCONNECTED) {
+        delay(100);
+        Serial.println("+");
+    }
+  */
 }

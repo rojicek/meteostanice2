@@ -7,12 +7,12 @@
 WiFiMulti WiFiMulti;
 
 TTGOClass *ttgo;
-TFT_eSPI *tft;
+//TFT_eSPI *tft;
 
 #include "time.h"
 
 const char *ntpServer = "pool.ntp.org";
-const long gmtOffset_sec = 0;
+const long gmtOffset_sec = 3600;
 const int daylightOffset_sec = 3600;
 
 #define COLOR565(r, g, b) ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3)
@@ -31,16 +31,16 @@ void setup() {
   ttgo = TTGOClass::getWatch();
   ttgo->begin();
   ttgo->openBL();
-  tft = ttgo->tft;
+  //tft = ttgo->tft;
 
-  tft->setRotation(1);
+  ttgo->tft->setRotation(3);
 
   // while (1) {
   //     Serial.println(ttgo->touched());
   // }
 
-  tft->setTextFont(1);
-  tft->fillScreen(BCK_COLOR);
+  //tft->setTextFont(1);
+  ttgo->tft->fillScreen(BCK_COLOR);
   //tft->fillRect(0, 0, 310, 470, TFT_WHITE); ok - ukazuje dimenze! (bez rotace)
 
   WiFiMulti.addAP("R_host", "badenka5");
@@ -72,11 +72,11 @@ void loop() {
   // put your main code here, to run repeatedly:
   //Serial.println("ping");
 
-  tft->setTextSize(3);
-  tft->setCursor(20, 20);
-  tft->setTextColor(BCK_COLOR);
+  ttgo->tft->setTextSize(3);
+  ttgo->tft->setCursor(20, 20);
+  ttgo->tft->setTextColor(BCK_COLOR);
   //tft->print(score);
-  tft->print(asctime(&timeinfo));
+  ttgo->tft->print(asctime(&timeinfo));
 
   score++;
   
@@ -85,19 +85,15 @@ void loop() {
     return;
   }
 
-  tft->setCursor(20, 20);
-  tft->setTextColor(FORESTGREEN);
+  ttgo->tft->setCursor(20, 20);
+  ttgo->tft->setTextColor(FORESTGREEN);
   //tft->print(score);
-  tft->print(asctime(&timeinfo));
+  ttgo->tft->print(asctime(&timeinfo));
 
-  
-
-
- // Serial.println(&timeinfo, "%A, %B %d %Y %H:%M:%S");
 
   Serial.println (asctime(&timeinfo));
 
 
-
+  Serial.println ( "ping");
   delay(1000);
 }
