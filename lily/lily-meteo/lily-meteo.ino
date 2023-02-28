@@ -41,7 +41,7 @@ void setup() {
 
   ttgo->tft->fillScreen(BCK_COLOR);
 
-  Serial.print("inicializovano");
+  Serial.println("inicializovano");
 }
 
 // smycky
