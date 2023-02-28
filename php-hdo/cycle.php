@@ -47,6 +47,19 @@ $current_time = time();
 $month_today =  intval(date('n', $datetime_now));
 $month_tomorrow = intval(date('n', $datetime_now + 86400));
 
+$temp_min_today = 99;
+$temp_max_today = -99;
+$wind_max_today = 0;
+$rain_max_today = 0;
+$snow_max_today = 0;
+
+
+$temp_min_tomorrow = 99;
+$temp_max_tomorrow = -99;
+$wind_max_tomorrow = 0;
+$rain_max_tomorrow = 0;
+$snow_max_tomorrow = 0;
+
    //current weather
    $weather_url = $openweather_url . "?lat=".$lat."&lon=".$lon."&exclude=minutely,daily,alerts&appid=".$openweather_api."&units=metric";
    //echo $weather_url . "<p>"; // debug only
@@ -75,6 +88,9 @@ $month_tomorrow = intval(date('n', $datetime_now + 86400));
                   $cycling_today_rain = cycling_index_check ($weather_arr['hourly'][$i]['rain']['1h'], '>', $rain,  $super_rain, $cycling_today_rain); //rain
                   $cycling_today_snow = cycling_index_check ($weather_arr['hourly'][$i]['snow']['1h'], '>', $snow,  $super_snow, $cycling_today_snow); //snow
                   
+                  $temp_min_today = min ($temp_min_today, $weather_arr['hourly'][$i]['temp']);
+                  $temp_max_today = max ($temp_max_today, $weather_arr['hourly'][$i]['temp']);
+                  
                   
                   $today_in = 1; //dnesek je jeste relevantni                                                              
                   //echo "today index  " . date('Y-m-d H:i:s', $weather_arr['hourly'][$i]['dt'])  . " > " . $weather_arr['hourly'][$i]['temp'] ." >" . $cycling_today_temp . "<br>";                  
@@ -91,6 +107,9 @@ $month_tomorrow = intval(date('n', $datetime_now + 86400));
                   $cycling_tomorrow_wind = cycling_index_check ($weather_arr['hourly'][$i]['wind_speed'], '>', $hi_wind,  $super_hi_wind, $cycling_tomorrow_wind); //wind
                   $cycling_tomorrow_rain = cycling_index_check ($weather_arr['hourly'][$i]['rain']['1h'], '>', $rain,  $super_rain, $cycling_tomorrow_rain); //rain
                   $cycling_tomorrow_snow = cycling_index_check ($weather_arr['hourly'][$i]['snow']['1h'], '>', $snow,  $super_snow, $cycling_tomorrow_snow); //snow 
+                  
+                  $temp_min_tomorrow = min ($temp_min_tomorrow, $weather_arr['hourly'][$i]['temp']);
+                  $temp_max_tomorrow = max ($temp_max_tomorrow, $weather_arr['hourly'][$i]['temp']);
                                                                                     
                   //echo "tomorrow index  " . date('Y-m-d H:i:s', $weather_arr['hourly'][$i]['dt'])  . " > " . $weather_arr['hourly'][$i]['temp'] ." >" . $cycling_tomorrow_temp . "<br>";                                                                                                                     
               } //tomorrow
@@ -177,7 +196,7 @@ echo "snow " . $cycling_tomorrow_snow . "<br>";
 ?>
 
 
-<table style="air">
+<table style="cycle" border=1>
 
 
 
@@ -209,35 +228,49 @@ echo "snow " . $cycling_tomorrow_snow . "<br>";
 <td>
 <img src="img/cycle/cycle_<?php echo $cycling_today_total ?>.png"  style=vertical-align:middle width=70>
 </td>
-<td><b><?php echo $cycling_today_total; ?></b></td>
+<td><b><center><?php echo $cycling_today_total; ?></center></b></td>
+
 <td>&nbsp;&nbsp;&nbsp;</td>
+
 <td>
 <img src="img/cycle/cycle_<?php echo $cycling_tomorrow_total ?>.png"  style=vertical-align:middle width=70>
 </td>
-<td><b><?php echo $cycling_tomorrow_total; ?></b></td> 
+<td><b><center><?php echo $cycling_tomorrow_total; ?></center></b></td> 
 </tr>
 
 <tr>
-<td colspan=6><hr style="height:3px;background-color:black;width=100%;"></td>
+<td colspan=7><hr style="height:3px;background-color:black;width=100%;"></td>
 </tr>
+
 
 <td>Teplota</td>
 <td>&nbsp;&nbsp;&nbsp;</td>
 <td>
 <?php if ($today_in == 1) { ?>
 <img src="img/cycle/cycle_<?php echo $cycling_today_temp ?>.png"  style=vertical-align:middle width=70>
-<?php } ?>
 </td>
 <td>
 <?php if ($today_in == 1) { ?>
-<b><?php echo $cycling_today_temp; ?></b>
-<?php } ?>
+<b><center><?php echo $cycling_today_temp; ?></center></b>
+<?php } //if today?>
+<br>
+max <?php echo round($temp_max_today,0) . "&degC"; ?>
+<br>
+min <?php echo round($temp_min_today,0) . "&degC"; ?>
+<?php } //if today ?>
 </td>
 <td>&nbsp;&nbsp;&nbsp;</td>
 <td>
 <img src="img/cycle/cycle_<?php echo $cycling_tomorrow_temp ?>.png"  style=vertical-align:middle width=70>
 </td>
-<td><b><?php echo $cycling_tomorrow_temp; ?></b></td> 
+<td>
+<center><b><?php echo $cycling_tomorrow_temp; ?></b></center>
+<br>
+max <?php echo round($temp_max_tomorrow,0) . "&degC"; ?>
+<br>
+min <?php echo round($temp_min_tomorrow,0) . "&degC"; ?>
+</td>
+ 
 </tr>
 
 <tr>
