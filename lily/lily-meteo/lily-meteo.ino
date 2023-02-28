@@ -10,7 +10,7 @@ TTGOClass *ttgo;
 const char *wifi_ap = "R_host";
 const char *wifi_pd = "badenka5";
 
-struct tm aktualni_cas;
+//struct tm aktualni_cas;
 //struct tm zobrazeny_cas;
 ESP32Time board_time(0); //no offset, board is syncd to local
 
@@ -51,27 +51,42 @@ void setup() {
 String actual_time("");
 String shown_time("XX");
 
+unsigned long last_epoch_daily = 0;
+unsigned long last_epoch_5min = 0;
+unsigned long current_epoch = 0;
+
 void loop() {
   
-  actual_time = board_time.getTime();
-  if (actual_time != shown_time)
+  current_epoch = board_time.getEpoch();
+
+  //todo: zmenit aby se to provedlo i tesne po pulnoci
+  if (current_epoch > last_epoch_daily - 86400)
   {
-  ttgo->tft->setTextSize(2);
-  ttgo->tft->setCursor(20, 20);
-  ttgo->tft->setTextColor(BCK_COLOR);
-  ttgo->tft->print(shown_time);
-
-  ttgo->tft->setCursor(20, 20);
-  ttgo->tft->setTextColor(FORESTGREEN);
-  ttgo->tft->print(actual_time);
-
-  shown_time = actual_time;
+    //do daily jobs
+    Serial.println("daily jobs");
+    sync_local_clock();
+    last_epoch_daily = current_epoch;
   }
 
-  Serial.println(board_time.getTime());
+  if (current_epoch > last_epoch_5min - 300)
+  {
+    //do 5min jobs - pocasi a vsechno
+    Serial.println("5min jobs");
+    last_epoch_5min = current_epoch;
+  }
 
+  //with every change
+  actual_time = board_time.getTime("%e %b, %R");
+  if (actual_time != shown_time)
+  {
+    print_time(shown_time, actual_time); 
+    shown_time = actual_time;
+  }
 
-  delay(1000);
+  Serial.println(actual_time);
+
+  //nejaky kratky cas
+  delay(100);
 }  //loop
 
 ///////////////////////
@@ -116,5 +131,21 @@ void sync_local_clock() {
   }
   time(&now);
   board_time.setTime(now);
+  return;
+}
+
+void print_time (String shown_time, String actual_time)
+{
+  //replace old time with background
+  ttgo->tft->setTextSize(2);
+  ttgo->tft->setCursor(320, 5);
+  ttgo->tft->setTextColor(BCK_COLOR);
+  ttgo->tft->print(shown_time);
+
+  //new time
+  ttgo->tft->setCursor(320, 5);
+  ttgo->tft->setTextColor(FORESTGREEN);
+  ttgo->tft->print(actual_time);
+
   return;
 }
