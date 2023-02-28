@@ -39,11 +39,11 @@ $air_content= file_get_contents($air_url, false, $context);
 $air_quality_arr = json_decode($air_content, true);
 
 
-/*
-echo "<pre>";
-var_dump($air_content);
-echo "</pre>";
-*/
+
+//echo "<pre>";
+//var_dump($air_content);
+//echo "</pre>";
+
 
 $site_properties = get_aq_data($chmu_stanice, $air_quality_arr['features']);
 $updated = strtotime($site_properties['updated_at']);
@@ -72,7 +72,13 @@ $pm2_5_i = match_range($pm2_5, $aqi_limits["pm2_5"]);
 $pm10_i = match_range($pm10, $aqi_limits["pm10"]);
 $so2_i = match_range($so2, $aqi_limits["so2"]);
 
+
 /*
+
+echo "o3 = " . $o3 . "<br>";
+echo "o3i = " . $o3_i . "<br>";
+
+
 echo "aqi = " . $aqi . "<br>";
 echo "no2 = " . $no2 . "<br>";
 echo "so2 = " . $so2 . "<br>";
@@ -120,7 +126,12 @@ echo "<p>konec";
 <td></td>
 <td><img src= "img/air_quality/air<?php echo $pm2_5_i;?>.png" width=70></td>
 <td></td>
-<td class="air"><b><?php echo $pm2_5;?> &#181;g/m<sup>3</sup></b><br>
+<td class="air"><b>
+<?php 
+if ($pm2_5 != "NA")
+   echo $pm2_5 . " &#181;g/m<sup>3</sup>";    
+?>
+</b><br>
 max <?php echo $aqi_limits["pm2_5"][0];?> &#181;g/m<sup>3</sup></td>
 </tr>
 
@@ -130,7 +141,12 @@ max <?php echo $aqi_limits["pm2_5"][0];?> &#181;g/m<sup>3</sup></td>
 <td></td> 
 <td><img src= "img/air_quality/air<?php echo $pm10_i;?>.png" width=70></td>
 <td></td>
-<td class="air"><b><?php echo $pm10;?> &#181;g/m<sup>3</sup></b><br>
+<td class="air"><b>
+<?php 
+if ($pm10 != "NA")
+   echo $pm10 . " &#181;g/m<sup>3</sup>";    
+?>
+</b><br>
 max <?php echo $aqi_limits["pm10"][0];?> &#181;g/m<sup>3</sup></td>
 </tr>
 
@@ -139,7 +155,12 @@ max <?php echo $aqi_limits["pm10"][0];?> &#181;g/m<sup>3</sup></td>
 <td></td>
 <td><img src= "img/air_quality/air<?php echo $no2_i;?>.png" width=70></td>
 <td></td>
-<td class="air"><b><?php echo $no2;?> &#181;g/m<sup>3</sup></b><br>
+<td class="air"><b>
+<?php 
+if ($no2 != "NA")
+   echo $no2 . " &#181;g/m<sup>3</sup>";    
+?>
+</b><br>
 max <?php echo $aqi_limits["no2"][0];?> &#181;g/m<sup>3</sup></td>
 </tr>
 
@@ -148,7 +169,13 @@ max <?php echo $aqi_limits["no2"][0];?> &#181;g/m<sup>3</sup></td>
 <td></td>
 <td><img src= "img/air_quality/air<?php echo $o3_i;?>.png" width=70></td>
 <td></td>
-<td class="air"><b><?php echo $o3;?> &#181;g/m<sup>3</sup></b><br>
+<td class="air"><b>
+<?php 
+if ($o3 != "NA")
+   echo $o3 . " &#181;g/m<sup>3</sup>";    
+?>
+ </b><br>
+ 
 max <?php echo $aqi_limits["o3"][0];?> &#181;g/m<sup>3</sup></td>
 </tr>
 
@@ -157,7 +184,12 @@ max <?php echo $aqi_limits["o3"][0];?> &#181;g/m<sup>3</sup></td>
 <td></td>
 <td><img src= "img/air_quality/air<?php echo $so2_i;?>.png" width=70></td>
 <td></td>
-<td class="air"><b><?php echo $so2;?> &#181;g/m<sup>3</sup></b><br>
+<td class="air"><b>
+<?php 
+if ($so2 != "NA")
+   echo $so2 . " &#181;g/m<sup>3</sup>";    
+?>
+</b><br>
 max <?php echo $aqi_limits["so2"][0];?> &#181;g/m<sup>3</sup></td>
 </tr>
 
@@ -174,3 +206,4 @@ max <?php echo $aqi_limits["so2"][0];?> &#181;g/m<sup>3</sup></td>
 
 </body>
 </html>
+

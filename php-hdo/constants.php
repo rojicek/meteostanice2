@@ -53,6 +53,7 @@
 $air_url = "https://api.golemio.cz/v2/airqualitystations/";
 $openweather_url = 'https://api.openweathermap.org/data/3.0/onecall';
 
-
+//nejak nefunguje - je to zadratovane
+//$na = "NA";
 
 ?>

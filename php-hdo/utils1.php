@@ -1,5 +1,7 @@
 <?php
 
+
+
 function next_hdo($intervals)
 {
   $hdo = array();
@@ -182,13 +184,17 @@ function next_hdo_intervals($intervals)
 
 function match_range($value, $arr)
 {
- for ($i=0; $i<count($arr); $i++)
- {
-  if ($value <= $arr[$i])
-    {
-      return $i+1;
-    } //
- }//for
+ 
+ if ($value == "NA")
+    return 0;
+ else
+   for ($i=0; $i<count($arr); $i++)
+   {
+    if ($value <= $arr[$i])
+      {
+        return $i+1;
+      } //
+   }//for
  
  //zbyva posledni
  return count($arr);
@@ -215,13 +221,13 @@ function get_aq_data($site, $data_arr)
 
 ////////////////////////////////
 function get_component($comp, $components)
-{
+{  
   for ($i=0; $i<count($components); $i++)
    {
     if (strtolower($components[$i]['type']) == strtolower($comp))
         return $components[$i]['averaged_time']['value'];    
    }
-   return -1; //not found
+   return "NA"; //not found
 }
 
 
