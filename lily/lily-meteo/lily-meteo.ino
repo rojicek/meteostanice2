@@ -59,23 +59,23 @@ void loop() {
   
   current_epoch = board_time.getEpoch();
 
-  //todo: zmenit aby se to provedlo i tesne po pulnoci
-  if (current_epoch > last_epoch_daily - 86400)
+  if (current_epoch > last_epoch_daily + 86400)
   {
     //do daily jobs
     Serial.println("daily jobs");
     sync_local_clock();
+    //todo: obnov HDO
     last_epoch_daily = current_epoch;
   }
 
-  if (current_epoch > last_epoch_5min - 300)
+  if (current_epoch > last_epoch_5min + 300) //todo: nebo aspon 1 min a v 1. min po pulnoci
   {
     //do 5min jobs - pocasi a vsechno
     Serial.println("5min jobs");
     last_epoch_5min = current_epoch;
   }
 
-  //with every change
+  //with every change (time only)
   actual_time = board_time.getTime("%e %b, %R");
   if (actual_time != shown_time)
   {
@@ -83,7 +83,9 @@ void loop() {
     shown_time = actual_time;
   }
 
-  Serial.println(actual_time);
+
+  // todo: asi odstranit
+  // Serial.println(actual_time);
 
   //nejaky kratky cas
   delay(100);
