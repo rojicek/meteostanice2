@@ -28,8 +28,9 @@
  $rain = 0.5;
  $super_rain = 1.5;
  $snow = 0.5;
- $super_snow = 1.5;
+ $super_snow = 2;
  
+ //pro trend
  $small_temp_diff = 2;
  $big_temp_diff = 6;
  

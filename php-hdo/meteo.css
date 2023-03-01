@@ -52,3 +52,14 @@ a.cas:link, a.cas:visited, a.cas:hover, a.cas:active
  color:#000000;
  text-decoration: none;
 }
+
+div.cycle_key
+{
+ font-weight: bold;
+ text-align: center;
+}
+div.cycle
+{
+ font-weight: normal;
+ text-align: center;
+}
