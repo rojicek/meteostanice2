@@ -137,6 +137,27 @@ $snow_max_tomorrow = 0;
    if  ($current_time > $sunset+3600) //hodina po zapadu slunce
       $cycling_today_sun = max($cycling_today_sun, 3);
 
+  // cas do slunce
+  //umyslne opakuji ify
+  $sun_seconds = 0; //default
+  if ($current_time < $sunrise)
+  {
+    $cycling_sun_sign = "sunrise"; 
+    $sun_seconds = $sunrise - $current_time;   
+  } 
+  elseif ($current_time < $sunset) 
+  {
+     $cycling_sun_sign = "sunset";
+     $sun_seconds = $sunset - $current_time;       
+  }
+  else
+  { //poz apadu
+    $cycling_sun_sign = "sunrise"; //dalsi den (trochu nepresne, protoze dnesni vychad, ale to je jedno)
+    $sun_seconds = 86400-($current_time - $sunrise);
+  }
+         
+    
+   $cycling_sun = sprintf('%d:%02d', ($sun_seconds/ 3600),($sun_seconds/ 60 % 60));
                            
  }//weather content
  
@@ -173,6 +194,8 @@ $snow_max_tomorrow = 0;
         $cycling_today_aqi = max($cycling_today_aqi, 3);
                         
    } //air ok
+   
+   
 
 //total values
 //overall
@@ -199,10 +222,12 @@ echo "wind " . $cycling_tomorrow_wind . "<br>";
 echo "rain " . $cycling_tomorrow_rain . "<br>";
 echo "snow " . $cycling_tomorrow_snow . "<br>";
 */
+
+
 ?>
 
 
-<table style="cycle" border=1>
+<table style="cycle">
 
 
 
@@ -220,15 +245,10 @@ echo "snow " . $cycling_tomorrow_snow . "<br>";
 <td colspan=2 style="text-align: center;">
 <b>Zítra</b>
 </td>
- 
 </tr>
 
 
-
 <tr>
-
-
-
 <td>Celkově</td>
 <td>&nbsp;&nbsp;&nbsp;</td>
 <td>
@@ -277,6 +297,11 @@ echo "snow " . $cycling_tomorrow_snow . "<br>";
 </tr>
 
 <tr>
+<td colspan=7><hr style="height:1px;background-color:black;width=100%;"></td>
+</tr>
+
+
+<tr>
 <td>Vítr</td>
 <td>&nbsp;&nbsp;&nbsp;</td>
 <td>
@@ -302,6 +327,9 @@ echo "snow " . $cycling_tomorrow_snow . "<br>";
 </td> 
 </tr>
 
+<tr>
+<td colspan=7><hr style="height:1px;background-color:black;width=100%;"></td>
+</tr>
 
 <tr>
 <td>Déšť</td>
@@ -330,6 +358,10 @@ echo "snow " . $cycling_tomorrow_snow . "<br>";
 </tr>
 
 <tr>
+<td colspan=7><hr style="height:1px;background-color:black;width=100%;"></td>
+</tr>
+
+<tr>
 <td>Sníh</td>
 <td>&nbsp;&nbsp;&nbsp;</td>
 <td>
@@ -355,6 +387,9 @@ echo "snow " . $cycling_tomorrow_snow . "<br>";
 </td> 
 </tr>
 
+<tr>
+<td colspan=7><hr style="height:1px;background-color:black;width=100%;"></td>
+</tr>
 
 <tr>
 <td>Vzduch</td>
@@ -363,11 +398,16 @@ echo "snow " . $cycling_tomorrow_snow . "<br>";
 <img src="img/cycle/cycle_<?php echo $cycling_today_aqi ?>.png"  style=vertical-align:middle width=70>
 </td>
 <td>
-<div class="cycle_key"><?php echo $cycling_today_aqi; ?></div>
+<div class="cycle_key"><?php echo $cycling_today_aqi; ?></div><br>
+<div class="cycle"><?php echo $aqi; ?></div>
 </td>
 <td>&nbsp;&nbsp;&nbsp;</td>
 <td></td>
 <td></td> 
+</tr>
+
+<tr>
+<td colspan=7><hr style="height:1px;background-color:black;width=100%;"></td>
 </tr>
 
 <tr>
@@ -378,6 +418,10 @@ echo "snow " . $cycling_tomorrow_snow . "<br>";
 </td>
 <td>
 <div class="cycle_key"><?php echo $cycling_today_sun; ?></div>
+<br>
+<div class="cycle">
+<img src = "img/sun/<?php echo $cycling_sun_sign; ?>.png" width=45 style="vertical-align:middle"><?php echo $cycling_sun; ?>
+</div>
 </td>
 <td>&nbsp;&nbsp;&nbsp;</td>
 <td></td>
@@ -388,3 +432,6 @@ echo "snow " . $cycling_tomorrow_snow . "<br>";
 
 </body>
 </html>
+
+
+
