@@ -231,6 +231,7 @@ void update_meteo() {
   http.begin(url.c_str());
 
   int httpResponseCode = http.GET();
+  //Serial.println("Meteo response: " + String(httpResponseCode));
   if (httpResponseCode == 200) {
     String payload = http.getString();
     DeserializationError error = deserializeJson(w_doc, payload);
@@ -257,7 +258,7 @@ void update_meteo() {
   }
 
   //Serial.println("update meteo get ok");
-  Serial.println("Response: " + String(httpResponseCode));
+  
   http.end();
 
 
