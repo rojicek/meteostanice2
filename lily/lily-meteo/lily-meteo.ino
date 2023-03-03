@@ -7,6 +7,7 @@
 #include "config.h"
 #include "time.h"
 
+#include <TJpg_Decoder.h>
 
 TTGOClass *ttgo;
 const char *wifi_ap = "R_host";
@@ -53,15 +54,20 @@ void setup() {
     Serial.println("SD initialization failed!");
     return;
   }
-  Serial.println("SD initialization done.");
-  Serial.println("Creating example.txt...");
-  myFile = SD.open("example.aaa", FILE_WRITE);
-  myFile.close();
-  if (SD.exists("example.aaa")) {
-    Serial.println("obrazek existuje");
-  } else {
-    Serial.println("obrazek neexistuje");
+  myFile = SD.open("/img/cycle/cycle_1.jpg");
+
+  //  myFile = SD.open("test.txt");
+  if (myFile) {
+    Serial.println("testovaci file: ok!!!!!!!!!!!!!");
   }
+  //printDirectory(myFile, 0);
+
+  uint16_t w = 2, h = 2;
+  TJpgDec.getSdJpgSize(&w, &h, "/img/cycle/cycle_1.jpg");
+  Serial.print("Width = ");
+  Serial.print(w);
+  Serial.print(", height = ");
+  Serial.println(h);
 
 
   /////////////////////////////////
@@ -105,7 +111,7 @@ unsigned long current_epoch = 0;
 
 void loop() {
 
-  return;  //skip all
+  //return;  //skip all
 
   current_epoch = board_time.getEpoch();
 
@@ -255,7 +261,7 @@ void made_up() {
   //Serial.println("made up");
 }
 
-void update_meteo() {
+int update_meteo() {
   //Serial.println("update meteo intro");
   StaticJsonDocument<1000> w_doc;
   HTTPClient http;
@@ -274,7 +280,7 @@ void update_meteo() {
     if (error) {
       Serial.print(F("deserializeJson() failed: "));
       Serial.println(error.f_str());
-      return;
+      return 0;
     }
 
 
@@ -296,6 +302,8 @@ void update_meteo() {
     ttgo->tft->print(temp);
   } else {
     Serial.printf("Meteo update failed, next time, response [%d]\n", httpResponseCode);
+    http.end();
+    return 0;
   }
 
   //Serial.println("update meteo get ok");
@@ -304,4 +312,35 @@ void update_meteo() {
 
 
   Serial.println("update meteo leaving");
+  return 1;
+}
+/////////////////////
+
+void printDirectory(File dir, int numTabs) {
+  // Begin at the start of the directory
+  dir.rewindDirectory();
+
+  while (true) {
+    File entry = dir.openNextFile();
+    if (!entry) {
+      // no more files
+      //Serial.println("**nomorefiles**");
+      break;
+    }
+    for (uint8_t i = 0; i < numTabs; i++) {
+      Serial.print('\t');  // we'll have a nice indentation
+    }
+    // Print the 8.3 name
+    Serial.print(entry.name());
+    // Recurse for directories, otherwise print the file size
+    if (entry.isDirectory()) {
+      Serial.println("/");
+      printDirectory(entry, numTabs + 1);
+    } else {
+      // files have sizes, directories do not
+      Serial.print("\t\t");
+      Serial.println(entry.size(), DEC);
+    }
+    entry.close();
+  }
 }
