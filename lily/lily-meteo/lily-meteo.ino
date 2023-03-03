@@ -1,14 +1,5 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
-/*
-#include <Arduino.h>
-
-#include <ESP8266WiFi.h>
-#include <ESP8266WiFiMulti.h>
-#include <ESP8266HTTPClient.h>
-
-#include <WiFiClientSecureBearSSL.h>
-*/
 
 #include <ESP32Time.h>
 #include <ArduinoJson.h>
@@ -50,16 +41,22 @@ void setup() {
   ttgo->openBL();
   ttgo->tft->setRotation(3);
 
-  // nastav presny cas
-  wifi_connect();
-
-  sync_local_clock();
-
-  wifi_disconnect();
+  int sync = 0;
+  while (sync == 0) {
+    // nastav presny cas
+    if (wifi_connect() == 1) {  //wifi ok
+      sync = 1;
+      sync_local_clock();
+      wifi_disconnect();
+    } else {
+      Serial.println("NEMAM REALNY CAS");
+      delay(10000);
+    }
+  }
 
   ttgo->tft->fillScreen(BCK_COLOR);
 
-  made_up();
+  made_up();  //jen docasne
 
   Serial.println("inicializovano");
 }
@@ -81,20 +78,39 @@ void loop() {
 
   if (current_epoch > last_epoch_daily + 86400) {
     //do daily jobs
+    if (wifi_connect() == 1) {  //kdyz se nepovede, tak nevadi, priste
 
-    sync_local_clock();
-    //todo: obnov HDO
+      //udelej vsechno
+      sync_local_clock();
+      update_meteo();
+
+      //todo: obnov HDO
+
+      last_epoch_daily = current_epoch;  //jen kdyz se to povedlo
+      last_epoch_5min = current_epoch;   //udelal jsem najednou i 5min i pocasi
+
+      wifi_disconnect();
+    } else {
+      Serial.println("Daily jobs failed, waiting 1 min");
+      last_epoch_daily = last_epoch_daily + 60;  //posunu posledni uspech jen trochu abych to zkusil brzo znova
+    }
+
     Serial.println("daily jobs done");
-    last_epoch_daily = current_epoch;
   }
 
   if (current_epoch > last_epoch_5min + 300)  //300 //todo: nebo aspon 1 min a v 1. min po pulnoci
   {
     //do 5min jobs - pocasi a vsechno
-    update_meteo();
+    if (wifi_connect() == 1) {  //kdyz se nepovede, tak nevadi, priste
 
-    Serial.println("5min jobs done");
-    last_epoch_5min = current_epoch;
+      update_meteo();
+
+      last_epoch_5min = current_epoch;
+      Serial.println("5min jobs done");
+    } else {
+      last_epoch_5min = last_epoch_5min + 60;  //pockam jen minutu
+      Serial.println("5min jobs failed, waiting 1 min");
+    }
   }
 
   //with every change (time only)
@@ -113,14 +129,24 @@ void loop() {
 }  //loop
 
 ///////////////////////
-void wifi_connect() {
+int wifi_connect() {
+
   Serial.print("wifi");
+
+  int max_tries = 30;
+
   WiFi.begin(wifi_ap, wifi_pd);
   while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
+    delay(1000);
     Serial.print(".");
+    max_tries--;
+    if (max_tries < 0) {
+      Serial.println("failed, giving up");
+      return 0;
+    }
   }
   Serial.println("ok");
+  return 1;
 }
 void wifi_disconnect() {
   WiFi.disconnect();
@@ -191,18 +217,17 @@ void made_up() {
   ttgo->tft->setTextColor(BLACK);
   ttgo->tft->print("12 C");
 
-  Serial.println("made up");
+  //Serial.println("made up");
 }
 
 void update_meteo() {
   //Serial.println("update meteo intro");
-  StaticJsonDocument<500> w_doc;
+  StaticJsonDocument<1000> w_doc;
   HTTPClient http;
   String url = "https://www.rojicek.cz/meteo/meteo-query.php?pwd=pa1e2";
 
   //Serial.println("update meteo 1");
-  wifi_connect();
-  //Serial.println("update meteo wifi ok");
+
   http.begin(url.c_str());
 
   int httpResponseCode = http.GET();
@@ -210,11 +235,18 @@ void update_meteo() {
     String payload = http.getString();
     DeserializationError error = deserializeJson(w_doc, payload);
 
+    if (error) {
+      Serial.print(F("deserializeJson() failed: "));
+      Serial.println(error.f_str());
+      return;
+    }
+
+
     //JsonArray weather = w_doc["weather"];
     const char *aqi = w_doc["weather"]["aqi"];
     //Serial.println(w_doc);
-    Serial.print("aqi: ");
-    Serial.println(aqi);
+    Serial.printf("aqi: %s\n", aqi);
+
 
 
     ttgo->tft->fillRect(200, 50, 50, 50, BCK_COLOR);
@@ -228,7 +260,6 @@ void update_meteo() {
   Serial.println("Response: " + String(httpResponseCode));
   http.end();
 
-  //Serial.println("update meteo get end");
-  wifi_disconnect();
+
   Serial.println("update meteo leaving");
 }
