@@ -15,6 +15,14 @@ const char *wifi_pd = "badenka5";
 ESP32Time board_time(0);  //no offset, board is syncd to local
 
 
+File myFile;
+
+// change this to match your SD shield or module;
+//     Arduino Ethernet shield: pin 4
+//     Adafruit SD shields and modules: pin 10
+//     Sparkfun SD shield: pin 8
+const int chipSelect = 4;
+
 #define COLOR565(r, g, b) ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3)
 
 const unsigned int FORESTGREEN = COLOR565(34, 139, 34);
@@ -34,6 +42,29 @@ int teplota = 14;
 
 void setup() {
   Serial.begin(115200);
+  while (!Serial) {
+    delay(100);
+  }
+  Serial.println("Serial initialized");
+
+  ///////////////////////////////
+  Serial.print("Initializing SD card...");
+  if (!SD.begin(chipSelect)) {
+    Serial.println("SD initialization failed!");
+    return;
+  }
+  Serial.println("SD initialization done.");
+  Serial.println("Creating example.txt...");
+  myFile = SD.open("example.aaa", FILE_WRITE);
+  myFile.close();
+  if (SD.exists("example.aaa")) {
+    Serial.println("obrazek existuje");
+  } else {
+    Serial.println("obrazek neexistuje");
+  }
+
+
+  /////////////////////////////////
 
   //nastav obrazovku
   ttgo = TTGOClass::getWatch();
@@ -74,6 +105,8 @@ unsigned long current_epoch = 0;
 
 void loop() {
 
+  return;  //skip all
+
   current_epoch = board_time.getEpoch();
 
   if (current_epoch > last_epoch_daily + 86400) {
@@ -85,17 +118,15 @@ void loop() {
       update_meteo();
 
       //todo: obnov HDO
-
+      wifi_disconnect();
       last_epoch_daily = current_epoch;  //jen kdyz se to povedlo
       last_epoch_5min = current_epoch;   //udelal jsem najednou i 5min i pocasi
+      Serial.println("daily jobs done");
 
-      wifi_disconnect();
     } else {
       Serial.println("Daily jobs failed, waiting 1 min");
       last_epoch_daily = last_epoch_daily + 60;  //posunu posledni uspech jen trochu abych to zkusil brzo znova
     }
-
-    Serial.println("daily jobs done");
   }
 
   if (current_epoch > last_epoch_5min + 300)  //300 //todo: nebo aspon 1 min a v 1. min po pulnoci
@@ -105,7 +136,10 @@ void loop() {
 
       update_meteo();
 
+
+      wifi_disconnect();
       last_epoch_5min = current_epoch;
+
       Serial.println("5min jobs done");
     } else {
       last_epoch_5min = last_epoch_5min + 60;  //pockam jen minutu
@@ -150,14 +184,15 @@ int wifi_connect() {
 }
 void wifi_disconnect() {
   WiFi.disconnect();
-  //asi nemusim cekat na odpojeni
-  /* 
-    while (WiFi.status() != WL_DISCONNECTED) {
-        delay(100);
-        Serial.println("+");
-    }
-  */
-  Serial.println("wifi disconnected");
+  int max_tries = 30;
+
+  while ((WiFi.status() != WL_DISCONNECTED) && (max_tries > 0)) {
+    delay(500);
+    max_tries--;
+    Serial.print("+");
+  }
+
+  Serial.println(" wifi disconnected (or not:)");
 }
 
 // Function that gets current epoch time
@@ -245,8 +280,12 @@ void update_meteo() {
 
     //JsonArray weather = w_doc["weather"];
     const char *aqi = w_doc["weather"]["aqi"];
+    const int temp = w_doc["weather"]["temp"];
+
+
     //Serial.println(w_doc);
     Serial.printf("aqi: %s\n", aqi);
+    Serial.printf("temp: %d\n", temp);
 
 
 
@@ -254,11 +293,13 @@ void update_meteo() {
     ttgo->tft->setTextSize(4);
     ttgo->tft->setCursor(200, 50);
     ttgo->tft->setTextColor(BLACK);
-    ttgo->tft->print(aqi);
+    ttgo->tft->print(temp);
+  } else {
+    Serial.printf("Meteo update failed, next time, response [%d]\n", httpResponseCode);
   }
 
   //Serial.println("update meteo get ok");
-  
+
   http.end();
 
 
