@@ -192,7 +192,7 @@ function match_range($value, $arr)
    {
     if ($value <= $arr[$i])
       {
-        return $i+1;
+        return $i;
       } //
    }//for
  
