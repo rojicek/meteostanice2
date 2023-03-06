@@ -135,10 +135,13 @@ $snow_max_tomorrow = 0;
      //musim spocitat i today index
      //min/max zalezi na poradi!
         $temp_now = $weather_arr['hourly'][0]['temp'];
+       
         $wind_max_today = $weather_arr['hourly'][0]['wind_speed'];                
         $rain_max_today = max(0, $weather_arr['hourly'][0]['rain']['1h']); //pokud neex tak zustane nula
         $snow_max_today = max(0, $weather_arr['hourly'][0]['snow']['1h']);         
         
+        
+        //aktualizuji celkovy index
         $cycling_today_temp = cycling_index_check ($temp_now, '<', $temp_limits[$month_today][1], $temp_limits[$month_today][0], $cycling_today_temp); //cold check
         $cycling_today_temp = cycling_index_check ($temp_now, '>', $temp_limits[$month_today][2],  $temp_limits[$month_today][3], $cycling_today_temp); //hot check
         
