@@ -38,15 +38,16 @@
  $lon = "14.4074581";
 
 
+ //todo: nejaky vyzkum, tohle je trochu kreativni
  $aqi_limits = array(
- "co"    => array(2000, 2500, 2501, 2502), //nepouzivam
- "no2"   => array(50, 100, 200, 400),
- "o3"    => array(60, 120, 180, 240),
- "pm10"  => array(25, 50, 90, 180),
- "pm2_5" => array(15, 30, 55, 110),
- "so2"   => array(40, 80, 380, 800),
- "no"    => array(2000, 2500, 2501, 2502), //nepouzivam
- "nh3"   => array(1000, 1100, 1200, 1300) //nepouzivam
+ "co"    => array(2000, 2500, 2501, 2502, 2503), //nepouzivam
+ "no2"   => array(50, 100, 200, 3000, 400),
+ "o3"    => array(60, 85, 105, 130, 250),
+ "pm10"  => array(30, 60, 90, 180, 250),
+ "pm2_5" => array(20, 35, 60, 110, 250),
+ "so2"   => array(40, 80, 250, 380, 800),
+ "no"    => array(2000, 2500, 2501, 2502, 2503), //nepouzivam
+ "nh3"   => array(1000, 1100, 1200, 1300, 1400) //nepouzivam
  );
 
 

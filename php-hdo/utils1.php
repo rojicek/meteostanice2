@@ -185,19 +185,20 @@ function next_hdo_intervals($intervals)
 function match_range($value, $arr)
 {
  
+ 
  if ($value == "NA")
     return 0;
  else
    for ($i=0; $i<count($arr); $i++)
-   {
+   { 
     if ($value <= $arr[$i])
-      {
-        return $i;
+      {    
+        return $i+1;
       } //
    }//for
  
  //zbyva posledni
- return count($arr);
+ return count($arr)+1;
 }
 
 ////////////////////////////////

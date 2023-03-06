@@ -25,6 +25,7 @@ require_once 'constants.php';
 require_once 'utils1.php';
 
 
+//indexy pro ikony
 $datetime_now = time();
 $cycling_today_temp = 1;
 $cycling_today_rain = 1;
@@ -47,16 +48,23 @@ $current_time = time();
 $month_today =  intval(date('n', $datetime_now));
 $month_tomorrow = intval(date('n', $datetime_now + 86400));
 
+//rain/snow - pokud neexistuje, tak zustane nula (proto nedelam init -99)
 $temp_min_today = 99;
 $temp_max_today = -99;
-$wind_max_today = 0;
+$wind_max_today = -99;
 $rain_max_today = 0;
 $snow_max_today = 0;
+
+//pokud pouziju, tak prepisu
+$temp_now = -99;
+$wind_now = -99;
+$rain_now = 0;
+$snow_now = 0;
 
 
 $temp_min_tomorrow = 99;
 $temp_max_tomorrow = -99;
-$wind_max_tomorrow = 0;
+$wind_max_tomorrow = -99;
 $rain_max_tomorrow = 0;
 $snow_max_tomorrow = 0;
 
@@ -95,7 +103,7 @@ $snow_max_tomorrow = 0;
                   $snow_max_today = max ($snow_max_today, $weather_arr['hourly'][$i]['snow']['1h']);
                   
                   
-                  $today_in = 1; //dnesek je jeste relevantni                                                              
+                  //$today_in = 1; //dnesek je jeste relevantni                                                              
                   //echo "today index  " . date('Y-m-d H:i:s', $weather_arr['hourly'][$i]['dt'])  . " > " . $weather_arr['hourly'][$i]['temp'] ." >" . $cycling_today_temp . "<br>";                  
                                                                                                                                          
               } //today
@@ -111,6 +119,7 @@ $snow_max_tomorrow = 0;
                   $cycling_tomorrow_rain = cycling_index_check ($weather_arr['hourly'][$i]['rain']['1h'], '>', $rain,  $super_rain, $cycling_tomorrow_rain); //rain
                   $cycling_tomorrow_snow = cycling_index_check ($weather_arr['hourly'][$i]['snow']['1h'], '>', $snow,  $super_snow, $cycling_tomorrow_snow); //snow 
                   
+                  //min/max zalezi na poradi!
                   $temp_min_tomorrow = min ($temp_min_tomorrow, $weather_arr['hourly'][$i]['temp']);
                   $temp_max_tomorrow = max ($temp_max_tomorrow, $weather_arr['hourly'][$i]['temp']);
                   $wind_max_tomorrow = max ($wind_max_tomorrow, $weather_arr['hourly'][$i]['wind_speed']);
@@ -121,8 +130,26 @@ $snow_max_tomorrow = 0;
               } //tomorrow
 
           } //for hourly                            
+     
       
-
+    if ($today_in == 0)
+    { 
+     //po zapadu - vypisu jen aktualni hodnoty (at to neni prazdna tabulka)
+     //musim spocitat i today index
+     //min/max zalezi na poradi!
+        $temp_now = $weather_arr['hourly'][0]['temp'];
+        $wind_now = $weather_arr['hourly'][0]['wind'];                
+        $rain_now = max(0, $weather_arr['hourly'][0]['rain']['1h']); //pokud neex tak zustane nula
+        $snow_now = max(0, $weather_arr['hourly'][0]['snow']['1h']);         
+        
+        $cycling_today_temp = cycling_index_check ($temp_now, '<', $temp_limits[$month_today][1], $temp_limits[$month_today][0], $cycling_today_temp); //cold check
+        $cycling_today_temp = cycling_index_check ($temp_now, '>', $temp_limits[$month_today][2],  $temp_limits[$month_today][3], $cycling_today_temp); //hot check
+        
+        $cycling_today_wind = cycling_index_check ($wind_now, '>', $hi_wind,  $super_hi_wind, $cycling_today_wind); //wind
+        $cycling_today_rain = cycling_index_check ($rain_now, '>', $rain,  $super_rain, $cycling_today_rain); //rain
+        $cycling_today_snow = cycling_index_check ($snow_now, '>', $snow,  $super_snow, $cycling_today_snow); //snow
+                 
+    }
          
    //extra kontroly pro dnesek, jestli uz neni noc
    //too early today
@@ -272,15 +299,15 @@ echo "snow " . $cycling_tomorrow_snow . "<br>";
 <td>Teplota</td>
 <td>&nbsp;&nbsp;&nbsp;</td>
 <td>
-<?php if ($today_in == 1) { ?>
 <img src="img/cycle/cycle_<?php echo $cycling_today_temp ?>.png"  style=vertical-align:middle width=70>
-<?php } ?>
 </td>
 <td>
-<?php if ($today_in == 1) { ?>
 <div class="cycle_key"><?php echo $cycling_today_temp; ?></div>
 <br>
-<div class="cycle">&nbsp;<?php echo round($temp_min_today,0) . "&degC / " . round($temp_max_today,0) . "&degC"; ?></div>
+<?php if ($today_in == 1) { ?>
+<div class="cycle">&nbsp;<?php echo round($temp_min_today, 0) . "&degC / " . round($temp_max_today,0) . "&degC"; ?></div>
+<?php } else { ?>
+<div class="cycle">&nbsp;<?php echo round($temp_now, 0) . "&degC"; ?></div>
 <?php } ?>
 </td>
 <td>&nbsp;&nbsp;&nbsp;</td>
@@ -432,6 +459,7 @@ echo "snow " . $cycling_tomorrow_snow . "<br>";
 
 </body>
 </html>
+
 
 
 
