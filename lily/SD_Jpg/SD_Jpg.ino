@@ -7,10 +7,13 @@
 // to the SD card using you PC.
 
 // Include the jpeg decoder library
-#include <TJpg_Decoder.h>
+//#include <TJpg_Decoder.h>
 
 #include "config.h"
 #include "i.h"
+
+#define BIRDW 132  // bird width
+#define BIRDH 142
 
 // Include SD
 #define FS_NO_GLOBALS
@@ -20,6 +23,9 @@
 #endif
 
 #define mySD_CS 4
+#define drawPixel(a, b, c) \
+  ttgo->tft->setAddrWindow(a, b, a, b); \
+  ttgo->tft->pushColor(c)
 
 TTGOClass* ttgo;
 
@@ -36,7 +42,7 @@ TFT_eSPI tft = TFT_eSPI();         // Invoke custom library
 // This next function will be called during decoding of the jpeg file to
 // render each block to the TFT.  If you use a different TFT library
 // you will need to adapt this function to suit.
-
+/*
 bool tft_output(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t* bitmap) {
   // Stop further decoding as image is running off bottom of screen
   if (y >= ttgo->tft->height()) return 0;
@@ -50,7 +56,7 @@ bool tft_output(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t* bitmap) 
   // Return 1 to decode next block
   return 1;
 }
-
+*/
 
 void setup() {
   Serial.begin(115200);
@@ -65,7 +71,7 @@ void setup() {
   }
   Serial.println("\r\nSD Initialisation done.");
 */
-  uint16_t w = 0, h = 0;
+  //uint16_t w = 0, h = 0;
   //TJpgDec.getSdJpgSize(&w, &h, "/panda.jpg");
   //Serial.println("get SD img");
 
@@ -74,16 +80,45 @@ void setup() {
 
   //Serial.println(w);  //funguje pro sd i h
   //Serial.println(h);  //funguje pro sd i h
-  Serial.println(sizeof(ii));
+  //Serial.println(sizeof(ii));
 
 
   ttgo = TTGOClass::getWatch();
   ttgo->begin();
   ttgo->openBL();
-  ttgo->tft->setRotation(3);
+  //ttgo->tft->setRotation(1);
 
-  ttgo->tft->fillScreen(TFT_RED);
+  ttgo->tft->fillScreen(TFT_WHITE);
 
+  static short tmpx, tmpy;
+  unsigned char px;
+  long bird_x = 0;
+  long bird_y = 0;
+
+  long bird_ox = 0;
+  long bird_oy = 0;
+
+
+  tmpx = BIRDW - 1;
+  do {
+    px = bird_x + tmpx + BIRDW;
+    // clear bird at previous position stored in old_y
+    // we can't just erase the pixels before and after current position
+    // because of the non-linear bird movement (it would leave 'dirty' pixels)
+    tmpy = BIRDH - 1;
+    do {
+      drawPixel(px, bird_oy + tmpy, TFT_WHITE);
+    } while (tmpy--);
+    // draw bird sprite at new position
+    tmpy = BIRDH - 1;
+    do {
+      drawPixel(px, bird_y + tmpy, logo[tmpx + (tmpy * BIRDW)]);
+    } while (tmpy--);
+  } while (tmpx--);
+  // save position to erase bird on next draw
+
+
+  /*
   // The decoder must be given the exact name of the rendering function above
   TJpgDec.setCallback(tft_output);
   TJpgDec.setJpgScale(1);
@@ -97,7 +132,7 @@ void setup() {
 
 
   //TJpgDec.drawSdJpg(0, 0, "/panda.jpg");
-
+*/
 
   /*
   // Initialise the TFT
