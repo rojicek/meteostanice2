@@ -1,4 +1,5 @@
 //https://www.mischianti.org/images-to-byte-array-online-converter-cpp-arduino/
+//https://cloudconvert.com/svg-to-bmp
 
 #include "config.h"
 #include "extra.h"
@@ -27,39 +28,32 @@ void setup() {
 
   ttgo->tft->fillScreen(TFT_WHITE);
 
+  Serial.println("setup hotov");
+}
 
-  static short tmpx, tmpy;
-  unsigned char px;
-  long bird_x = 0;
-  long bird_y = 0;
-
-  long bird_ox = 0;
-  long bird_oy = 0;
+void loop() {
 
   for (int x = 0; x < IMGW; x++)
     for (int y = 0; y < IMGH; y++) {
       //plot
-      drawPixel(x, y, cervena[x+y*IMGW]);
+      drawPixel(x, y, slunicko[x + y * IMGW]);
     }
-/*
-  tmpx = IMGW - 1;
-  do {
-    px = bird_x + tmpx + IMGW;
-    // clear bird at previous position stored in old_y
-    // we can't just erase the pixels before and after current position
-    // because of the non-linear bird movement (it would leave 'dirty' pixels)
-    tmpy = IMGH - 1;
-    do {
-      drawPixel(px, bird_oy + tmpy, TFT_WHITE);
-    } while (tmpy--);
-    // draw bird sprite at new position
-    tmpy = IMGH - 1;
-    do {
-      drawPixel(px, bird_y + tmpy, cervena[tmpx + (tmpy * IMGW)]);
-    } while (tmpy--);
-  } while (tmpx--);
-*/
-  Serial.println("setup hotov");
-}
 
-void loop() {}
+  delay(2000);
+
+  for (int x = 0; x < IMGW; x++)
+    for (int y = 0; y < IMGH; y++) {
+      //plot
+      drawPixel(x, y, mrak[x + y * IMGW]);
+    }
+
+  delay(2000);
+
+  ttgo->tft->fillScreen(TFT_WHITE);
+
+  delay(2000);
+
+  ttgo->tft->fillScreen(TFT_BLUE);
+
+  delay(2000);
+}
