@@ -15,7 +15,8 @@
     array('type' => 'number', 'label' => 'sníh (mm/h)', 'role' => 'data'),
     array('type' => 'string', 'role' => 'style'),    
     array('type' => 'number', 'role' => 'annotation'),    
-    array('type' => 'number', 'label' => 'teplota', 'role' => 'data')      
+    array('type' => 'number', 'label' => 'teplota', 'role' => 'data'),
+    array('type' => 'string', 'label'=> 'ikona', 'role' => 'none')      
     );
 
 
@@ -77,7 +78,8 @@
                             array('v' => $snow), //snih
                             array('v' => "fill-color: #C5E2F7; stroke-width: ".$snow_stroke_width."; stroke-color:#000000 ; fill-opacity:".$snow_opa),
                             array('v' => $total_precipitation), //celkem anotace                            
-                            array('v' => $weather_arr['hourly'][$i]['temp']) //teplota                            
+                            array('v' => $weather_arr['hourly'][$i]['temp']), //teplota                            
+                            array('v' => $weather_arr['hourly'][$i]['weather'][0]['icon'] . '.svg') //ikona
                             );
             $rows[] = array('c' => $temp);  
         }//for hourly
