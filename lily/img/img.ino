@@ -1,5 +1,6 @@
 //https://www.mischianti.org/images-to-byte-array-online-converter-cpp-arduino/
 //https://cloudconvert.com/svg-to-bmp
+//http://www.rinkydinkelectronics.com/t_imageconverter565.php
 
 
 //http://www.rinkydinkelectronics.com/t_imageconverter565.php - TOHLE pouzivam
