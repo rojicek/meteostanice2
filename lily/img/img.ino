@@ -19,25 +19,15 @@
 File picFile;
 
 
-#define COLOR565(r, g, b) ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3)
-
-
-
-
+//#define COLOR565(r, g, b) ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3)
 
 #define drawPixel(a, b, c) \
   ttgo->tft->setAddrWindow(a, b, a, b); \
   ttgo->tft->pushColor(c)
 
 
-
-
 TTGOClass* ttgo;
 
-/* ok - obdelnik
-#define IMGW 200
-#define IMGH 100
-*/
 #define IMGW 150
 #define IMGH 150
 
@@ -81,7 +71,7 @@ void loop() {
 
   delay(2000);
 */
-  ttgo->tft->fillScreen(TFT_WHITE);
+  //ttgo->tft->fillScreen(TFT_WHITE);
 
   delay(2000);
 
@@ -104,7 +94,6 @@ void loop() {
         char rgb2 = picFile.read();
 
         drawPixel(j, i, 256 * rgb1 + rgb2);
-
       }
     }
 
@@ -115,5 +104,29 @@ void loop() {
   } else {
     Serial.println("soubor nenalezen ...?");
   }
+
+  ttgo->tft->setTextSize(5);
+  ttgo->tft->setCursor(200, 100);
+  ttgo->tft->setTextColor(TFT_BLACK);
+  ttgo->tft->print("Ahoj 6C");
+
+  ttgo->tft->setTextSize(4);
+  ttgo->tft->setCursor(200, 150);
+  ttgo->tft->setTextColor(TFT_BLACK);
+  ttgo->tft->print("ctyrka");
+
+  ttgo->tft->setTextSize(3);
+  ttgo->tft->setCursor(200, 200);
+  ttgo->tft->setTextColor(TFT_BLACK);
+  ttgo->tft->print("trojka");
+
+
+  ttgo->tft->setTextSize(2);
+  ttgo->tft->setCursor(200, 250);
+  ttgo->tft->setTextColor(TFT_BLACK);
+  ttgo->tft->print("dvojka");
+
+
+
   delay(2000);
 }
