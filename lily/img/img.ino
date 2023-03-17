@@ -10,6 +10,13 @@
 #include "config.h"
 #include "extra.h"
 
+//#include "Ubuntubold.c"
+#include "RREFont.h"
+
+RREFont font;
+
+#include "rre_ubuntu_32.h"
+
 #include <SPI.h>
 #include <SD.h>
 //#include <Streaming.h>
@@ -104,6 +111,18 @@ void loop() {
   } else {
     Serial.println("soubor nenalezen ...?");
   }
+
+  /*
+  ttgo->tft->loadFont("_NSBold15.vlw");
+  ttgo->tft->setTextSize(4);
+  ttgo->tft->setTextColor(TFT_GREEN);
+  ttgo->tft->drawString("Meteorologicka stanice", 10, 250);
+*/
+  //font.setFont(&rre_ubuntu_32);
+ // font.setCR(0);
+  //font.setColor(TFT_BLUE);
+ // font.printStr(0, font.getHeight() * 0, name);
+ // font.printStr(0, font.getHeight() * 1, "0123456789:;.-+*()!?/");
 
   ttgo->tft->setTextSize(5);
   ttgo->tft->setCursor(200, 100);
