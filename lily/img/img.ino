@@ -10,12 +10,17 @@
 #include "config.h"
 #include "extra.h"
 
+#include "font1.h"
+#define GFXFF 1
+
+#define MYFONT32 &myFont32pt8b
+
 //#include "Ubuntubold.c"
-#include "RREFont.h"
+//#include "RREFont.h"
 
-RREFont font;
+//RREFont font;
 
-#include "rre_ubuntu_32.h"
+//#include "rre_ubuntu_32.h"
 
 #include <SPI.h>
 #include <SD.h>
@@ -119,11 +124,17 @@ void loop() {
   ttgo->tft->drawString("Meteorologicka stanice", 10, 250);
 */
   //font.setFont(&rre_ubuntu_32);
- // font.setCR(0);
+  // font.setCR(0);
   //font.setColor(TFT_BLUE);
- // font.printStr(0, font.getHeight() * 0, name);
- // font.printStr(0, font.getHeight() * 1, "0123456789:;.-+*()!?/");
+  // font.printStr(0, font.getHeight() * 0, name);
+  // font.printStr(0, font.getHeight() * 1, "0123456789:;.-+*()!?/");
 
+  ttgo->tft->setFreeFont(MYFONT32);  // Select the font 
+  //ttgo->tft->setTextSize(3);
+  ttgo->tft->setCursor(200, 250);
+  ttgo->tft->setTextColor(TFT_BLACK);
+  ttgo->tft->print("123 dvojka");
+  /*
   ttgo->tft->setTextSize(5);
   ttgo->tft->setCursor(200, 100);
   ttgo->tft->setTextColor(TFT_BLACK);
@@ -144,6 +155,8 @@ void loop() {
   ttgo->tft->setCursor(200, 250);
   ttgo->tft->setTextColor(TFT_BLACK);
   ttgo->tft->print("dvojka");
+*/
+
 
 
 
