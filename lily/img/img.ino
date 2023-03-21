@@ -7,14 +7,23 @@
 
 //https://javl.github.io/image2cpp/
 
+//fonty: postup - ... nefunguje :)
+// vybrat ttf font: https://fonts.google.com/noto/specimen/Noto+Sans?noto.query=Noto+Sans
+// nahrat na https://rop.nl/truetype2gfx/
+// vybrat si velikost
+// udelat h + pouzit jak tady
+// kazda velikost je jiny font
+
 #include "config.h"
 #include "extra.h"
 
 #include "NotoSansBold15.h" //ok
-#include "my_u.h"
+#include "NotoSans_Medium20pt7b.h" //muj font
+
 
 #define AA_FONT_SMALL NotoSansBold15
-//#define AA_FONT_SMALL myU - nefunguje
+///#define AA_FONT_SMALL NotoSans_Medium20pt7bBitmaps
+
 
 //#include "font1.h"
 //#define GFXFF 1
