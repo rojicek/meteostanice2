@@ -10,10 +10,16 @@
 #include "config.h"
 #include "extra.h"
 
-#include "font1.h"
-#define GFXFF 1
+#include "NotoSansBold15.h" //ok
+#include "my_u.h"
 
-#define MYFONT32 &myFont32pt8b
+#define AA_FONT_SMALL NotoSansBold15
+//#define AA_FONT_SMALL myU - nefunguje
+
+//#include "font1.h"
+//#define GFXFF 1
+
+//#define MYFONT32 &myFont32pt8b
 
 //#include "Ubuntubold.c"
 //#include "RREFont.h"
@@ -117,6 +123,18 @@ void loop() {
     Serial.println("soubor nenalezen ...?");
   }
 
+
+  ttgo->tft->loadFont(AA_FONT_SMALL);
+  ttgo->tft->setTextSize(2);
+  ttgo->tft->setTextColor(TFT_BLACK);
+  ttgo->tft->setCursor(200, 100);
+  ttgo->tft->print("123 dvojka");
+
+  ttgo->tft->setTextSize(3);
+  ttgo->tft->setTextColor(TFT_BLACK);
+  ttgo->tft->setCursor(200, 150);
+  ttgo->tft->print("123 trojka");
+
   /*
   ttgo->tft->loadFont("_NSBold15.vlw");
   ttgo->tft->setTextSize(4);
@@ -129,11 +147,11 @@ void loop() {
   // font.printStr(0, font.getHeight() * 0, name);
   // font.printStr(0, font.getHeight() * 1, "0123456789:;.-+*()!?/");
 
-  ttgo->tft->setFreeFont(MYFONT32);  // Select the font 
+  //ttgo->tft->setFreeFont(MYFONT32);  // Select the font
   //ttgo->tft->setTextSize(3);
-  ttgo->tft->setCursor(200, 250);
-  ttgo->tft->setTextColor(TFT_BLACK);
-  ttgo->tft->print("123 dvojka");
+  //ttgo->tft->setCursor(200, 250);
+  //ttgo->tft->setTextColor(TFT_BLACK);
+  //ttgo->tft->print("123 dvojka");
   /*
   ttgo->tft->setTextSize(5);
   ttgo->tft->setCursor(200, 100);
