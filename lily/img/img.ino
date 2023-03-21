@@ -13,6 +13,7 @@
 // vybrat si velikost
 // udelat h + pouzit jak tady
 // kazda velikost je jiny font
+// pridat #include <pgmspace.h>
 
 #include "config.h"
 #include "extra.h"
@@ -21,8 +22,8 @@
 #include "NotoSans_Medium20pt7b.h" //muj font
 
 
-#define AA_FONT_SMALL NotoSansBold15
-///#define AA_FONT_SMALL NotoSans_Medium20pt7bBitmaps
+//#define AA_FONT_SMALL NotoSansBold15
+#define AA_FONT_SMALL NotoSans_Medium20pt7bBitmaps
 
 
 //#include "font1.h"
