@@ -15,21 +15,34 @@
 // kazda velikost je jiny font
 // pridat #include <pgmspace.h>
 
+//postup - asi ok
+// processing - vybrat font a ulozit jako wlv
+//https://wiki.seeedstudio.com/Wio-Terminal-LCD-Anti-aliased-Fonts/
+//vlw prevest na byty: https://tomeko.net/online_tools/file_to_hex.php?lang=en
+
 #include "config.h"
-#include "extra.h"
+// #include "extra.h" obrazek primo v .h
 
-#include "NotoSansBold15.h" //ok
-#include "NotoSans_Medium20pt7b.h" //muj font
+#include "NotoSansBold15.h"  //ok
+#include "NotoSansBold36.h"
+
+#include "mujfont1.h"
+#include "mujfont2.h"
 
 
-//#define AA_FONT_SMALL NotoSansBold15
-#define AA_FONT_SMALL NotoSans_Medium20pt7bBitmaps
 
+#define AA_FONT_SMALL NotoSansBold15
+//#define MUJFONT1 NotoSansBold36 //ok
+#define MUJFONT1 mujfont1
+#define MUJFONT2 mujfont2
+//mujfont1
+//#define AA_FONT_SMALL NotoSans_Medium20pt7bBitmaps
+//#define MYFONT &FreeSans20pt7bBitmaps
 
 //#include "font1.h"
 //#define GFXFF 1
 
-//#define MYFONT32 &myFont32pt8b
+#define MYFONT32 &myFont32pt8b
 
 //#include "Ubuntubold.c"
 //#include "RREFont.h"
@@ -134,16 +147,25 @@ void loop() {
   }
 
 
-  ttgo->tft->loadFont(AA_FONT_SMALL);
+  ttgo->tft->loadFont(AA_FONT_SMALL);  // ok pro NotoSansBold15
+
   ttgo->tft->setTextSize(2);
   ttgo->tft->setTextColor(TFT_BLACK);
   ttgo->tft->setCursor(200, 100);
   ttgo->tft->print("123 dvojka");
 
-  ttgo->tft->setTextSize(3);
+  ////////////
+  ttgo->tft->loadFont(MUJFONT1);
+  //ttgo->tft->setTextSize(3);
   ttgo->tft->setTextColor(TFT_BLACK);
   ttgo->tft->setCursor(200, 150);
-  ttgo->tft->print("123 trojka");
+  ttgo->tft->print("EXTRA font 20");
+
+  ttgo->tft->loadFont(MUJFONT2);
+  //ttgo->tft->setTextSize(3);
+  ttgo->tft->setTextColor(TFT_BLACK);
+  ttgo->tft->setCursor(200, 200);
+  ttgo->tft->print("EXTRA font 40");
 
   /*
   ttgo->tft->loadFont("_NSBold15.vlw");
