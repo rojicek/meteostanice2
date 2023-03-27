@@ -8,6 +8,8 @@
 
 //fonty
 #include "ubuntu_reg.h"
+#include "ubuntu_bold.h"
+
 //#include "ubuntu_light.h "
 
 TTGOClass* ttgo;
@@ -36,13 +38,23 @@ void setup() {
 
   //umisti bloky a texty
   //meteoikona
-  drawRect(10, 10, 150, 150, TFT_RED);
+  drawRect(30, 10, 150, 150, TFT_RED);
 
   //cas
   ttgo->tft->loadFont(ubuntu_reg_25);
   ttgo->tft->setTextColor(TFT_BLACK);
   ttgo->tft->setCursor(300, 10);
   ttgo->tft->print("Aug 29, 18:58");
+
+  ttgo->tft->loadFont(ubuntu_bold_45);
+  ttgo->tft->setTextColor(TFT_BLACK);
+  ttgo->tft->setCursor(10, 170);
+  ttgo->tft->print("15°C");
+
+  ttgo->tft->loadFont(ubuntu_reg_30);
+  ttgo->tft->setTextColor(TFT_BLACK);
+  ttgo->tft->setCursor(120, 180);
+  ttgo->tft->print("25°C");
 }
 
 
