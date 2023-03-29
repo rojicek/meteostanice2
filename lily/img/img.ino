@@ -124,8 +124,8 @@ void loop() {
 
   // delay(2000);
 
-  //picFile = SD.open("/test.raw", FILE_READ);
-  picFile = SD.open("/layout-top.raw", FILE_READ);
+  picFile = SD.open("/test.raw", FILE_READ);
+ // picFile = SD.open("/layout-top.raw", FILE_READ);
 
 
   if (picFile) {
@@ -142,10 +142,11 @@ void loop() {
 
     int barva;
 
-    for (int i = 0; i < 160; i++) {
+    for (int i = 0; i < 150; i++) {
+      Serial.print("radek:");
       Serial.println(i);
 
-      for (int j = 0; j < 480; j++) {
+      for (int j = 0; j < 150; j++) {
 
         //drawPixel(j, i, TFT_BLACK);
 
@@ -160,14 +161,14 @@ void loop() {
         //Serial.print("=");
         //Serial.println(256 * rgb1 + rgb2);
 
-        //drawPixel(j, i, barva);
+        drawPixel(j, i, barva);
 
         //if ((256 * rgb1 + rgb2) > 0) {
-        if (barva < 65000) {
+       /* if (barva < 65000) {
           drawPixel(j, i, TFT_BLACK);
         } else {
           drawPixel(j, i, TFT_WHITE);
-        }
+        }*/
       }
     }
 
@@ -182,7 +183,7 @@ void loop() {
 
   Serial.println("konec");
   //////////////////////////////////////////////
-
+/*
   picFile2 = SD.open("/layout-bottom.raw", FILE_READ);
 
 
@@ -237,7 +238,7 @@ void loop() {
   } else {
     Serial.println("soubor 2  nenalezen ...?");
   }
-
+*/
   Serial.println("konec");
 
 
@@ -306,5 +307,5 @@ void loop() {
 
 
 
-  delay(99999999);
+  delay(20000);
 }
