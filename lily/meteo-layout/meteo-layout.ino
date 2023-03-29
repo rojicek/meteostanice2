@@ -1,6 +1,3 @@
-// https://tomeko.net/online_tools/file_to_hex.php?lang=en
-//NEPOUZIVAT SMOOTH
-
 //https://www.mischianti.org/images-to-byte-array-online-converter-cpp-arduino/
 //https://cloudconvert.com/svg-to-bmp
 //http://www.rinkydinkelectronics.com/t_imageconverter565.php
@@ -24,16 +21,16 @@
 //vlw prevest na byty: https://tomeko.net/online_tools/file_to_hex.php?lang=en
 
 #include "config.h"
-// #include "extra.h" obrazek primo v .h
-
 
 
 #include <SPI.h>
 #include <SD.h>
+//#include <Streaming.h>
 
+//#define BUFFPIXEL 20
 
 File picFile;
-
+File picFile2;
 
 
 //#define COLOR565(r, g, b) ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3)
@@ -45,26 +42,16 @@ File picFile;
 
 TTGOClass* ttgo;
 
-//ok#define IMGW 150
-//ok#define IMGH 150
-
-//#define IMGW 480
-//#define IMGH 150
-#define drawPixel(a, b, c) \
-  ttgo->tft->setAddrWindow(a, b, a, b); \
-  ttgo->tft->pushColor(c)
-/////////////////////////////////////////////////////////////////////////////
-/*
 void drawPic(int x, int y, int h, int w, String pic) {
   //File picFile = SD.open("/layout/sunset.raw", FILE_READ);
   picFile = SD.open("/test.raw", FILE_READ);
 
-  Serial.print("pic:");
+  Serial.print("pic: ");
   Serial.println(picFile);
 
   if (picFile) {
-    for (int i = 0; i < 150; i++) {
-      for (int j = 0; j < 150; j++) {
+    for (int i = x; i < x + h; i++) {
+      for (int j = y; j < y + w; j++) {
 
         char rgb1 = picFile.read();
         char rgb2 = picFile.read();
@@ -74,14 +61,24 @@ void drawPic(int x, int y, int h, int w, String pic) {
     }
 
     close(picFile);
+    Serial.println("closing image");
+
   } else {
     Serial.println("cant read image");
     //Serial.println(pic);
   }
 }
-*/
+
+
 void setup() {
   Serial.begin(115200);
+
+  ttgo = TTGOClass::getWatch();
+  ttgo->begin();
+  ttgo->openBL();
+  ttgo->tft->setRotation(3);
+
+  ttgo->tft->fillScreen(TFT_WHITE);
 
   //SD karta
   if (!SD.begin(4)) {
@@ -91,99 +88,24 @@ void setup() {
   }
   Serial.println("initialization done.");
 
-  delay(2000);
+  delay(1000);
+  //drawPic(0, 0, 150, 150, "eee");
 
-
-  ttgo = TTGOClass::getWatch();
-  ttgo->begin();
-  ttgo->openBL();
-  ttgo->tft->setRotation(3);
-
-  ttgo->tft->fillScreen(TFT_RED);
-  /*
-  ttgo->tft->loadFont(ubuntu_regular_18);
-  ttgo->tft->setTextColor(TFT_BLACK);
-  ttgo->tft->setCursor(15, 15);
-  ttgo->tft->print("6:00");
-*/
-  //printText()
-  //drawPic(15, 15, 35, 28, "/layout/sunset.raw");
-  //drawPic(15, 15, 150, 150, "/layout/sunset.raw");
-
-
-
-  //cas
-  /*
-  ttgo->tft->loadFont(ubuntu_reg_25);
-  ttgo->tft->setTextColor(TFT_BLACK);
-  ttgo->tft->setCursor(300, 10);
-  ttgo->tft->print("Aug 29, 18:58");
-
-  ttgo->tft->loadFont(ubuntu_bold_45);
-  ttgo->tft->setTextColor(TFT_BLACK);
-  ttgo->tft->setCursor(10, 170);
-  ttgo->tft->print("15°C");
-
-  ttgo->tft->loadFont(ubuntu_reg_30);
-  ttgo->tft->setTextColor(TFT_BLACK);
-  ttgo->tft->setCursor(120, 180);
-  ttgo->tft->print("25°C");
-  */
+  Serial.println("setup hotov");
+  delay(3000);
 }
 
-
-
 void loop() {
+ ttgo->tft->fillScreen(TFT_WHITE);
+  int x = random(0, 50);
+  int y = random(0, 50);
+  Serial.println("ping 1");
+  drawPic(0, 20, 150, 150, "eee");
+  Serial.println("ping 2");
 
-  picFile = SD.open("/test.raw", FILE_READ);
-  // picFile = SD.open("/layout-top.raw", FILE_READ);
-
-
-  if (picFile) {
-    Serial.println("budu cist z karty");
-
-    //int height = 480;
-    //int width = 320;
-
-    // int height = 150;
-    //int width = 150;
-
-    char rgb1;
-    char rgb2;
-
-    int barva;
-
-    for (int i = 0; i < 150; i++) {
+  drawPic(0, 0, 150, 150, "eee");
 
 
-      for (int j = 0; j < 150; j++) {
 
-        //drawPixel(j, i, TFT_BLACK);
-
-
-        rgb1 = picFile.read();
-        rgb2 = picFile.read();
-
-        barva = 256 * rgb1 + rgb2;
-        //Serial.print(i);
-        //Serial.print("-");
-        //Serial.println(j);
-        //Serial.print("=");
-        //Serial.println(256 * rgb1 + rgb2);
-
-        drawPixel(j, i, barva);
-
-        //if ((256 * rgb1 + rgb2) > 0) {
-        /* if (barva < 65000) {
-          drawPixel(j, i, TFT_BLACK);
-        } else {
-          drawPixel(j, i, TFT_WHITE);
-        }*/
-      }
-    }
-  }
-  else
-  {
-    Serial.println("sd problem");
-  }
+  delay(500000);
 }
