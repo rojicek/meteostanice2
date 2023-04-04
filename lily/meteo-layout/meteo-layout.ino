@@ -45,7 +45,10 @@ TTGOClass* ttgo;
 void drawPic(int x, int y, int h, int w, String pic) {
   //File picFile = SD.open("/layout/sunset.raw", FILE_READ);
   picFile = SD.open("/test.raw", FILE_READ);
+  char wpic[22500];
+  picFile.readBytes(wpic, 22500);
   close(picFile);
+
   x = (int)random(0, 300);
   y = (int)random(0, 150);
 
@@ -64,6 +67,23 @@ void drawPic(int x, int y, int h, int w, String pic) {
       drawPixel(i, j, c);
     }
   }
+
+  //char rgb1, rgb2;
+
+  for (int i = x; i < x + w; i++) {
+    for (int j = y; j < y + h; j++) {
+      int ix = 2*(150*i+j);
+
+      //drawPixel(i, j, 256 * wpic[ix] + wpic[ix+1]);
+
+      // rgb1 = picFile.readBytes();
+      // rgb2 = picFile.readBytes();
+
+      //drawPixel(i, j, 256 * rgb1 + rgb2);
+    }
+  }
+
+
   /*
   Serial.print("pic: ");
   Serial.println(picFile);
