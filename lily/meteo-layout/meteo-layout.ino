@@ -45,16 +45,37 @@ TTGOClass* ttgo;
 void drawPic(int x, int y, int h, int w, String pic) {
   //File picFile = SD.open("/layout/sunset.raw", FILE_READ);
   picFile = SD.open("/test.raw", FILE_READ);
+  close(picFile);
+  x = (int)random(0, 300);
+  y = (int)random(0, 150);
 
+  w = 150;
+  h = 150;
+
+  int c;
+  if (random(2) < 1) {
+    c = TFT_RED;
+  } else {
+    c = TFT_GREEN;
+  }
+
+  for (int i = x; i < x + w; i++) {
+    for (int j = y; j < y + h; j++) {
+      drawPixel(i, j, c);
+    }
+  }
+  /*
   Serial.print("pic: ");
   Serial.println(picFile);
 
-  if (picFile) {
-    for (int i = x; i < x + h; i++) {
-      for (int j = y; j < y + w; j++) {
+  char rgb1, rgb2;
 
-        char rgb1 = picFile.read();
-        char rgb2 = picFile.read();
+  if (picFile) {
+    for (int i = 0; i < 150; i++) {
+      for (int j = 50; j < 150 + 50; j++) {  //radek
+
+        rgb1 = picFile.read();
+        rgb2 = picFile.read();
 
         drawPixel(j, i, 256 * rgb1 + rgb2);
       }
@@ -66,7 +87,7 @@ void drawPic(int x, int y, int h, int w, String pic) {
   } else {
     Serial.println("cant read image");
     //Serial.println(pic);
-  }
+  }*/
 }
 
 
@@ -96,16 +117,71 @@ void setup() {
 }
 
 void loop() {
- ttgo->tft->fillScreen(TFT_WHITE);
-  int x = random(0, 50);
-  int y = random(0, 50);
+
+  //ttgo->tft->fillScreen(TFT_WHITE);
+  //delay(1000);
+  //ttgo->tft->fillScreen(TFT_BLUE);
+
+  //int x = random(0, 50);
+  //int y = random(0, 50);
   Serial.println("ping 1");
-  drawPic(0, 20, 150, 150, "eee");
+  //drawPic(50, 0, 150, 150, "eee");
+  //drawPic(10, 10, 150, 150, "eee");
+
+  drawPixel(5, 10, TFT_WHITE);
+  drawPixel(12, 10, TFT_WHITE);
+  drawPixel(100, 10, TFT_WHITE);
+  drawPixel(400, 10, TFT_WHITE);
+  drawPixel(475, 10, TFT_WHITE);
+
+  drawPixel(5, 315, TFT_WHITE);
+
+  drawPixel(475, 315, TFT_GREEN);
+
+  int x;
+  int y;
+
+  for (x = 100; x < 120; x++) {
+    //Serial.println(x);
+    drawPixel(x, 50, TFT_GREEN);
+  }
+
+  for (x = 100; x < 120; x++) {
+    // Serial.println(x);
+    drawPixel(x, 100, TFT_GREEN);
+  }
+
+  for (y = 0; y < 50; y++) {
+    //Serial.println(y);
+    drawPixel(10, y, TFT_YELLOW);
+  }
+
+  for (y = 0; y < 320; y++) {
+    //Serial.println(y);
+    drawPixel(200, y, TFT_WHITE);
+  }
+
+  for (y = 0; y < 320; y++) {
+    //Serial.println(y);
+    drawPixel(477, y, TFT_GREEN);
+    drawPixel(479, y, TFT_WHITE);
+  }
+
+  //drawPixel(1, 0, TFT_RED);
+  //drawPixel(0, 1, TFT_RED);
+  //drawPixel(1, 1, TFT_RED);
+
   Serial.println("ping 2");
 
-  drawPic(0, 0, 150, 150, "eee");
+  drawPic(50, 10, 150, 150, "to je jedno");
+
+  delay(3000);
+
+  //drawPic(300, 0, 150, 150, "eee");
+
+  Serial.println("ping 3");
 
 
 
-  delay(500000);
+  // delay(500000);
 }
