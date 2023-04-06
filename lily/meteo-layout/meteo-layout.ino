@@ -25,6 +25,7 @@
 
 #include <SPI.h>
 #include <SD.h>
+#include <FS.h>
 //#include <Streaming.h>
 
 //#define BUFFPIXEL 20
@@ -44,10 +45,26 @@ TTGOClass* ttgo;
 
 void drawPic(int x, int y, int h, int w, String pic) {
   //File picFile = SD.open("/layout/sunset.raw", FILE_READ);
-  picFile = SD.open("/test.raw", FILE_READ);
-  char wpic[22500];
-  picFile.readBytes(wpic, 22500);
+  Serial.println("draw 1");
+
+  picFile = SD.open("/test.raw");
+  Serial.println("draw 2");
+
+  //uint8_t wpic[45000];
+  uint8_t* pbuffer = nullptr;
+  pbuffer = (uint8_t*)malloc(45000);
+  Serial.println("draw 3");
+
+  if (picFile) {
+    Serial.print("trying..:");
+    picFile.read(pbuffer, 45000);
+    Serial.println("read!");
+  }
+
+  Serial.print("picFile:");
+  Serial.println(picFile);
   close(picFile);
+
 
   x = (int)random(0, 300);
   y = (int)random(0, 150);
@@ -62,6 +79,7 @@ void drawPic(int x, int y, int h, int w, String pic) {
     c = TFT_GREEN;
   }
 
+  //jen ctverec
   for (int i = x; i < x + w; i++) {
     for (int j = y; j < y + h; j++) {
       drawPixel(i, j, c);
@@ -72,17 +90,24 @@ void drawPic(int x, int y, int h, int w, String pic) {
 
   for (int i = x; i < x + w; i++) {
     for (int j = y; j < y + h; j++) {
-      int ix = 2*(150*i+j);
+      int ix = 2 * (150 * (i - x) + (j - y));  //counter
 
-      //drawPixel(i, j, 256 * wpic[ix] + wpic[ix+1]);
-
+      drawPixel(i, j, 256 * pbuffer[ix] + pbuffer[ix + 1]);
+      /*
+      Serial.print(ix);
+      Serial.print(":");
+      Serial.print(pbuffer[ix]);
+      Serial.print("-");
+      Serial.print(pbuffer[ix + 1]);
+      Serial.println(".. read!");
+*/
       // rgb1 = picFile.readBytes();
       // rgb2 = picFile.readBytes();
 
       //drawPixel(i, j, 256 * rgb1 + rgb2);
     }
   }
-
+  if (pbuffer) free(pbuffer);
 
   /*
   Serial.print("pic: ");
@@ -110,6 +135,32 @@ void drawPic(int x, int y, int h, int w, String pic) {
   }*/
 }
 
+SPIClass* sdhander = nullptr;
+
+#define SD_CS 13
+#define SD_MISO 2
+#define SD_MOSI 15
+#define SD_SCLK 14
+
+// //GPIO FUNCTIONS
+// #define INPUT               0x01
+// #define OUTPUT              0x03
+// #define PULLUP              0x04
+// #define INPUT_PULLUP        0x05
+
+bool sdcard_begin() {
+  if (!sdhander) {
+    sdhander = new SPIClass(HSPI);
+    pinMode(SD_MISO, INPUT_PULLUP);
+    sdhander->begin(SD_SCLK, SD_MISO, SD_MOSI, SD_CS);
+  }
+  if (!SD.begin(SD_CS, *sdhander)) {
+    Serial.println("SD Card Mount Failed");
+    return false;
+  }
+  return true;
+}
+
 
 void setup() {
   Serial.begin(115200);
@@ -122,14 +173,30 @@ void setup() {
   ttgo->tft->fillScreen(TFT_WHITE);
 
   //SD karta
-  if (!SD.begin(4)) {
-    Serial.println("initialization failed!");
+  if (sdcard_begin()) {
+    Serial.println("sd ok");
+  } else {
+    Serial.println("sd failed");
     while (1)
-      ;  // bacha - tohle je nekonecna smycka
+      ;  // nekonecna smycka
   }
-  Serial.println("initialization done.");
 
-  delay(1000);
+  /*
+  if (!SD.begin(4)) {  //pin 4
+                       //
+    Serial.println("initialization failed!");
+    while (1) {
+      Serial.println("initialization failed! - jako fakt");
+      delay(3000);
+    }  // bacha - tohle je nekonecna smycka
+  }
+*/
+  uint64_t cardSize = SD.cardSize() / (1024 * 1024);
+  Serial.printf("SD Card Size: %lluMB\n", cardSize);
+
+
+
+  //delay(1000);
   //drawPic(0, 0, 150, 150, "eee");
 
   Serial.println("setup hotov");
@@ -148,13 +215,13 @@ void loop() {
   //drawPic(50, 0, 150, 150, "eee");
   //drawPic(10, 10, 150, 150, "eee");
 
-  drawPixel(5, 10, TFT_WHITE);
-  drawPixel(12, 10, TFT_WHITE);
-  drawPixel(100, 10, TFT_WHITE);
-  drawPixel(400, 10, TFT_WHITE);
-  drawPixel(475, 10, TFT_WHITE);
+  drawPixel(5, 10, TFT_BLACK);
+  drawPixel(12, 10, TFT_BLACK);
+  drawPixel(100, 10, TFT_BLACK);
+  drawPixel(400, 10, TFT_BLACK);
+  drawPixel(475, 10, TFT_BLACK);
 
-  drawPixel(5, 315, TFT_WHITE);
+  drawPixel(5, 315, TFT_BLACK);
 
   drawPixel(475, 315, TFT_GREEN);
 
@@ -178,7 +245,7 @@ void loop() {
 
   for (y = 0; y < 320; y++) {
     //Serial.println(y);
-    drawPixel(200, y, TFT_WHITE);
+    drawPixel(200, y, TFT_BLACK);
   }
 
   for (y = 0; y < 320; y++) {
@@ -194,6 +261,11 @@ void loop() {
   Serial.println("ping 2");
 
   drawPic(50, 10, 150, 150, "to je jedno");
+
+
+
+  //picFile.read(wpic, 100);
+  close(picFile);
 
   delay(3000);
 
