@@ -25,10 +25,10 @@
 
 #include <SPI.h>
 #include <SD.h>
-#include <FS.h>
-//#include <Streaming.h>
+//#include <FS.h>
 
-//#define BUFFPIXEL 20
+#include "ubuntu_fonts.h"
+
 
 File picFile;
 File picFile2;
@@ -47,7 +47,8 @@ void drawPic(int x, int y, int h, int w, String pic) {
   //File picFile = SD.open("/layout/sunset.raw", FILE_READ);
   Serial.println("draw 1");
 
-  picFile = SD.open("/test.raw");
+  //picFile = SD.open("/test.raw");
+  picFile = SD.open(pic);
   Serial.println("draw 2");
 
   //uint8_t wpic[45000];
@@ -65,74 +66,14 @@ void drawPic(int x, int y, int h, int w, String pic) {
   Serial.println(picFile);
   close(picFile);
 
-
-  x = (int)random(0, 300);
-  y = (int)random(0, 150);
-
-  w = 150;
-  h = 150;
-
-  int c;
-  if (random(2) < 1) {
-    c = TFT_RED;
-  } else {
-    c = TFT_GREEN;
-  }
-
-  //jen ctverec
-  for (int i = x; i < x + w; i++) {
-    for (int j = y; j < y + h; j++) {
-      drawPixel(i, j, c);
-    }
-  }
-
-  //char rgb1, rgb2;
-
   for (int i = x; i < x + w; i++) {
     for (int j = y; j < y + h; j++) {
       int ix = 2 * (150 * (i - x) + (j - y));  //counter
 
       drawPixel(i, j, 256 * pbuffer[ix] + pbuffer[ix + 1]);
-      /*
-      Serial.print(ix);
-      Serial.print(":");
-      Serial.print(pbuffer[ix]);
-      Serial.print("-");
-      Serial.print(pbuffer[ix + 1]);
-      Serial.println(".. read!");
-*/
-      // rgb1 = picFile.readBytes();
-      // rgb2 = picFile.readBytes();
-
-      //drawPixel(i, j, 256 * rgb1 + rgb2);
     }
   }
   if (pbuffer) free(pbuffer);
-
-  /*
-  Serial.print("pic: ");
-  Serial.println(picFile);
-
-  char rgb1, rgb2;
-
-  if (picFile) {
-    for (int i = 0; i < 150; i++) {
-      for (int j = 50; j < 150 + 50; j++) {  //radek
-
-        rgb1 = picFile.read();
-        rgb2 = picFile.read();
-
-        drawPixel(j, i, 256 * rgb1 + rgb2);
-      }
-    }
-
-    close(picFile);
-    Serial.println("closing image");
-
-  } else {
-    Serial.println("cant read image");
-    //Serial.println(pic);
-  }*/
 }
 
 SPIClass* sdhander = nullptr;
@@ -161,6 +102,14 @@ bool sdcard_begin() {
   return true;
 }
 
+void print_text(int x, int y, String txt, const uint8_t * font, uint16_t color) {
+ 
+  ttgo->tft->loadFont(font); //ubuntu_regular_18
+  ttgo->tft->setTextColor(color);
+  ttgo->tft->setCursor(x, y);
+  ttgo->tft->print(txt);
+
+}
 
 void setup() {
   Serial.begin(115200);
@@ -181,23 +130,9 @@ void setup() {
       ;  // nekonecna smycka
   }
 
-  /*
-  if (!SD.begin(4)) {  //pin 4
-                       //
-    Serial.println("initialization failed!");
-    while (1) {
-      Serial.println("initialization failed! - jako fakt");
-      delay(3000);
-    }  // bacha - tohle je nekonecna smycka
-  }
-*/
+
   uint64_t cardSize = SD.cardSize() / (1024 * 1024);
   Serial.printf("SD Card Size: %lluMB\n", cardSize);
-
-
-
-  //delay(1000);
-  //drawPic(0, 0, 150, 150, "eee");
 
   Serial.println("setup hotov");
   delay(3000);
@@ -206,74 +141,12 @@ void setup() {
 void loop() {
 
   //ttgo->tft->fillScreen(TFT_WHITE);
-  //delay(1000);
-  //ttgo->tft->fillScreen(TFT_BLUE);
 
-  //int x = random(0, 50);
-  //int y = random(0, 50);
-  Serial.println("ping 1");
-  //drawPic(50, 0, 150, 150, "eee");
-  //drawPic(10, 10, 150, 150, "eee");
+  drawPic(10, 10, 150, 150, "/test.raw");
 
-  drawPixel(5, 10, TFT_BLACK);
-  drawPixel(12, 10, TFT_BLACK);
-  drawPixel(100, 10, TFT_BLACK);
-  drawPixel(400, 10, TFT_BLACK);
-  drawPixel(475, 10, TFT_BLACK);
-
-  drawPixel(5, 315, TFT_BLACK);
-
-  drawPixel(475, 315, TFT_GREEN);
-
-  int x;
-  int y;
-
-  for (x = 100; x < 120; x++) {
-    //Serial.println(x);
-    drawPixel(x, 50, TFT_GREEN);
-  }
-
-  for (x = 100; x < 120; x++) {
-    // Serial.println(x);
-    drawPixel(x, 100, TFT_GREEN);
-  }
-
-  for (y = 0; y < 50; y++) {
-    //Serial.println(y);
-    drawPixel(10, y, TFT_YELLOW);
-  }
-
-  for (y = 0; y < 320; y++) {
-    //Serial.println(y);
-    drawPixel(200, y, TFT_BLACK);
-  }
-
-  for (y = 0; y < 320; y++) {
-    //Serial.println(y);
-    drawPixel(477, y, TFT_GREEN);
-    drawPixel(479, y, TFT_WHITE);
-  }
-
-  //drawPixel(1, 0, TFT_RED);
-  //drawPixel(0, 1, TFT_RED);
-  //drawPixel(1, 1, TFT_RED);
-
-  Serial.println("ping 2");
-
-  drawPic(50, 10, 150, 150, "to je jedno");
+  print_text(365, 10, "Aug 28, 18:58", ubuntu_regular_18, TFT_BLACK);
 
 
 
-  //picFile.read(wpic, 100);
-  close(picFile);
-
-  delay(3000);
-
-  //drawPic(300, 0, 150, 150, "eee");
-
-  Serial.println("ping 3");
-
-
-
-  // delay(500000);
+  delay(1000);
 }
