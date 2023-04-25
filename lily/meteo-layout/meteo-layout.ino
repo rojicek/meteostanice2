@@ -16,7 +16,7 @@
 // pridat #include <pgmspace.h>
 
 //postup - asi ok
-// processing - vybrat font a ulozit jako wlv
+// processing - vybrat font a ulozit jako wlv (nepouzit smooth)
 //https://wiki.seeedstudio.com/Wio-Terminal-LCD-Anti-aliased-Fonts/
 //vlw prevest na byty: https://tomeko.net/online_tools/file_to_hex.php?lang=en
 
@@ -104,7 +104,7 @@ bool sdcard_begin() {
 
 void print_text(int x, int y, String txt, const uint8_t * font, uint16_t color) {
  
-  ttgo->tft->loadFont(font); //ubuntu_regular_18
+  ttgo->tft->loadFont(font); 
   ttgo->tft->setTextColor(color);
   ttgo->tft->setCursor(x, y);
   ttgo->tft->print(txt);
@@ -142,9 +142,13 @@ void loop() {
 
   //ttgo->tft->fillScreen(TFT_WHITE);
 
-  drawPic(10, 10, 150, 150, "/test.raw");
+  drawPic(10, 30, 150, 150, "/test.raw");
 
-  print_text(365, 10, "Aug 28, 18:58", ubuntu_regular_18, TFT_BLACK);
+  print_text(10, 10, "6:33", ubuntu_regular_20, TFT_BLACK);
+  print_text(100, 10, "21:44", ubuntu_regular_20, TFT_BLACK);
+
+  print_text(350, 10, "Aug 28, 18:58", ubuntu_regular_20, TFT_BLACK);
+
 
 
 
