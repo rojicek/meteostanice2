@@ -200,7 +200,12 @@ $hdo_arr = array();
                             $temp_trend = $weather_arr['hourly'][$i]['temp'] - $temp;
                     } //relevant for temp trend
                     
-                    if  ((($weather_arr['hourly'][$i]['dt'] > $current_time)) and ($weather_arr['hourly'][$i]['dt'] < $sunset+3600))
+                    // don't care for time before 8am (even if sun rises earlier), start at 8am
+                    $cycling_time_start_today = max($current_time, strtotime('midnight')+8*3600);
+                    // end: 1hr after sunset or 20:001
+                    $cycling_time_end_today = min($sunset+3600, strtotime('midnight')+20*3600);
+                                                                                                    
+                    if  ((($weather_arr['hourly'][$i]['dt'] > $cycling_time_start_today)) and ($weather_arr['hourly'][$i]['dt'] < $cycling_time_end_today))
                     { //today, future only until sunset + 1h                                               
                         //echo "today index  " . date('Y-m-d H:i:s', $weather_arr['hourly'][$i]['dt'])  . "<br>";                              
                         $cycling_today = cycling_index_check ($weather_arr['hourly'][$i]['temp'],       '<', $temp_limits[$month_today][1], $temp_limits[$month_today][0], $cycling_today); //cold check
@@ -212,10 +217,15 @@ $hdo_arr = array();
 
                                                                                                                              
                     } //today
-                                        
+                    
+                    // don't care for time before 8am (even if sun rises earlier), start at 8am
+                    $cycling_time_start_tomorrow = max($sunrise + 86400, strtotime('midnight')+ 8*3600 + 86400);
+                    // end: 1hr after sunset or 20:001
+                    $cycling_time_end_tomorrow = min($sunset + 86400 + 3600, strtotime('midnight')+ 20*3600 + 86400);
+                                                            
                                 
                     //cycling index - only between sunrise and sunset (same sun as today)    
-                    if (($weather_arr['hourly'][$i]['dt'] >= $sunrise+86400) and ($weather_arr['hourly'][$i]['dt'] <= $sunset+86400))
+                    if (($weather_arr['hourly'][$i]['dt'] >= $cycling_time_start_tomorrow) and ($weather_arr['hourly'][$i]['dt'] <= $cycling_time_end_tomorrow))
                     { //sunrise-sunset for cycling index tomorrow
                         //echo "tomorrow index " . date('Y-m-d H:i:s', $weather_arr['hourly'][$i]['dt'])  .  " - ".$weather_arr['hourly'][$i]['temp']. " (". $temp_limits[$month_tomorrow][2]. ")<br>";        
                         $cycling_tomorrow = cycling_index_check ($weather_arr['hourly'][$i]['temp'],       '<', $temp_limits[$month_tomorrow][1], $temp_limits[$month_tomorrow][0], $cycling_tomorrow); //cold check
