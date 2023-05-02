@@ -149,6 +149,14 @@ void loop() {
 
   print_text(350, 10, "Aug 28, 18:58", ubuntu_regular_20, TFT_BLACK);
 
+  print_text(10, 185, "25°C", ubuntu_bold_45, TFT_BLACK);
+  print_text(110, 190, "21°C", ubuntu_bold_35, TFT_BLACK);
+
+  print_text(50, 240, "-2°C", ubuntu_bold_35, TFT_BLACK);
+  print_text(50, 275, "5m/s", ubuntu_bold_35, TFT_BLACK);
+
+  
+
 
 
 
