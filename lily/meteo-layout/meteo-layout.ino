@@ -29,11 +29,6 @@
 
 #include "ubuntu_fonts.h"
 
-
-File picFile;
-File picFile2;
-
-
 //#define COLOR565(r, g, b) ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3)
 
 #define drawPixel(a, b, c) \
@@ -43,22 +38,31 @@ File picFile2;
 
 TTGOClass* ttgo;
 
+void drawBox(int x, int y, int w, int h, uint16_t color) {
+
+  for (int i = x; i < x + w; i++) {
+    for (int j = y; j < y + h; j++) {
+      int ix = 2 * (w * (i - x) + (j - y));  //counter
+
+      drawPixel(i, j, color);
+    }
+  }
+}
+
 void drawPic(int x, int y, int h, int w, String pic) {
-  //File picFile = SD.open("/layout/sunset.raw", FILE_READ);
+
   Serial.println("draw 1");
 
-  //picFile = SD.open("/test.raw");
-  picFile = SD.open(pic);
+  File picFile = SD.open(pic);
   Serial.println("draw 2");
 
-  //uint8_t wpic[45000];
   uint8_t* pbuffer = nullptr;
-  pbuffer = (uint8_t*)malloc(45000);
+  pbuffer = (uint8_t*)malloc(w * h * 2);
   Serial.println("draw 3");
 
   if (picFile) {
     Serial.print("trying..:");
-    picFile.read(pbuffer, 45000);
+    picFile.read(pbuffer, w * h * 2);
     Serial.println("read!");
   }
 
@@ -68,9 +72,10 @@ void drawPic(int x, int y, int h, int w, String pic) {
 
   for (int i = x; i < x + w; i++) {
     for (int j = y; j < y + h; j++) {
-      int ix = 2 * (150 * (i - x) + (j - y));  //counter
+      //int ix = 2 * (w * (i - x) + (j - y));  //counter
+      int ix = 2 * (w * (j - x) + (i - y));
 
-      drawPixel(i, j, 256 * pbuffer[ix] + pbuffer[ix + 1]);
+      drawPixel(j, i, 256 * pbuffer[ix] + pbuffer[ix + 1]);
     }
   }
   if (pbuffer) free(pbuffer);
@@ -102,13 +107,12 @@ bool sdcard_begin() {
   return true;
 }
 
-void print_text(int x, int y, String txt, const uint8_t * font, uint16_t color) {
- 
-  ttgo->tft->loadFont(font); 
+void print_text(int x, int y, String txt, const uint8_t* font, uint16_t color) {
+
+  ttgo->tft->loadFont(font);
   ttgo->tft->setTextColor(color);
   ttgo->tft->setCursor(x, y);
   ttgo->tft->print(txt);
-
 }
 
 void setup() {
@@ -142,20 +146,51 @@ void loop() {
 
   //ttgo->tft->fillScreen(TFT_WHITE);
 
-  drawPic(10, 30, 150, 150, "/test.raw");
+  drawPic(10, 30, 150, 150, "/test.raw");  //pocasi
 
-  print_text(10, 10, "6:33", ubuntu_regular_20, TFT_BLACK);
-  print_text(100, 10, "21:44", ubuntu_regular_20, TFT_BLACK);
+  print_text(10, 5, "6:33", ubuntu_regular_23, TFT_BLACK);
+  drawBox(55, 5, 25, 25, TFT_SKYBLUE);  //vychod zapad
+  //drawPic(10, 30, 150, 150, "/test.raw"); //pocasi
+  print_text(100, 5, "21:44", ubuntu_regular_23, TFT_BLACK);
 
-  print_text(350, 10, "Aug 28, 18:58", ubuntu_regular_20, TFT_BLACK);
+  print_text(320, 5, "Aug 28, 18:58", ubuntu_regular_23, TFT_BLACK);
 
   print_text(10, 185, "25°C", ubuntu_bold_45, TFT_BLACK);
-  print_text(110, 190, "21°C", ubuntu_bold_35, TFT_BLACK);
+  print_text(120, 190, "21°C", ubuntu_regular_30, TFT_BLACK);
 
-  print_text(50, 240, "-2°C", ubuntu_bold_35, TFT_BLACK);
-  print_text(50, 275, "5m/s", ubuntu_bold_35, TFT_BLACK);
+  //drawBox(50, 240, 30, 30, TFT_SKYBLUE); //temp trend
+  drawPic(50, 240, 30, 30, "/trend_small_up.raw");  //temp trend
+  print_text(90, 240, "-2°C", ubuntu_regular_30, TFT_BLACK);
 
-  
+  //drawBox(10, 275, 30, 30, TFT_SKYBLUE); //kompas
+  drawPic(10, 275, 30, 30, "/compass-nw.raw");  //kompas - blbe!
+
+  print_text(50, 275, "5m/s", ubuntu_regular_30, TFT_BLACK);
+  //drawBox(120, 275, 30, 30, TFT_SKYBLUE); //w drop
+  drawPic(120, 275, 30, 30, "/w-drop.raw");  //w drop
+  print_text(160, 275, "2mm", ubuntu_regular_30, TFT_BLACK);
+
+  print_text(250, 40, "NOW", ubuntu_bold_35, TFT_BLACK);
+  print_text(360, 40, "THU", ubuntu_bold_35, TFT_BLACK);
+
+  //cycling info
+  //drawBox(260, 90, 75, 75, TFT_GREEN);
+  drawPic(260, 90, 75, 75, "/cycle_2.raw");
+  //drawBox(360, 90, 75, 75, TFT_GREEN);
+  drawPic(360, 90, 75, 75, "/cycle_2.raw");
+
+  //vzduch
+  //drawBox(260, 190, 50, 50, TFT_DARKGREEN);
+  drawPic(260, 190, 50, 50, "/air1A.raw");  //vzduch
+
+  print_text(315, 190, "NOW, +1h", ubuntu_regular_30, TFT_BLACK);
+  print_text(315, 220, "+4h, +5h", ubuntu_regular_30, TFT_BLACK);
+
+  //grafika HDO
+  drawBox(260, 260, 60, 40, TFT_MAROON);
+  drawBox(320, 260, 140, 40, TFT_DARKGREEN);
+
+  print_text(320, 268, "18:00", ubuntu_regular_23, TFT_WHITE);
 
 
 
