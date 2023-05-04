@@ -49,33 +49,33 @@ void drawBox(int x, int y, int w, int h, uint16_t color) {
   }
 }
 
-void drawPic(int x, int y, int h, int w, String pic) {
+void drawPic(int x, int y, int dim, String pic) {
 
-  Serial.println("draw 1");
+  //Serial.println("draw 1");
 
   File picFile = SD.open(pic);
-  Serial.println("draw 2");
+  //Serial.println("draw 2");
 
   uint8_t* pbuffer = nullptr;
-  pbuffer = (uint8_t*)malloc(w * h * 2);
-  Serial.println("draw 3");
+  pbuffer = (uint8_t*)malloc(dim * dim * 2);
+  //Serial.println("draw 3");
 
   if (picFile) {
     Serial.print("trying..:");
-    picFile.read(pbuffer, w * h * 2);
+    picFile.read(pbuffer, dim * dim * 2);
     Serial.println("read!");
   }
 
-  Serial.print("picFile:");
-  Serial.println(picFile);
+  //Serial.print("picFile:");
+  //Serial.println(picFile);
   close(picFile);
 
-  for (int i = x; i < x + w; i++) {
-    for (int j = y; j < y + h; j++) {
-      //int ix = 2 * (w * (i - x) + (j - y));  //counter
-      int ix = 2 * (w * (j - x) + (i - y));
+  for (int i = x; i < x + dim; i++) {
+    for (int j = y; j < y + dim; j++) {
+      
+      int ix = 2 * ((i - x) + dim * (j - y));
 
-      drawPixel(j, i, 256 * pbuffer[ix] + pbuffer[ix + 1]);
+      drawPixel(i, j, 256 * pbuffer[ix] + pbuffer[ix + 1]);
     }
   }
   if (pbuffer) free(pbuffer);
@@ -146,11 +146,11 @@ void loop() {
 
   //ttgo->tft->fillScreen(TFT_WHITE);
 
-  drawPic(10, 30, 150, 150, "/test.raw");  //pocasi
+  drawPic(10, 30, 150, "/test.raw");  //pocasi
 
   print_text(10, 5, "6:33", ubuntu_regular_23, TFT_BLACK);
-  drawBox(55, 5, 25, 25, TFT_SKYBLUE);  //vychod zapad
-  //drawPic(10, 30, 150, 150, "/test.raw"); //pocasi
+  //drawBox(55, 5, 25, 25, TFT_SKYBLUE);  //vychod zapad
+  drawPic(55, 0, 35, "/sunset.raw"); //sunset
   print_text(100, 5, "21:44", ubuntu_regular_23, TFT_BLACK);
 
   print_text(320, 5, "Aug 28, 18:58", ubuntu_regular_23, TFT_BLACK);
@@ -159,15 +159,15 @@ void loop() {
   print_text(120, 190, "21°C", ubuntu_regular_30, TFT_BLACK);
 
   //drawBox(50, 240, 30, 30, TFT_SKYBLUE); //temp trend
-  drawPic(50, 240, 30, 30, "/trend_small_up.raw");  //temp trend
+  drawPic(50, 240, 30, "/trend_small_up.raw");  //temp trend
   print_text(90, 240, "-2°C", ubuntu_regular_30, TFT_BLACK);
 
   //drawBox(10, 275, 30, 30, TFT_SKYBLUE); //kompas
-  drawPic(10, 275, 30, 30, "/compass-nw.raw");  //kompas - blbe!
+  drawPic(10, 275, 30, "/compass-nw.raw");  //kompas 
 
   print_text(50, 275, "5m/s", ubuntu_regular_30, TFT_BLACK);
   //drawBox(120, 275, 30, 30, TFT_SKYBLUE); //w drop
-  drawPic(120, 275, 30, 30, "/w-drop.raw");  //w drop
+  drawPic(120, 275, 30, "/w-drop.raw");  //w drop
   print_text(160, 275, "2mm", ubuntu_regular_30, TFT_BLACK);
 
   print_text(250, 40, "NOW", ubuntu_bold_35, TFT_BLACK);
@@ -175,13 +175,13 @@ void loop() {
 
   //cycling info
   //drawBox(260, 90, 75, 75, TFT_GREEN);
-  drawPic(260, 90, 75, 75, "/cycle_2.raw");
+  drawPic(260, 90, 75, "/cycle_2.raw");
   //drawBox(360, 90, 75, 75, TFT_GREEN);
-  drawPic(360, 90, 75, 75, "/cycle_2.raw");
+  drawPic(360, 90, 75, "/cycle_2.raw");
 
   //vzduch
   //drawBox(260, 190, 50, 50, TFT_DARKGREEN);
-  drawPic(260, 190, 50, 50, "/air1A.raw");  //vzduch
+  drawPic(260, 190, 50, "/air1A.raw");  //vzduch
 
   print_text(315, 190, "NOW, +1h", ubuntu_regular_30, TFT_BLACK);
   print_text(315, 220, "+4h, +5h", ubuntu_regular_30, TFT_BLACK);
