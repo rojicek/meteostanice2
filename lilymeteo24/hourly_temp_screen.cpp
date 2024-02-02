@@ -17,6 +17,7 @@
 #define Y_OFFSET_TOP 20
 #define Y_OFFSET_BOTTOM 30
 #define PROGRESSBAR_HEIGHT 2
+#define SCREEN_DELAY 30  // sec - za jak dlouho obrazovka zmizi
 
 extern TTGOClass* ttgo;
 
@@ -29,7 +30,6 @@ void show_hourly_temp_screen() {
 
 
   //pocitadlo ktere bude mizet
-  // plotLineWidth(0, SCREEN_HEIGHT - 2, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 2, 2, TFT_RED);
   drawBox(0, SCREEN_HEIGHT - PROGRESSBAR_HEIGHT, SCREEN_WIDTH, PROGRESSBAR_HEIGHT, TFT_RED);
 
   // nakresli osy
@@ -136,15 +136,10 @@ void show_hourly_temp_screen() {
 
   //smycka pres 24 aka DAY_SIZE, ale kvuli interpolovane care delam mensi kroky
   for (double hour_of_day = 0; hour_of_day <= DAY_SIZE; hour_of_day += 0.1) {
-    
+
 
     double y_plot_interpolate = Interpolation::CatmullSpline((double*)x_raw, (double*)y_teplota, DAY_SIZE, (double)hour_of_day);
-
-    //double x_plot = (double)(SCREEN_WIDTH - 2 * X_OFFSET) * iix / (double)DAY_SIZE;
-
-    double x_plot = (SCREEN_WIDTH-2*X_OFFSET) * hour_of_day / (double)DAY_SIZE + X_OFFSET;
-
-    Serial.println(x_plot);
+    double x_plot = (double)(SCREEN_WIDTH - 2 * X_OFFSET) * hour_of_day / (double)DAY_SIZE + (double)X_OFFSET;
 
 
     // tohle by bylo bez interpolace, ale iix by muselo byt jen 0-23 jako index
@@ -164,61 +159,24 @@ void show_hourly_temp_screen() {
   Serial.println("***************");
 
 
-  //ttgo->tft->drawLine(10, 10, 400, 300, TFT_RED);
-
-  //plotLineWidth(10, 10, 400, 300, 15); ok!
-  /*
-  const int numValues = 10;
-  double xCasy[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-  double yTeploty[10] = { 15, 17, 21, 20, 23, 18, 17, 15, 14, 15 };
-
-
-
-  for (int ix = 0; ix < numValues - 1; ix++) {
-    int xCas1 = xCasy[ix] * 40;
-    int xCas2 = xCasy[ix + 1] * 40;
-
-    // ttgo->tft->drawLine(xCas1, 15 * (yTeploty[ix] - 10), xCas2, 15 * (yTeploty[ix + 1] - 10), TFT_BLUE);
-  }
-*/
-  /*
-  double krok = 0.05;
-  for (double f_temp = krok; f_temp < 10.0; f_temp += krok) {
-
-    double xs1 = (f_temp - krok) * 40.0;
-    double xs2 = (f_temp)*40.0;
-
-    //Serial.println(xs1);
-
-    double ys1 = Interpolation::CatmullSpline(xCasy, yTeploty, numValues, f_temp - krok);
-    double ys2 = Interpolation::CatmullSpline(xCasy, yTeploty, numValues, f_temp);
-
-    // ok  plotLineWidth(int(xs1), int(15 * (ys1 - 10)), int(xs2), int(15 * (ys2 - 10)), 2.5);
-    plotLineWidth(int(xs1), int(15 * (ys1 - 10)), int(xs2), int(15 * (ys2 - 10)), 3);
-  }
-*/
-  // plotLineWidth(100, 100, 200, 300, 1);
-
-
-
-
   /// cekam na konec
-  delay(1000);  // abych stihl dat prst pryc
+  delay(100);  // abych stihl dat prst pryc
   ESP32Time board_time(0);
   unsigned long current_epoch = board_time.getEpoch();
-  unsigned long expected_end_epoch = current_epoch + 30;  // za 30s
-  //String shown_counter("XX");
-  // String actual_counter("XX");
+  unsigned long expected_end_epoch = current_epoch + SCREEN_DELAY;  // za 30s
 
   while ((expected_end_epoch > current_epoch) && (ttgo->touched() == 0)) {
-    //actual_counter = (String)(expected_end_epoch - current_epoch);
-    unsigned int zbyva_se = expected_end_epoch - current_epoch;
-    //show_text(450, 450, 293, ubuntu_regular_23, shown_counter, actual_counter);
-    //nahradim mizejici carou dole
-    // shown_counter = actual_counter;
-    current_epoch = board_time.getEpoch();
+
+    double zbyva_procent = (double)(expected_end_epoch - current_epoch) / (double)SCREEN_DELAY;
+    int zbyva_pixelu = (int)(zbyva_procent * (double)SCREEN_WIDTH);
+
+    drawBox(zbyva_pixelu, SCREEN_HEIGHT - PROGRESSBAR_HEIGHT, SCREEN_WIDTH - zbyva_pixelu, PROGRESSBAR_HEIGHT, TFT_WHITE);
+
     delay(100);
+    current_epoch = board_time.getEpoch();
   }
+
+  // uklid
   ttgo->tft->fillScreen(TFT_WHITE);
 
   return;

@@ -2,3 +2,5 @@
 lily pi meteostanice v 2024
 
 tohle je realne bezici kod
+
+board: TTGO T-Watch
