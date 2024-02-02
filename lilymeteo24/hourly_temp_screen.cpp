@@ -13,13 +13,28 @@
 #define myNAN -9999
 #define SCREEN_WIDTH 480
 #define SCREEN_HEIGHT 320
-#define X_OFFSET 20
+#define X_OFFSET 10
 #define Y_OFFSET_TOP 20
 #define Y_OFFSET_BOTTOM 30
 #define PROGRESSBAR_HEIGHT 2
 #define SCREEN_DELAY 30  // sec - za jak dlouho obrazovka zmizi
+#define TICKS_COUNT 8    //kolik x labelu mam zobrazit, vynechavam ty mezi
+
+
+#define X_TICK_GAP (SCREEN_WIDTH - 2 * X_OFFSET) / DAY_SIZE
 
 extern TTGOClass* ttgo;
+
+int x_axis_convert(double x) {
+  double x_plot = (double)(SCREEN_WIDTH - 2 * X_OFFSET) * x / (double)DAY_SIZE + (double)X_OFFSET;
+  return (int)x_plot;
+}
+
+int y_axis_convert(double y, double min_temp, double max_temp) {
+  // double y_plot = 310 - 300. * (y - min_temp) / (max_temp - min_temp);
+  double y_plot = (double)(SCREEN_HEIGHT - Y_OFFSET_BOTTOM) - (double)(SCREEN_HEIGHT - Y_OFFSET_TOP - Y_OFFSET_BOTTOM) * (y - min_temp) / (max_temp - min_temp);
+  return (int)y_plot;
+}
 
 void show_hourly_temp_screen() {
 
@@ -30,7 +45,7 @@ void show_hourly_temp_screen() {
 
 
   //pocitadlo ktere bude mizet
-  drawBox(0, SCREEN_HEIGHT - PROGRESSBAR_HEIGHT, SCREEN_WIDTH, PROGRESSBAR_HEIGHT, TFT_RED);
+  drawBox(0, SCREEN_HEIGHT - PROGRESSBAR_HEIGHT, SCREEN_WIDTH, PROGRESSBAR_HEIGHT, TFT_DARKGREEN);
 
   // nakresli osy
 
@@ -43,15 +58,8 @@ void show_hourly_temp_screen() {
   //osa deste
   ttgo->tft->drawLine(SCREEN_WIDTH - X_OFFSET, Y_OFFSET_TOP, SCREEN_WIDTH - X_OFFSET, SCREEN_HEIGHT - Y_OFFSET_BOTTOM, TFT_BLACK);
 
-  //time tick
-  int ticks_count = 8;
-  int tick_step = (SCREEN_WIDTH - 2 * X_OFFSET) / ticks_count;
-  for (int x_tick = X_OFFSET; x_tick < SCREEN_WIDTH - X_OFFSET; x_tick += tick_step) {
-    //zatim testy
-    show_text(-100, x_tick, SCREEN_HEIGHT - Y_OFFSET_BOTTOM + 2, ubuntu_regular_23, "", "15h");
-    //show_text(int past_x, int x, int y, const unsigned char* font, String shown, String actual)
-  }
-
+  // test teplot labels
+  //show_text(-100, X_OFFSET + 3, 100, ubuntu_regular_23, "", "22°C");
 
 
   String x_casy[DAY_SIZE];
@@ -60,6 +68,9 @@ void show_hourly_temp_screen() {
 
   double max_temp = -999.;
   double min_temp = 999.;
+
+  double prvni_teplota = 999;
+  double posledni_teplota = 999;
 
   if (wifi_connect() == 0) {
 
@@ -107,6 +118,15 @@ void show_hourly_temp_screen() {
 
         y_teplota[ix] = teplota_plot;
 
+
+        if (ix == 0) {
+          //prvni teplota pro graf
+          prvni_teplota = teplota_plot;
+        }
+
+        // porad prepisuji az mi tam zustane posledni
+        posledni_teplota = teplota_plot;
+
         ix++;
       }
 
@@ -115,48 +135,97 @@ void show_hourly_temp_screen() {
     wifi_disconnect();
   }
 
-  //mam nactena data, ted je nakreslit
-
-
-
-
-
-
-  // todo:
-  // pripocitat nejaky prostor k min a max (podle webu, tak to vypada ok)
-  // teploty chci prepocitat
-
-  float temp_band = max(0.1 * (max_temp - min_temp), 1.4);
+  float temp_band = max(0.1 * (max_temp - min_temp), 1.0);
   min_temp = min_temp - temp_band;
   max_temp = max_temp + temp_band;
 
-  // kresleni plotu
-  float x_plot_prev = myNAN;
-  float y_plot_prev = myNAN;
 
-  //smycka pres 24 aka DAY_SIZE, ale kvuli interpolovane care delam mensi kroky
-  for (double hour_of_day = 0; hour_of_day <= DAY_SIZE; hour_of_day += 0.1) {
+  //mam nactena data, ted je nakreslit
 
+  //time tick
+  for (int iix = 0; iix < 24; iix += DAY_SIZE / TICKS_COUNT) {
+    // vejde se kazdy 3 tick
+    int x_tick = X_OFFSET + iix * X_TICK_GAP;
 
-    double y_plot_interpolate = Interpolation::CatmullSpline((double*)x_raw, (double*)y_teplota, DAY_SIZE, (double)hour_of_day);
-    double x_plot = (double)(SCREEN_WIDTH - 2 * X_OFFSET) * hour_of_day / (double)DAY_SIZE + (double)X_OFFSET;
+    // -100: nechci nic mazat
+    show_text(-100, x_tick, SCREEN_HEIGHT - Y_OFFSET_BOTTOM + 2, ubuntu_regular_23, "", x_casy[iix]);
+  }
 
+  //temp ticks
+  int temp_low = ceil(min_temp);
+  int temp_high = floor(max_temp);
+  int temp_step = 1;
+  // pokud je prilis velky rozsah teplot, tak kresli kazdy druhy
 
-    // tohle by bylo bez interpolace, ale iix by muselo byt jen 0-23 jako index
-    //float y_plot = 310 - 300. * (y_teplota[iix] - min_temp) / (max_temp - min_temp);
+  if (temp_high - temp_low >= 10)
+    temp_step = 2;
 
-    //s intepolaci
-    double y_plot = 310 - 300. * (y_plot_interpolate - min_temp) / (max_temp - min_temp);
+  double y_prvni_teplota = y_axis_convert(prvni_teplota, min_temp, max_temp);
+  double y_posledni_teplota = y_axis_convert(posledni_teplota, min_temp, max_temp);
 
-    if (x_plot_prev != myNAN) {
-      //nekresli prvni bod, neni s cim spojit
-      plotLineWidth(int(x_plot_prev), int(y_plot_prev), int(x_plot), int(y_plot), 4, TFT_RED);
+  for (int temp_tick = temp_low; temp_tick <= temp_high; temp_tick += temp_step) {
+
+    double y_temp = y_axis_convert(temp_tick, min_temp, max_temp);
+
+    if ((y_temp < SCREEN_HEIGHT - Y_OFFSET_BOTTOM - 10) && (abs(y_temp - y_prvni_teplota) > 8)) {
+      //spodni cislo vynecham, kdyz je moc blizko osy (10px od osy)
+      //todo: nebo kdyz se kryje s teplotou (5px rozdil)
+      show_text(-100, X_OFFSET + 3, y_temp - 10, ubuntu_light_18, "", String(temp_tick) + "°C");
     }
 
-    x_plot_prev = x_plot;
-    y_plot_prev = y_plot;
+    // +50 - necham misto na labely stupnu C
+    ttgo->tft->drawLine(X_OFFSET + 20, y_temp, SCREEN_WIDTH - X_OFFSET, y_temp, TFT_SILVER);
   }
-  Serial.println("***************");
+
+  // srazky tick (cary nekreslim kvuli prehlednosti)
+  int srazky_high = 10;
+  int srazky_low = 0;
+  int srazky_step = 2;
+
+  for (int srazky_tick = srazky_step; srazky_tick < srazky_high; srazky_tick += srazky_step) {
+    double y_srazky = y_axis_convert(srazky_tick, srazky_low, srazky_high);
+
+    if (abs(y_srazky - y_posledni_teplota) > 8) {
+        // nepisu popisek srazek, kdyz koliduje s teplotou
+        //porovnavam pixely, tak srazky a teplota jsou ok
+        show_text(-100, 400, y_srazky - 10, ubuntu_light_18, "", String(srazky_tick) + "mm/h");
+
+        // cary srazek asi nechci
+        // ttgo->tft->drawLine(X_OFFSET + 50, y_srazky, SCREEN_WIDTH - X_OFFSET, y_srazky, TFT_RED);
+      }
+
+    // kresleni plotu
+    int x_plot_prev = myNAN;
+    int y_plot_prev = myNAN;
+
+    // test plot
+    // plotLineWidth(20, y_axis_convert(min_temp, min_temp, max_temp), 200, y_axis_convert(min_temp, min_temp, max_temp), 3, TFT_GREEN);
+    // plotLineWidth(20, y_axis_convert(max_temp, min_temp, max_temp), 200, y_axis_convert(max_temp, min_temp, max_temp), 3, TFT_RED);
+    // konec testu
+
+    //smycka pres 24 aka DAY_SIZE, ale kvuli interpolovane care delam mensi kroky
+    for (double hour_of_day = 0; hour_of_day <= DAY_SIZE; hour_of_day += 0.1) {
+
+
+      double y_plot_interpolate = Interpolation::CatmullSpline((double*)x_raw, (double*)y_teplota, DAY_SIZE, (double)hour_of_day);
+      //double x_plot = (double)(SCREEN_WIDTH - 2 * X_OFFSET) * hour_of_day / (double)DAY_SIZE + (double)X_OFFSET;
+      int x_plot = x_axis_convert(hour_of_day);
+
+      // s intepolaci
+      // bez interpolace pouzij y_teplota[iix], ale musel bych si prepsat smycku pro index
+      int y_plot = y_axis_convert(y_plot_interpolate, min_temp, max_temp);
+
+      if (x_plot_prev != myNAN) {
+        //nekresli prvni bod, neni s cim spojit
+        plotLineWidth(x_plot_prev, y_plot_prev, x_plot, y_plot, 3, TFT_NAVY);
+      }
+
+      // zapamatuj si predchozi bod
+      x_plot_prev = x_plot;
+      y_plot_prev = y_plot;
+    }
+  }
+  // Serial.println("***************");
 
 
   /// cekam na konec
