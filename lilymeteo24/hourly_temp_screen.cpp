@@ -26,6 +26,11 @@
 
 #define X_TICK_GAP (SCREEN_WIDTH - 2 * X_OFFSET) / DAY_SIZE
 
+// definuje obvyklou sirku pro label teploty resp srazky
+// polohy pocitam podle aktualnich hodnod
+#define X_WIDTH_COLLIDER_4TEMP 20
+#define X_WIDTH_COLLIDER_4PERC 50
+
 extern TTGOClass* ttgo;
 
 int x_axis_convert(double x) {
@@ -173,39 +178,37 @@ void show_hourly_temp_screen() {
   //int y_posledni_teplota = y_axis_convert(posledni_teplota, min_temp, max_temp);
   //int y_predposledni_teplota = y_axis_convert(predposledni_teplota, min_temp, max_temp);
 
-  // kolider - default neni zadny
+  // kolider - default neni zadna kolize
   int y_collider_left_low_px = SCREEN_HEIGHT;
   int y_collider_left_high_px = 0;
   int y_collider_right_low_px = SCREEN_HEIGHT;
   int y_collider_right_high_px = 0;
 
 
-
   // kresleni plotu
   int x_plot_prev = myNAN;
   int y_plot_prev = myNAN;
 
-  //smycka pres 24 aka DAY_SIZE, ale kvuli interpolovane care delam mensi kroky
+  // smycka pres 24 aka DAY_SIZE, ale kvuli interpolovane care delam mensi kroky
+  // posledni krok nedelam ve smycce, ale zaridi ho interpolace
   for (double hour_of_day = 0; hour_of_day < DAY_SIZE - 1; hour_of_day += 0.1) {
 
-
-    double y_plot_interpolate = Interpolation::CatmullSpline((double*)x_raw, (double*)y_teplota, DAY_SIZE, (double)hour_of_day);
-    //double x_plot = (double)(SCREEN_WIDTH - 2 * X_OFFSET) * hour_of_day / (double)DAY_SIZE + (double)X_OFFSET;
+    double y_interpolate = Interpolation::CatmullSpline((double*)x_raw, (double*)y_teplota, DAY_SIZE, (double)hour_of_day);
     int x_plot = x_axis_convert(hour_of_day);
 
     // s intepolaci
     // bez interpolace pouzij y_teplota[iix], ale musel bych si prepsat smycku pro index
-    int y_plot = y_axis_convert(y_plot_interpolate, min_temp, max_temp);
+    int y_plot = y_axis_convert(y_interpolate, min_temp, max_temp);
 
     // zapis si levy kolider
-    if ((x_plot >= X_OFFSET + X_TIMETICK_LEFT_OFFSET) && (x_plot <= X_OFFSET + X_TIMETICK_LEFT_OFFSET + 20)) {
+    if ((x_plot >= X_OFFSET + X_TIMETICK_LEFT_OFFSET) && (x_plot <= X_OFFSET + X_TIMETICK_LEFT_OFFSET + X_WIDTH_COLLIDER_4TEMP)) {
       //posledni cislo = sirka temp labelu, staci priblizne
       y_collider_left_low_px = min(y_collider_left_low_px, y_plot);
       y_collider_left_high_px = max(y_collider_left_high_px, y_plot);
     }
 
     // zapis si pravy kolider
-    if ((x_plot >= X_RIGHT_LABELS) && (x_plot <= X_RIGHT_LABELS + 30)) {
+    if ((x_plot >= X_RIGHT_LABELS) && (x_plot <= X_RIGHT_LABELS + X_WIDTH_COLLIDER_4PERC)) {
       //posledni cislo  = sirka temp labelu, staci priblizne
       y_collider_right_low_px = min(y_collider_right_low_px, y_plot);
       y_collider_right_high_px = max(y_collider_right_high_px, y_plot);
@@ -240,14 +243,6 @@ void show_hourly_temp_screen() {
     // jestli budu kresli nebo jestli mi to nekde koliduji
     int kresli = 1;
 
-    /*
-tohle nevim co jsem tim myslel :)
-    if (y_temp < SCREEN_HEIGHT - Y_OFFSET_BOTTOM - 10)
-    {
-       Serial.println("kolize 1");
-      kresli = 0;
-    }
-*/
     // koliduje s carou, 15 je asi velikost pisma
     if ((y_temp + 15 >= y_collider_left_low_px) && (y_temp <= y_collider_left_high_px)) {
       Serial.print("kolize ");
@@ -264,7 +259,7 @@ tohle nevim co jsem tim myslel :)
       show_text(-100, X_OFFSET + X_TIMETICK_LEFT_OFFSET, y_temp - 10, ubuntu_light_18, "", String(temp_tick) + "°C");
     }
 
-    // neni uplne idealni, nemel bych se divat na min/max temp, ale na realne pouzite labely
+    // todo: neni uplne idealni, nemel bych se divat na min/max temp, ale na realne pouzite labely
     int extra_x_offet_temp_labels = 0;
     if ((abs(min_temp) >= 10) || (abs(max_temp) >= 10))
       extra_x_offet_temp_labels = 10;
@@ -289,12 +284,10 @@ tohle nevim co jsem tim myslel :)
     }
     ////
 
-    //stary kolider
-    //if ((abs(y_srazky - y_posledni_teplota) > 8) && (abs(y_srazky - y_predposledni_teplota) > 8)) {
     if (kresli == 1) {
       // nepisu popisek srazek, kdyz koliduje s teplotou
       //porovnavam pixely, tak srazky a teplota jsou ok
-      show_text(-100, X_RIGHT_LABELS, y_srazky - 10, ubuntu_light_18, "", String(srazky_tick) + "mm/h");
+      show_text(-100, X_RIGHT_LABELS, y_srazky - 10, ubuntu_light_18, "", String(srazky_tick) + " mm/h");
 
       // cary srazek asi nechci
       // ttgo->tft->drawLine(X_OFFSET + 50, y_srazky, SCREEN_WIDTH - X_OFFSET, y_srazky, TFT_RED);
