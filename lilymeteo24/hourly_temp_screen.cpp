@@ -31,11 +31,18 @@
 #define X_WIDTH_COLLIDER_4TEMP 20
 #define X_WIDTH_COLLIDER_4PERC 50
 
+#define SRAZKY_BOX_WIDTH 8
+
 extern TTGOClass* ttgo;
 
 int x_axis_convert(double x) {
-  // -1: realne roztahnu jen do 23h, posledni se dopocita interpolaci
+  // tohle je korektne ... ale krajni srazkove boxy jsou mimo osy
   double x_plot = (double)(SCREEN_WIDTH - 2 * X_OFFSET) * x / (double)(DAY_SIZE - 1) + (double)X_OFFSET;
+
+  // pokusy
+  //int adjusted_x_offset = X_OFFSET + 2;
+  //double x_plot = (double)(SCREEN_WIDTH - 2 * adjusted_x_offset) * x / (double)(DAY_SIZE - 1) + (double)adjusted_x_offset;
+
   return (int)x_plot;
 }
 
@@ -74,6 +81,8 @@ void show_hourly_temp_screen() {
   String x_casy[DAY_SIZE];
   double x_raw[DAY_SIZE];
   double y_teplota[DAY_SIZE];
+  double y_dest[DAY_SIZE];
+  double y_snih[DAY_SIZE];
 
   double max_temp = -999.;
   double min_temp = 999.;
@@ -127,6 +136,8 @@ void show_hourly_temp_screen() {
         x_casy[ix] = cas_plot;  //jen label
         x_raw[ix] = ix;
         y_teplota[ix] = teplota_plot;
+        y_dest[ix] = dest_plot;
+        y_snih[ix] = snih_plot;
 
         /*
         if (ix == 0) {
@@ -169,6 +180,12 @@ void show_hourly_temp_screen() {
   int temp_low = ceil(min_temp);
   int temp_high = floor(max_temp);
   int temp_step = 1;
+
+  //srazky maji pevne meritko
+  int srazky_high = 10;
+  int srazky_low = 0;
+  int srazky_step = 2;
+
   // pokud je prilis velky rozsah teplot, tak kresli kazdy druhy
 
   if (temp_high - temp_low >= 10)
@@ -188,6 +205,17 @@ void show_hourly_temp_screen() {
   // kresleni plotu
   int x_plot_prev = myNAN;
   int y_plot_prev = myNAN;
+
+  //nejdrive nakresli horizontalni osy - muzou se prekreslit cimkoliv
+  for (int temp_tick = temp_low; temp_tick <= temp_high; temp_tick += temp_step) {
+    int y_temp = y_axis_convert(temp_tick, min_temp, max_temp);
+
+    // todo: neni uplne idealni, nemel bych se divat na min/max temp, ale na realne pouzite labely
+    int extra_x_offet_temp_labels = 0;
+    if ((abs(min_temp) >= 10) || (abs(max_temp) >= 10))
+      extra_x_offet_temp_labels = 10;
+    ttgo->tft->drawLine(X_OFFSET + 30 + extra_x_offet_temp_labels, y_temp, SCREEN_WIDTH - X_OFFSET, y_temp, TFT_SILVER);
+  }
 
   // smycka pres 24 aka DAY_SIZE, ale kvuli interpolovane care delam mensi kroky
   // posledni krok nedelam ve smycce, ale zaridi ho interpolace
@@ -223,22 +251,34 @@ void show_hourly_temp_screen() {
     // zapamatuj si predchozi bod
     x_plot_prev = x_plot;
     y_plot_prev = y_plot;
-  }  //konec plotu
+  }  //konec plotu teploty
 
+  // kresleni srazek (mozna to pujde v 1 smycce, ale tohle je bez interpolace: todo)
+  // nakreslim jen 23h a cele to bude trochu posunute, ale to je asi jedno
+  for (int ix_hour_of_day = 0; ix_hour_of_day < DAY_SIZE - 1; ix_hour_of_day++) {
 
+    int x_srazky_plot = x_axis_convert((double)ix_hour_of_day);
+    int y_srazky_plot = SCREEN_HEIGHT - Y_OFFSET_BOTTOM - y_axis_convert(y_dest[ix_hour_of_day], srazky_low, srazky_high);
+    int y_snih_plot = SCREEN_HEIGHT - Y_OFFSET_BOTTOM - y_axis_convert(y_snih[ix_hour_of_day], srazky_low, srazky_high);
 
-  Serial.print("kolider ");
-  Serial.print(y_collider_left_low_px);
-  Serial.print(" : ");
-  Serial.println(y_collider_left_high_px);
+    //Serial.println(y_srazky_plot);
 
+    // todo: budu kreslit 2 boxy: dest a snih
+    // SRAZKY_BOX_WIDTH
+
+    //dole je dest
+    drawBox(x_srazky_plot + 5, SCREEN_HEIGHT - Y_OFFSET_BOTTOM - y_srazky_plot, 12, y_srazky_plot, TFT_CYAN);
+
+    //nahore snih
+    drawBox(x_srazky_plot + 5, SCREEN_HEIGHT - Y_OFFSET_BOTTOM - y_snih_plot - y_srazky_plot, 12, y_snih_plot, TFT_SKYBLUE);
+  }
 
   //////
 
   // kresleni popisu osy y (teploty)
   for (int temp_tick = temp_low; temp_tick <= temp_high; temp_tick += temp_step) {
 
-    double y_temp = y_axis_convert(temp_tick, min_temp, max_temp);
+    int y_temp = y_axis_convert(temp_tick, min_temp, max_temp);
 
     // jestli budu kresli nebo jestli mi to nekde koliduji
     int kresli = 1;
@@ -258,49 +298,34 @@ void show_hourly_temp_screen() {
       //spodni cislo vynecham, kdyz je moc blizko osy (10px od osy)
       show_text(-100, X_OFFSET + X_TIMETICK_LEFT_OFFSET, y_temp - 10, ubuntu_light_18, "", String(temp_tick) + "°C");
     }
-
-    // todo: neni uplne idealni, nemel bych se divat na min/max temp, ale na realne pouzite labely
-    int extra_x_offet_temp_labels = 0;
-    if ((abs(min_temp) >= 10) || (abs(max_temp) >= 10))
-      extra_x_offet_temp_labels = 10;
-
-    ttgo->tft->drawLine(X_OFFSET + 30 + extra_x_offet_temp_labels, y_temp, SCREEN_WIDTH - X_OFFSET, y_temp, TFT_SILVER);
   }
 
   // srazky tick (cary nekreslim kvuli prehlednosti)
-  int srazky_high = 10;
-  int srazky_low = 0;
-  int srazky_step = 2;
+
 
   for (int srazky_tick = srazky_step; srazky_tick < srazky_high; srazky_tick += srazky_step) {
 
-    double y_srazky = y_axis_convert(srazky_tick, srazky_low, srazky_high);
+    int y_srazky = y_axis_convert(srazky_tick, srazky_low, srazky_high);
     int kresli = 1;
 
-    if ((y_srazky + 15 >= y_collider_right_low_px) && (y_srazky <= y_collider_right_high_px)) {
-      Serial.print("kolize srazky ");
-      Serial.println(y_srazky);
+    // + 6 je vyska fontu (nevim proc 6, proste se mi to tak libi)
+    if ((y_srazky + 6 >= y_collider_right_low_px) && (y_srazky <= y_collider_right_high_px)) {
       kresli = 0;
     }
-    ////
 
     if (kresli == 1) {
       // nepisu popisek srazek, kdyz koliduje s teplotou
-      //porovnavam pixely, tak srazky a teplota jsou ok
+      // porovnavam pixely, tak srazky a teplota jsou ok
       show_text(-100, X_RIGHT_LABELS, y_srazky - 10, ubuntu_light_18, "", String(srazky_tick) + " mm/h");
 
-      // cary srazek asi nechci
+      // cary srazek asi nechci, ale vypadaly by takhle
       // ttgo->tft->drawLine(X_OFFSET + 50, y_srazky, SCREEN_WIDTH - X_OFFSET, y_srazky, TFT_RED);
     }
-
-
-
-    // test plot
-    // plotLineWidth(20, y_axis_convert(min_temp, min_temp, max_temp), 200, y_axis_convert(min_temp, min_temp, max_temp), 3, TFT_GREEN);
-    // plotLineWidth(20, y_axis_convert(max_temp, min_temp, max_temp), 200, y_axis_convert(max_temp, min_temp, max_temp), 3, TFT_RED);
-    // konec testu
   }
-  // Serial.println("***************");
+
+
+
+  // konec kresleni
 
 
   /// cekam na konec
