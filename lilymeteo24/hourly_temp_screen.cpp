@@ -284,11 +284,21 @@ void show_hourly_temp_screen() {
     int kresli = 1;
 
     // koliduje s carou, 15 je asi velikost pisma
-    if ((y_temp + 15 >= y_collider_left_low_px) && (y_temp <= y_collider_left_high_px)) {
-      Serial.print("kolize ");
-      Serial.println(y_temp);
+    if ((y_temp + 15 >= y_collider_left_low_px) && (y_temp <= y_collider_left_high_px)) {      
       kresli = 0;
     }
+
+    //kolider se spodni osou
+    if (y_temp >= SCREEN_HEIGHT - Y_OFFSET_BOTTOM - 10) {    
+      kresli = 0;
+      Serial.println("*****************************");
+    }
+    
+    Serial.print(temp_tick);
+    Serial.print(" : ");
+    Serial.println(y_temp);
+
+
 
     //stary kolider
     // if ((y_temp < SCREEN_HEIGHT - Y_OFFSET_BOTTOM - 10) && (abs(y_temp - y_prvni_teplota) > 8))
@@ -316,7 +326,7 @@ void show_hourly_temp_screen() {
     if (kresli == 1) {
       // nepisu popisek srazek, kdyz koliduje s teplotou
       // porovnavam pixely, tak srazky a teplota jsou ok
-      show_text(-100, X_RIGHT_LABELS, y_srazky - 10, ubuntu_light_18, "", String(srazky_tick) + " mm/h");
+      show_text(-100, X_RIGHT_LABELS, y_srazky - 5, ubuntu_light_18, "", String(srazky_tick) + " mm/h");
 
       // cary srazek asi nechci, ale vypadaly by takhle
       // ttgo->tft->drawLine(X_OFFSET + 50, y_srazky, SCREEN_WIDTH - X_OFFSET, y_srazky, TFT_RED);
