@@ -1,13 +1,13 @@
 #include <WiFi.h>
 
-const char* wifi_ap = "R_host";
-const char* wifi_pd = "badenka5";
+//const char* wifi_ap = "R_host";
+//const char* wifi_pd = "badenka5";
 
 //const char* wifi_ap = "RFM2";
 //const char* wifi_pd = "ada3022001";
 
-//const char* wifi_ap = "TP-Link_AE38";
-//const char* wifi_pd = "48120104";
+const char* wifi_ap = "TP-Link_AE38";
+const char* wifi_pd = "48120104";
 
 ///////////////////////
 int wifi_connect() {
