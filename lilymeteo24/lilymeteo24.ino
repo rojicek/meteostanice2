@@ -138,7 +138,7 @@ void loop() {
   Serial.println(current_epoch);
 
   if (do_anything == 1) {
-    drawBox(470, 310, 10, 10, TFT_BLUE);
+    drawBox(470, 310, 10, 10, TFT_BLUE, 0);
 
     int vysledek_meteo_behu = 0;
     int vysledek_ntp_behu = 0;
@@ -177,7 +177,7 @@ void loop() {
       last_quick_loop_epoch = current_epoch - QUICK_LOOP_SEC + 60;
     }
 
-    drawBox(470, 310, 10, 10, TFT_WHITE);
+    drawBox(470, 310, 10, 10, TFT_WHITE, 0);
     kresli_info_ctverecek(vysledek_meteo_behu);
   }
 

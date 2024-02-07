@@ -390,9 +390,9 @@ void kresli_info_ctverecek(int vysledek_behu) {
   if (vysledek_behu == 0) {
     //do nothing ... ale musi to tu byt abych neskoncil s 'jinou' chybou
   } else if (vysledek_behu == 1)
-    drawBox(470, 310, 10, 10, TFT_MAGENTA);  //necham varovani, ze posledni aktualizace nebyla ok
+    drawBox(470, 310, 10, 10, TFT_MAGENTA, 0);  //necham varovani, ze posledni aktualizace nebyla ok
   else if (vysledek_behu == 2)
-    drawBox(470, 310, 10, 10, TFT_RED);  //necham varovani, ze wifi nebylo ok
+    drawBox(470, 310, 10, 10, TFT_RED, 0);  //necham varovani, ze wifi nebylo ok
   else
-    drawBox(470, 310, 10, 10, TFT_BLACK);  //snad nemuze nastatat
+    drawBox(470, 310, 10, 10, TFT_BLACK, 0);  //snad nemuze nastatat
 }

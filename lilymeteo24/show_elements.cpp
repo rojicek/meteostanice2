@@ -69,7 +69,7 @@ void drawPic(int x, int y, int dimx, int dimy, String pic) {
   close(picFile);
 }
 
-void drawBox(int x, int y, int w, int h, uint16_t color) {
+void drawBox(int x, int y, int w, int h, uint16_t color, int okraj) {
 
   for (int i = x; i < x + w; i++) {
     for (int j = y; j < y + h; j++) {
@@ -77,6 +77,14 @@ void drawBox(int x, int y, int w, int h, uint16_t color) {
 
       drawPixel(i, j, color);
     }
+  }
+
+  if ((okraj == 1) && ( h > 0)) {
+    //nakresli okraj, vzdy cerne
+    ttgo->tft->drawLine(x, y, x + w - 1, y, TFT_BLACK);
+    ttgo->tft->drawLine(x, y + h, x + w - 1, y + h, TFT_BLACK);
+    ttgo->tft->drawLine(x, y, x, y + h, TFT_BLACK);
+    ttgo->tft->drawLine(x + w - 1, y, x + w - 1, y + h, TFT_BLACK);
   }
 }
 
@@ -92,5 +100,4 @@ void plotLineWidth(int start_x, int start_y, int end_x, int end_y, float thickne
 
   ttgo->tft->fillTriangle(start_x - x_shift, start_y - y_shift, start_x + x_shift, start_y + y_shift, end_x + x_shift, end_y + y_shift, color);
   ttgo->tft->fillTriangle(end_x + x_shift, end_y + y_shift, end_x - x_shift, end_y - y_shift, start_x - x_shift, start_y - y_shift, color);
-
 }

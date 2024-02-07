@@ -61,7 +61,7 @@ void show_hourly_temp_screen() {
 
 
   //pocitadlo ktere bude mizet
-  drawBox(0, SCREEN_HEIGHT - PROGRESSBAR_HEIGHT, SCREEN_WIDTH, PROGRESSBAR_HEIGHT, TFT_DARKGREEN);
+  drawBox(0, SCREEN_HEIGHT - PROGRESSBAR_HEIGHT, SCREEN_WIDTH, PROGRESSBAR_HEIGHT, TFT_DARKGREEN, 0);
 
   // nakresli osy
 
@@ -200,6 +200,7 @@ void show_hourly_temp_screen() {
   int y_collider_left_high_px = 0;
   int y_collider_right_low_px = SCREEN_HEIGHT;
   int y_collider_right_high_px = 0;
+  int y_collider_left_srazky = 0;
 
 
   // kresleni plotu
@@ -263,14 +264,14 @@ void show_hourly_temp_screen() {
 
     //Serial.println(y_srazky_plot);
 
-    // todo: budu kreslit 2 boxy: dest a snih
-    // SRAZKY_BOX_WIDTH
+    if (ix_hour_of_day == 0)
+      y_collider_left_srazky = y_srazky_plot + y_snih_plot;
 
     //dole je dest
-    drawBox(x_srazky_plot + 5, SCREEN_HEIGHT - Y_OFFSET_BOTTOM - y_srazky_plot, 12, y_srazky_plot, TFT_CYAN);
+    drawBox(x_srazky_plot + 5, SCREEN_HEIGHT - Y_OFFSET_BOTTOM - y_srazky_plot, 12, y_srazky_plot, TFT_SKYBLUE, 0);
 
     //nahore snih
-    drawBox(x_srazky_plot + 5, SCREEN_HEIGHT - Y_OFFSET_BOTTOM - y_snih_plot - y_srazky_plot, 12, y_snih_plot, TFT_SKYBLUE);
+    drawBox(x_srazky_plot + 5, SCREEN_HEIGHT - Y_OFFSET_BOTTOM - y_snih_plot - y_srazky_plot, 12, y_snih_plot, TFT_WHITE, 1);
   }
 
   //////
@@ -284,19 +285,24 @@ void show_hourly_temp_screen() {
     int kresli = 1;
 
     // koliduje s carou, 15 je asi velikost pisma
-    if ((y_temp + 15 >= y_collider_left_low_px) && (y_temp <= y_collider_left_high_px)) {      
+    if ((y_temp + 15 >= y_collider_left_low_px) && (y_temp <= y_collider_left_high_px)) {
       kresli = 0;
     }
 
-    //kolider se spodni osou
-    if (y_temp >= SCREEN_HEIGHT - Y_OFFSET_BOTTOM - 10) {    
+    //kolider teploty se spodni osou
+    if (y_temp >= SCREEN_HEIGHT - Y_OFFSET_BOTTOM - 10) {
       kresli = 0;
-      Serial.println("*****************************");
     }
-    
-    Serial.print(temp_tick);
-    Serial.print(" : ");
-    Serial.println(y_temp);
+
+    //kolize teploty a srazky
+    if (y_temp > SCREEN_HEIGHT - Y_OFFSET_BOTTOM - y_collider_left_srazky - 5)
+    {
+      kresli = 0;
+    }
+
+    //Serial.print(temp_tick);
+    //Serial.print(" : ");
+    //Serial.println(y_temp);
 
 
 
@@ -349,7 +355,7 @@ void show_hourly_temp_screen() {
     double zbyva_procent = (double)(expected_end_epoch - current_epoch) / (double)SCREEN_DELAY;
     int zbyva_pixelu = (int)(zbyva_procent * (double)SCREEN_WIDTH);
 
-    drawBox(zbyva_pixelu, SCREEN_HEIGHT - PROGRESSBAR_HEIGHT, SCREEN_WIDTH - zbyva_pixelu, PROGRESSBAR_HEIGHT, TFT_WHITE);
+    drawBox(zbyva_pixelu, SCREEN_HEIGHT - PROGRESSBAR_HEIGHT, SCREEN_WIDTH - zbyva_pixelu, PROGRESSBAR_HEIGHT, TFT_WHITE, 0);
 
     delay(100);
     current_epoch = board_time.getEpoch();
