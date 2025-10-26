@@ -3,7 +3,7 @@
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
 #include <TimeLib.h>
-#include <Time.h>
+//#include <Time.h>
 #include <ESP32Time.h>
 
 #include "meteo.h"
